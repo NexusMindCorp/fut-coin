@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://hk647lklo3l2"
-path="res://.godot/imported/Retro Pixel Stadium Matchup Screen.png-660dd606b9f26dcc4ed1e8faefa544cc.ctex"
+uid="uid://c5qmlq1kvys0t"
+path="res://.godot/imported/moeda_flip_sheet.png-443fdc09bef2898da119ad063fe672b9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/menus/Retro Pixel Stadium Matchup Screen.png"
-dest_files=["res://.godot/imported/Retro Pixel Stadium Matchup Screen.png-660dd606b9f26dcc4ed1e8faefa544cc.ctex"]
+source_file="res://assets/sprites/entities/moeda_flip_sheet.png"
+dest_files=["res://.godot/imported/moeda_flip_sheet.png-443fdc09bef2898da119ad063fe672b9.ctex"]
 
 [params]
 
