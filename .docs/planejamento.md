@@ -114,7 +114,7 @@ HUD 40 + parede 16 + campo jogável 288 (18 tiles) + parede 16 = 360. Escala do 
 - **Contraste prego × moeda (decisão do usuário):** o prego prata será **escurecido e ganhará leve tom azulado (aço/grafite)** no pipeline, para se distinguir do cinza claro da moeda, mantendo contorno preto e brilho. Verificação visual no M1 continua valendo; se ainda parecer próximo, escurecer mais.
 - **Indicador de posse/vez (decisão do usuário):** uma **aura na própria moeda, na cor do time que tem a posse** (aura prata/aço para o Corinthians, vermelha para o Flamengo). Fica ativa enquanto o time pode jogar (`AGUARDANDO_JOGADA` e `MIRANDO`) e some ou esmaece com a moeda em movimento. Implementação proposta: nó filho da moeda (sprite de halo ou `Polygon2D`/shader simples) com `modulate` na cor do time, pulsando por `Tween` (conta como animação geral sem sprites). **Atenção:** a aura prata tem pouco contraste com a moeda cinza, então usar contorno ou halo mais claro e verificar no M1. O HUD pode ter, opcionalmente, um destaque no placar como reforço.
 
-**Backup e reprodutibilidade:** os 13 originais estão em `assets/_fonte/` (com `.gdignore`, o Godot não os importa). O processamento será feito por script versionado, gerando os finais a partir deles. **Nada foi processado ainda.**
+**Backup e reprodutibilidade:** os 14 originais (13 iniciais mais a tela de matchup do Gianlucca, `tela_versus.png`) estão em `assets/_fonte/` (com `.gdignore`, o Godot não os importa). O processamento será feito por script versionado, gerando os finais a partir deles. **Nada foi processado ainda.**
 
 ---
 

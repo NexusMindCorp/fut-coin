@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dmye2xr72lgiw"]
 
 [ext_resource type="Texture2D" uid="uid://cqjdegmcekplh" path="res://icon.svg" id="1_1ldeg"]
-[ext_resource type="Texture2D" uid="uid://rki4m2i3uasl" path="res://assets/ui/hud/Retro Versus HUD Banner.png" id="2_hmy7e"]
+[ext_resource type="Texture2D" path="res://assets/ui/hud/placar_banner.png" id="2_hmy7e"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_yf5fn"]
 font_size = 32
