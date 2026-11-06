@@ -1,0 +1,65 @@
+[gd_scene format=3 uid="uid://dmye2xr72lgiw"]
+
+[ext_resource type="Texture2D" uid="uid://cqjdegmcekplh" path="res://icon.svg" id="1_1ldeg"]
+[ext_resource type="Texture2D" uid="uid://rki4m2i3uasl" path="res://assets/ui/hud/Retro Versus HUD Banner.png" id="2_hmy7e"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_yf5fn"]
+font_size = 32
+
+[sub_resource type="LabelSettings" id="LabelSettings_g4v7s"]
+font_size = 32
+
+[node name="Hub" type="Node2D" unique_id=60231731]
+
+[node name="Brazoes" type="Node2D" parent="." unique_id=2126953946]
+position = Vector2(428, 97.00001)
+scale = Vector2(0.6718747, 0.64062506)
+
+[node name="Brazao2" type="Sprite2D" parent="Brazoes" unique_id=477537096]
+z_index = 1
+position = Vector2(520.93036, -1.5609741)
+scale = Vector2(0.9767444, 0.96341455)
+texture = ExtResource("1_1ldeg")
+
+[node name="Brazao1" type="Sprite2D" parent="Brazoes" unique_id=1441314137]
+z_index = 1
+scale = Vector2(0.99999994, 1)
+texture = ExtResource("1_1ldeg")
+
+[node name="Estrutura" type="Sprite2D" parent="." unique_id=389940401]
+process_priority = -1
+position = Vector2(602, 120.00001)
+scale = Vector2(0.20557085, 0.37292817)
+texture = ExtResource("2_hmy7e")
+
+[node name="Control" type="Control" parent="." unique_id=1458836710]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="p1" type="Label" parent="Control" unique_id=1982044214]
+layout_mode = 0
+offset_left = 666.0
+offset_top = 77.0
+offset_right = 706.0
+offset_bottom = 122.0
+text = "0"
+label_settings = SubResource("LabelSettings_yf5fn")
+
+[node name="p2" type="Label" parent="Control" unique_id=272623640]
+layout_mode = 0
+offset_left = 523.0
+offset_top = 77.0
+offset_right = 568.0
+offset_bottom = 122.0
+text = "0"
+label_settings = SubResource("LabelSettings_g4v7s")
+
+[node name="timer" type="Label" parent="Control" unique_id=1477439671]
+layout_mode = 0
+offset_left = 568.0
+offset_top = 137.0
+offset_right = 658.0
+offset_bottom = 164.0
+text = "00:00:00"
