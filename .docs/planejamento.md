@@ -1,6 +1,6 @@
-# FutCoin: Planejamento Técnico (pré-desenvolvimento)
+# FutCoin: Planejamento Técnico
 
-> Status: **PROPOSTA, aguardando aval** nos pontos da Seção 6. Nenhum código foi escrito.
+> Status: **Marco 0 (Fundação) CONCLUÍDO** (`ADR-001`, `FEAT-000`, `FEAT-001` e Input Map implementados; commits `5ccfcd8`, `18bbc6b`, `d0ea75a`). Pronto para iniciar o **Marco 1 (Núcleo Físico)**.
 > Base: `.docs/FutCoin_Requisitos.md` + `.docs/Trabalho 2 - 2026.3.md` + auditoria do repositório (06/11/2026).
 > Prazo de entrega: **20/11/2026** (14 dias). Godot 4.7, GDScript, 2D top-down.
 > Fontes técnicas: documentação oficial do Godot 4 (docs.godotengine.org), consultada via busca web. O MCP Context7 não estava exposto nesta sessão. Usar nas próximas, se disponível.
@@ -75,7 +75,7 @@ Valores iniciais em 640×360: HUD ~48 px no topo, campo útil ~312 px de altura,
 
 ---
 
-### 2.1 Proporções e animações (revisão de 06/11, **proposta aguardando validação**)
+### 2.1 Proporções e animações (revisão de 06/11, **validado e executado na FEAT-001**)
 
 **Medidas (estimativas visuais):**
 | Asset | Tamanho útil | Pixel de arte | Em pixels de arte |
@@ -114,7 +114,7 @@ HUD 40 + parede 16 + campo jogável 288 (18 tiles) + parede 16 = 360. Escala do 
 - **Contraste prego × moeda (decisão do usuário):** o prego prata será **escurecido e ganhará leve tom azulado (aço/grafite)** no pipeline, para se distinguir do cinza claro da moeda, mantendo contorno preto e brilho. Verificação visual no M1 continua valendo; se ainda parecer próximo, escurecer mais.
 - **Indicador de posse/vez (decisão do usuário):** uma **aura na própria moeda, na cor do time que tem a posse** (aura prata/aço para o Corinthians, vermelha para o Flamengo). Fica ativa enquanto o time pode jogar (`AGUARDANDO_JOGADA` e `MIRANDO`) e some ou esmaece com a moeda em movimento. Implementação proposta: nó filho da moeda (sprite de halo ou `Polygon2D`/shader simples) com `modulate` na cor do time, pulsando por `Tween` (conta como animação geral sem sprites). **Atenção:** a aura prata tem pouco contraste com a moeda cinza, então usar contorno ou halo mais claro e verificar no M1. O HUD pode ter, opcionalmente, um destaque no placar como reforço.
 
-**Backup e reprodutibilidade:** os 14 originais (13 iniciais mais a tela de matchup do Gianlucca, `tela_versus.png`) estão em `assets/_fonte/` (com `.gdignore`, o Godot não os importa). O processamento será feito por script versionado, gerando os finais a partir deles. **Nada foi processado ainda.**
+**Backup e reprodutibilidade:** os 14 originais (13 iniciais mais a tela de matchup do Gianlucca, `tela_versus.png`) estão em `assets/_fonte/` (com `.gdignore`, o Godot não os importa). O processamento foi automatizado pelo script versionado `assets/_fonte/processar_assets.py` (**FEAT-001 concluída**, commit `18bbc6b`), incluindo spritesheets de brilho, giro 2D top-down (`moeda_giro_sheet.png` e `moeda_dourada_giro_sheet.png`), flip, pregos de 12×12 px (`prego_prata.png` em tom aço e `prego_vermelho.png`) + colisão, campo estendido `1152×320`, `campo_tileset.png` (`128×128` com 4 linhas de tiles animados), banner `320×44`, 9 brasões em `48×48` e `tela_versus.png` em `640×360`.
 
 ---
 
@@ -134,7 +134,7 @@ HUD 40 + parede 16 + campo jogável 288 (18 tiles) + parede 16 = 360. Escala do 
 
 ---
 
-## 4. Arquitetura proposta (rascunho do ADR-001, não registrado)
+## 4. Arquitetura aprovada (`ADR-001` registrado e implementado)
 
 ### Opção recomendada: Juiz + componentes + `TelaBase`
 Segue o catálogo da skill: *Call Down, Signal Up*, estado explícito e DRY de transição.
@@ -186,12 +186,12 @@ Mantidos: `AudioManager` (autoload, 5 barramentos, mudo no pause), componente de
 
 | Marco | Datas | Entregas | Critério de pronto |
 |:---|:---|:---|:---|
-| **M0 Fundação** | 06 a 08/11 | Respostas da Seção 6; ADR-001; Project Settings; pipeline de assets; Input Map; spec `FEAT-001`; preset de export Linux | Projeto abre em 640×360 pixel perfect; assets finais importados |
-| **M1 Núcleo físico** | 08 a 11/11 | Campo (retângulos cinza), paredes, 22 pregos, moeda, mira estilingue, limite perto da parede, detecção de parada, **câmera horizontal com travas** | Dá para lançar, quicar, parar. Sem tunelamento nem jitter. **Primeiro export Linux testado** |
-| **M2 Regras** | 11 a 14/11 | Gols (`Area2D`), animação de gol, placar, turnos, cronômetro, gol de ouro, tempo esgotado em movimento, estados | Partida completa jogável do início ao fim, em cinza |
-| **M3 Fluxo e UI** | 12 a 16/11 | `TelaBase`, menu, seleção de times, tela final, créditos, pause, HUD com banner e brasões, `AudioManager` + barramentos | Fluxo menu → seleção → partida → final → menu, sem travar |
-| **M4 Arte e polimento** | 15 a 18/11 | Arte final aplicada, animação de sprite, de tile e Tweens, SFX/música, balanceamento, tremor de câmera (opcional) | Checklist do enunciado 100% |
-| **M5 Entrega** | 18 a 20/11 | Export final em `build/`, teste do binário, `chmod +x` versionado, créditos finais, `roteiro_apresentacao.md`, repositório público | Submissão no Classroom, buffer de 1 dia |
+| **M0 Fundação (CONCLUÍDO)** | 06/11 | Respostas da Seção 6; `ADR-001`; `FEAT-000` (Project Settings 640×360 + Input Map `mira_clique`/`pausar`); `FEAT-001` (pipeline de assets + `.import`) | Projeto abre em 640×360 pixel perfect; 24 assets finais importados (commits `5ccfcd8`, `18bbc6b`, `d0ea75a`) |
+| **M1 Núcleo físico** | 08 a 11/11 | Campo (`1152×320` / `TileMapLayer`), paredes, 22 pregos (`12×12`), moeda (`28×28`), mira estilingue, limite perto da parede, detecção de parada, **câmera horizontal com travas** | Dá para lançar, quicar, parar. Sem tunelamento nem jitter |
+| **M2 Regras** | 11 a 14/11 | Gols (`Area2D`), animação de gol, placar, turnos, cronômetro, gol de ouro, tempo esgotado em movimento, estados | Partida completa jogável do início ao fim |
+| **M3 Fluxo e UI** | 12 a 16/11 | Menu, tela versus, tela final, créditos, pause, HUD (`hub.tscn` em 640×360) com banner e brasões, `AudioManager` + barramentos | Fluxo menu → partida → final → menu, sem travar |
+| **M4 Arte e polimento** | 15 a 18/11 | Animação de sprite, de tile e Tweens, SFX/música, balanceamento, tremor de câmera (opcional) | Checklist do enunciado 100% |
+| **M5 Entrega e Export Linux** | 18 a 20/11 | Preset e export final Linux em `build/`, `.gitattributes` (`build/** binary`), `chmod +x` versionado, créditos finais, `roteiro_apresentacao.md` | Submissão no Classroom, buffer de 1 dia |
 
 ### Divisão sugerida (4 pessoas, com rodízio, pois todos serão arguidos sobre tudo)
 | Papel | Foco | Revisa o código de |
@@ -205,24 +205,24 @@ Regra: **todo PR é revisado por quem não escreveu**. Antes da apresentação, 
 
 ---
 
-## 6. Pontos a alinhar ANTES de codar
+## 6. Status dos Pontos de Alinhamento (P1 a P14)
 
-| # | Questão | Recomendação |
+| # | Questão | Status / Decisão |
 |:---|:---|:---|
-| P1 | **Resolução base:** 480×270 ou 640×360? | **640×360** (Seção 2) |
-| P2 | **Campo:** estender a arte atual (corta/insere grama/espelha), redesenhar, ou aceitar campo de tela única (câmera só acompanha de leve ou faz zoom)? | **Estender a arte atual**. É a opção que respeita os requisitos com menos trabalho |
-| P3 | **Pipeline de assets:** reamostrar/redesenhar cada asset para o tamanho final, guardando os originais em `assets/_fonte/` com `.gdignore`? Quem faz (Aseprite ou script)? | Sim. A moeda precisa ser **redesenhada** em 24 px |
-| P4 | **Requisito "animação de tiles":** criar um `TileMapLayer` com ao menos 1 tile animado (placas LED/torcida ao redor do campo)? E um spritesheet de ~4 a 6 frames para a moeda (rolando), mais um para o gol de ouro? | Sim aos dois. É o único ponto do enunciado hoje **sem solução com os assets atuais** |
-| P5 | **Moeda sem rotação** (`lock_rotation`) com animação de frames por velocidade, em vez de girar o sprite | Recomendado (pixel art nítido) |
-| P6 | **Pasta `resources/times/`** (`TimeDados` + `.tres`), fora da estrutura da skill | Aprovar. Registrar como extensão da skill |
-| P7 | **Governança no GitHub:** manter `.agent/` e `GEMINI.md` no `.gitignore` (local) ou versionar? `AGENTS.md` hoje é versionado e referencia `.agent/` | Alinhar: se for local, ignorar também `AGENTS.md`. Se for público, remover `.agent/` do `.gitignore` |
-| P8 | **Times:** definido: **Corinthians (P1, prata, esquerda) e Flamengo (P2, vermelho, direita) fixos, sem tela de seleção por enquanto**; aura na moeda indica a posse | Decidido (06/11). Seleção de times fica para depois dos testes |
-| P9 | **Renderer `gl_compatibility`** e Project Settings da Seção 3 | Aprovar |
-| P10 | **Início do gol de ouro** (pendência dos requisitos) | Sugestão: quem sofreu o último gol, igual ao fluxo normal |
-| P11 | **Áudio:** origem da música e SFX (ex.: Kenney, OpenGameArt, freesound, CC0) | Preferir CC0 para simplificar os créditos |
-| P12 | **Pause:** menu com Continuar, Reiniciar e Menu (requisitos). Aprovar a abordagem da Seção 3.8 | Aprovar |
-| P13 | **Testes:** só F6 + scaffolding (Nível 1) e, opcionalmente, GUT para a lógica pura (desempate, formatação de tempo)? | Sem GUT por padrão (evita addon). Validar manualmente |
-| P14 | **Distribuição de papéis** da Seção 5 e quem é o 3º e 4º integrante (para os créditos) | A definir pelo grupo |
+| P1 | **Resolução base:** 480×270 ou 640×360? | **Concluído:** `640×360` aplicada no `project.godot` (`5ccfcd8`) |
+| P2 | **Campo:** estender a arte atual (corta/insere grama/espelha)? | **Concluído:** Campo estendido para `1152×320` com gol de `~72 px` (`18bbc6b`) |
+| P3 | **Pipeline de assets:** reamostrar/redesenhar cada asset para o tamanho final? | **Concluído:** Gerado por `assets/_fonte/processar_assets.py` (moeda `28×28`, pregos `12×12`, brasões `48×48`, banner `320×44`, versus `640×360`) |
+| P4 | **Requisito "animação de tiles" e spritesheets:** | **Concluído:** `campo_tileset.png` com 4 linhas de tiles animados + spritesheets de brilho, giro 2D top-down, flip e colisão dos pregos |
+| P5 | **Moeda sem rotação física** (`lock_rotation`) com animação por quadros (`moeda_giro_sheet.png` / `moeda_brilho_sheet.png`) | **Decidido:** Usar giro 2D top-down / brilho no deslize; manter `moeda_flip_sheet.png` guardado |
+| P6 | **Pasta `resources/times/`** vs. DTO estático da skill | **Decidido:** Seguir a skill (DTO estático `static var`, sem `resources/`) |
+| P7 | **Governança no GitHub:** `.agent/` e `AGENTS.md` locais; `assets/_fonte/` versionada | **Concluído:** `.agent/`, `AGENTS.md` e `relatorios/` locais; `assets/_fonte/` mantida versionada |
+| P8 | **Times:** Corinthians (P1, prata, esquerda) e Flamengo (P2, vermelho, direita) fixos; aura na moeda indica a posse | **Decidido:** Seleção de times fica para depois dos testes |
+| P9 | **Project Settings** e **Export Linux** | **Concluído:** `640×360` + `Nearest` + `snap` + gravidade zero + Input Map aplicados; tudo referente a Linux fica para o M5 |
+| P10 | **Início do gol de ouro** (pendência dos requisitos) | **Em aberto para M2:** Sugestão: quem sofreu o último gol, igual ao fluxo normal |
+| P11 | **Áudio:** origem da música e SFX (ex.: Kenney, OpenGameArt, freesound, CC0) | **Em aberto para M3/M4:** Preferir CC0 para simplificar os créditos |
+| P12 | **Pause:** menu com Continuar, Reiniciar e Menu (`WHEN_PAUSED`) | **Aprovado** (`ADR-001`) |
+| P13 | **Testes:** só F6 + scaffolding (Nível 1), sem GUT | **Decidido:** Validar no editor com scaffolding F6 |
+| P14 | **Distribuição de papéis** da Seção 5 e integrantes nos créditos | **A definir pelo grupo** |
 
 ---
 
