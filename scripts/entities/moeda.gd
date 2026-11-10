@@ -25,6 +25,8 @@ const RAIO: float = 14.0
 # --- ESTADO ---
 var em_movimento: bool = false
 var autorizada: bool = false
+var dourada: bool = false
+var contagem_reposicionamento: int = 0
 var impulso_pendente: Vector2 = Vector2.ZERO
 var consulta: PhysicsShapeQueryParameters2D = PhysicsShapeQueryParameters2D.new()
 var forma_consulta: CircleShape2D = CircleShape2D.new()
@@ -40,7 +42,7 @@ func _ready() -> void:
 	consulta.shape = forma_consulta
 	consulta.collision_mask = 1
 	consulta.exclude = [get_rid()]
-	animacao.play(&"repouso")
+	_atualizar_animacao()
 	pulso = create_tween().set_loops()
 	pulso.tween_property(self, "intensidade_aura", 1.0, 0.6)
 	pulso.tween_property(self, "intensidade_aura", 0.45, 0.6)
@@ -81,14 +83,14 @@ func lancar(impulso: Vector2) -> bool:
 	freeze = false
 	sleeping = false
 	tempo_parada.stop()
-	animacao.play(&"giro")
+	_atualizar_animacao()
 	queue_redraw()
 	lancada.emit(impulso_pendente)
 	return true
 
 
 func esta_parada() -> bool:
-	return not em_movimento and linear_velocity.is_zero_approx()
+	return not em_movimento and (freeze or linear_velocity.is_zero_approx())
 
 
 func pode_lancar(direcao: Vector2) -> bool:
@@ -113,16 +115,23 @@ func definir_autorizada(valor: bool) -> void:
 func reposicionar(posicao: Vector2) -> void:
 	if not posicao.is_finite():
 		return
-	em_movimento = false
-	impulso_pendente = Vector2.ZERO
-	tempo_parada.stop()
-	freeze = true
-	linear_velocity = Vector2.ZERO
-	angular_velocity = 0.0
+	contagem_reposicionamento += 1
+	_limpar_estado_fisico()
 	global_position = posicao
 	reset_physics_interpolation()
-	animacao.play(&"repouso")
+	_atualizar_animacao()
 	queue_redraw()
+
+
+func interromper_movimento() -> void:
+	_limpar_estado_fisico()
+	_atualizar_animacao()
+	queue_redraw()
+
+
+func definir_gol_de_ouro(ativo: bool) -> void:
+	dourada = ativo
+	_atualizar_animacao()
 
 
 static func direcao_permitida(direcao: Vector2, normal: Vector2) -> bool:
@@ -130,14 +139,29 @@ static func direcao_permitida(direcao: Vector2, normal: Vector2) -> bool:
 
 
 # --- AUXILIARES / SETTERS ---
-func _on_tempo_parada_timeout() -> void:
-	if not em_movimento or (not sleeping and linear_velocity.length() >= limiar_parada):
-		return
+func _limpar_estado_fisico() -> void:
+	em_movimento = false
+	impulso_pendente = Vector2.ZERO
+	tempo_parada.stop()
 	linear_velocity = Vector2.ZERO
 	angular_velocity = 0.0
 	freeze = true
-	em_movimento = false
-	animacao.play(&"repouso")
+
+
+func _atualizar_animacao() -> void:
+	if animacao == null:
+		return
+	if em_movimento:
+		animacao.play(&"giro_dourado" if dourada else &"giro")
+	else:
+		animacao.play(&"repouso_dourado" if dourada else &"repouso")
+
+
+func _on_tempo_parada_timeout() -> void:
+	if not em_movimento or (not sleeping and linear_velocity.length() >= limiar_parada):
+		return
+	_limpar_estado_fisico()
+	_atualizar_animacao()
 	queue_redraw()
 	parou.emit()
 
