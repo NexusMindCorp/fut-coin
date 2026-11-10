@@ -1,9 +1,9 @@
 # FutCoin: Planejamento Técnico
 
-> Status em **09/11/2026**: **M0 concluído** (configuração, Input Map e assets; commits `5ccfcd8`, `18bbc6b`, `d0ea75a`). ADR-001 aprovada; componentes de gameplay ainda não implementados. Próximo: **M1 — Núcleo Físico**.
-> Base: requisitos, enunciado e revisão documental/inventário de 09/11/2026. Não há `.gd`, cena principal configurada ou export Linux; a única cena é o esboço do HUD.
+> Status em **09/11/2026**: **M0 concluído; M1 parcial**. FEAT-002 implementada: campo, paredes, 22 pregos, tiles animados e prévia F6. Próximo: **FEAT-003 — moeda, mira e câmera de jogo**.
+> Base: requisitos, enunciado e implementação FEAT-002. Scripts/cenas de campo e prévia presentes; HUD ainda provisório. Sem cena principal configurada ou export Linux.
 > Prazo de entrega: **20/11/2026**. Godot 4.7, GDScript, 2D top-down. Datas do roadmap são metas, não evidência de execução.
-> Notas técnicas da seção 3 foram registradas em 06/11; APIs e configuração devem ser conferidas na documentação oficial durante a implementação. Esta revisão não executou o Godot.
+> Notas técnicas da seção 3 foram registradas em 06/11; APIs devem ser conferidas durante a implementação. FEAT-002 validada no editor e renderizada no Godot 4.7.2; evidências na spec e no relatório da sessão.
 
 ---
 
@@ -27,7 +27,7 @@
 | Dados dos times | DTO estático e times fixos aprovados; sem `resources/times/` | Implementar conforme ADR-001 |
 | `project.godot` (Forward Plus + `d3d12`) | Renderer mantido por decisão do usuário | Reavaliar no M5 com o ambiente Linux alvo |
 | Assets | Processados em `assets/`; originais em `assets/_fonte/` com `.gdignore` | Integrar spritesheets e tiles animados às cenas no M1/M4 |
-| Gameplay e HUD | Sem `.gd`; HUD provisório em coordenadas antigas | Implementar FEAT-002/003 e adaptar HUD no M3 |
+| Gameplay e HUD | Campo e pregos implementados; HUD provisório em coordenadas antigas | Implementar FEAT-003 e adaptar HUD no M3 |
 
 ### Estrutura-alvo
 ```text
@@ -189,7 +189,7 @@ Mantidos: `AudioManager` (autoload, 5 barramentos, mudo no pause), componente de
 | Marco | Datas | Entregas | Critério de pronto |
 |:---|:---|:---|:---|
 | **M0 Fundação (CONCLUÍDO)** | 06/11 | Respostas da Seção 6; `ADR-001`; `FEAT-000` (Project Settings 640×360 + Input Map `mira_clique`/`pausar`); `FEAT-001` (pipeline de assets + `.import`) | Projeto abre em 640×360 pixel perfect; 24 assets finais importados (commits `5ccfcd8`, `18bbc6b`, `d0ea75a`) |
-| **M1 Núcleo físico** | 08 a 11/11 | Campo (`1152×320` / `TileMapLayer`), paredes, 22 pregos (`12×12`), moeda (`28×28`), mira estilingue, limite perto da parede, detecção de parada, **câmera horizontal com travas** | Dá para lançar, quicar, parar. Sem tunelamento nem jitter |
+| **M1 Núcleo físico (parcial)** | 08 a 11/11 | FEAT-002 concluída: campo, paredes, 22 pregos e tiles animados. FEAT-003 pendente: moeda (`28×28`), mira, limite perto da parede, parada e câmera horizontal | Dá para lançar, quicar, parar. Sem tunelamento nem jitter; prévia do campo já disponível no F6 |
 | **M2 Regras** | 11 a 14/11 | Gols (`Area2D`), animação de gol, placar, turnos, cronômetro, gol de ouro, tempo esgotado em movimento, estados | Partida completa jogável do início ao fim |
 | **M3 Fluxo e UI** | 12 a 16/11 | Menu, tela versus, tela final, créditos, pause, HUD (`hub.tscn` em 640×360) com banner e brasões, `AudioManager` + barramentos | Fluxo menu → partida → final → menu, sem travar |
 | **M4 Arte e polimento** | 15 a 18/11 | Animação de sprite, de tile e Tweens, SFX/música, balanceamento, tremor de câmera (opcional) | Checklist do enunciado 100% |
@@ -214,7 +214,7 @@ Regra: **todo PR é revisado por quem não escreveu**. Antes da apresentação, 
 | P1 | **Resolução base:** 480×270 ou 640×360? | **Concluído:** `640×360` aplicada no `project.godot` (`5ccfcd8`) |
 | P2 | **Campo:** estender a arte atual (corta/insere grama/espelha)? | **Concluído:** Campo estendido para `1152×320` com gol de `~72 px` (`18bbc6b`) |
 | P3 | **Pipeline de assets:** reamostrar/redesenhar cada asset para o tamanho final? | **Concluído:** Gerado por `assets/_fonte/processar_assets.py` (moeda `28×28`, pregos `12×12`, brasões `48×48`, banner `320×44`, versus `640×360`) |
-| P4 | **Requisito "animação de tiles" e spritesheets:** | **Assets concluídos:** atlas e spritesheets gerados. Requisito funcional pendente de integração e verificação nas cenas M1/M4 |
+| P4 | **Requisito "animação de tiles" e spritesheets:** | **Parcialmente integrado:** TileMapLayer animado e recurso de impacto dos pregos na FEAT-002; animação da moeda e verificação de gameplay pendentes em FEAT-003/M4 |
 | P5 | **Moeda sem rotação física** (`lock_rotation`) com animação por quadros (`moeda_giro_sheet.png` / `moeda_brilho_sheet.png`) | **Decidido:** Usar giro 2D top-down / brilho no deslize; manter `moeda_flip_sheet.png` guardado |
 | P6 | **Pasta `resources/times/`** vs. DTO estático da skill | **Decidido:** Seguir a skill (DTO estático `static var`, sem `resources/`) |
 | P7 | **Versionamento da governança** | **Atualizado em 09/11:** `AGENTS.md`, `.agent/` e `relatorios/` versionados no Git local por autorização do usuário; publicação remota não verificada nesta revisão. `assets/_fonte/` também versionada |
