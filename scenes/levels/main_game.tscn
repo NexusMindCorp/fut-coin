@@ -1,0 +1,90 @@
+[gd_scene format=3 uid="uid://bw7hecjq0l62t"]
+
+[ext_resource type="Script" uid="uid://bum8dboywuy25" path="res://scripts/levels/main_game.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://c4dnbpkrgl3hq" path="res://scenes/levels/campo.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/entities/moeda.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/ui/mira.tscn" id="4"]
+[ext_resource type="Script" uid="uid://dnor1df5phj0g" path="res://scripts/levels/camera_partida.gd" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/entities/gol.tscn" id="6"]
+[ext_resource type="PackedScene" uid="uid://dmye2xr72lgiw" path="res://scenes/ui/hub/hub.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://scenes/ui/gol.tscn" id="8"]
+[ext_resource type="PackedScene" uid="uid://b4n9v6kp2x8re" path="res://scenes/ui/pause.tscn" id="9"]
+
+[node name="MainGame" type="Node2D" unique_id=1072508289]
+script = ExtResource("1")
+
+[node name="Campo" parent="." unique_id=1876622246 instance=ExtResource("2")]
+
+[node name="Moeda" parent="." unique_id=1150347055 instance=ExtResource("3")]
+position = Vector2(576, 160)
+
+[node name="Mira" parent="." unique_id=1936208077 node_paths=PackedStringArray("moeda") instance=ExtResource("4")]
+moeda = NodePath("../Moeda")
+
+[node name="CameraPartida" type="Camera2D" parent="." unique_id=1468781 node_paths=PackedStringArray("alvo")]
+position = Vector2(576, 136)
+process_callback = 0
+limit_left = 0
+limit_top = -44
+limit_right = 1152
+limit_bottom = 316
+position_smoothing_enabled = true
+position_smoothing_speed = 8.0
+script = ExtResource("5")
+alvo = NodePath("../Moeda")
+altura_fixa = 136.0
+
+[node name="Sensores" type="Node2D" parent="." unique_id=1469112]
+
+[node name="GolEsquerdo" parent="Sensores" unique_id=327862289 node_paths=PackedStringArray("referencia_campo") instance=ExtResource("6")]
+position = Vector2(28, 160)
+referencia_campo = NodePath("../../Campo")
+
+[node name="GolDireito" parent="Sensores" unique_id=1706021152 node_paths=PackedStringArray("referencia_campo") instance=ExtResource("6")]
+position = Vector2(1124, 160)
+equipe_defensora = 1
+referencia_campo = NodePath("../../Campo")
+
+[node name="Cronometro" type="Timer" parent="." unique_id=46603877]
+process_callback = 0
+wait_time = 180.0
+one_shot = true
+
+[node name="PausaGol" type="Timer" parent="." unique_id=1996600708]
+process_callback = 0
+wait_time = 1.2
+one_shot = true
+
+[node name="FeedbackRegras" type="CanvasLayer" parent="." unique_id=312995456]
+
+[node name="Hub" parent="FeedbackRegras" unique_id=698864086 instance=ExtResource("7")]
+
+[node name="GolUI" parent="FeedbackRegras" unique_id=941168849 instance=ExtResource("8")]
+
+[node name="AvisoCentral" type="Label" parent="FeedbackRegras" unique_id=704347150]
+visible = false
+offset_left = 120.0
+offset_top = 152.0
+offset_right = 520.0
+offset_bottom = 240.0
+theme_override_colors/font_color = Color(1, 0.95, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0.05, 0.05, 0.08, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 18
+text = "FIM DE PARTIDA"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Pause" parent="FeedbackRegras" unique_id=741852963 instance=ExtResource("9")]
+
+[connection signal="lancada" from="Moeda" to="." method="_on_moeda_lancada"]
+[connection signal="parou" from="Moeda" to="." method="_on_moeda_parou"]
+[connection signal="lancamento_solicitado" from="Mira" to="." method="_on_lancamento_solicitado"]
+[connection signal="mira_cancelada" from="Mira" to="." method="_on_mira_cancelada"]
+[connection signal="mira_iniciada" from="Mira" to="." method="_on_mira_iniciada"]
+[connection signal="timeout" from="Cronometro" to="." method="_on_cronometro_timeout"]
+[connection signal="timeout" from="PausaGol" to="." method="_on_pausa_gol_timeout"]
+[connection signal="pausa_solicitada" from="FeedbackRegras/Hub" to="." method="_on_hub_pausa_solicitada"]
+[connection signal="continuar_solicitado" from="FeedbackRegras/Pause" to="." method="_on_pause_continuar_solicitado"]
+[connection signal="menu_solicitado" from="FeedbackRegras/Pause" to="." method="_on_pause_menu_solicitado"]
+[connection signal="reinicio_solicitado" from="FeedbackRegras/Pause" to="." method="_on_pause_reinicio_solicitado"]
