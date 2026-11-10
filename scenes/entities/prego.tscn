@@ -1,0 +1,21 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/entities/prego.gd" id="1_6w2s5"]
+[ext_resource type="SpriteFrames" path="res://assets/sprites/entities/prego_animacoes.tres" id="2_animacoes"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_77adu"]
+radius = 6.0
+
+[node name="Prego" type="StaticBody2D" unique_id=135732133]
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("1_6w2s5")
+
+[node name="Animacao" type="AnimatedSprite2D" parent="." unique_id=124833582]
+sprite_frames = ExtResource("2_animacoes")
+animation = &"repouso_prata"
+
+[node name="Colisao" type="CollisionShape2D" parent="." unique_id=105173414]
+shape = SubResource("CircleShape2D_77adu")
+
+[connection signal="animation_finished" from="Animacao" to="." method="_on_animacao_animation_finished"]

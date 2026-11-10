@@ -1,0 +1,91 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://77311hpebylh"]
+
+[ext_resource type="Texture2D" uid="uid://bcfg1t0gutth1" path="res://assets/sprites/entities/prego_prata_colisao_sheet.png" id="1_t75jq"]
+[ext_resource type="Texture2D" uid="uid://5a26378jxjga" path="res://assets/sprites/entities/prego_vermelho_colisao_sheet.png" id="2_ye36t"]
+[ext_resource type="Texture2D" uid="uid://ccqanvbgyr00g" path="res://assets/sprites/entities/prego_prata.png" id="3_ey3ju"]
+[ext_resource type="Texture2D" uid="uid://j6yarmf4tvnd" path="res://assets/sprites/entities/prego_vermelho.png" id="4_h1rsc"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hg1xd"]
+atlas = ExtResource("1_t75jq")
+region = Rect2(0, 0, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lws2n"]
+atlas = ExtResource("1_t75jq")
+region = Rect2(12, 0, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cn4d8"]
+atlas = ExtResource("1_t75jq")
+region = Rect2(24, 0, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5sude"]
+atlas = ExtResource("1_t75jq")
+region = Rect2(36, 0, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rknwv"]
+atlas = ExtResource("2_ye36t")
+region = Rect2(0, 0, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gyei1"]
+atlas = ExtResource("2_ye36t")
+region = Rect2(12, 0, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8t6er"]
+atlas = ExtResource("2_ye36t")
+region = Rect2(24, 0, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uvbqs"]
+atlas = ExtResource("2_ye36t")
+region = Rect2(36, 0, 12, 12)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hg1xd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lws2n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cn4d8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5sude")
+}],
+"loop": 0,
+"name": &"impacto_prata",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rknwv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gyei1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8t6er")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uvbqs")
+}],
+"loop": 0,
+"name": &"impacto_vermelho",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_ey3ju")
+}],
+"loop": 1,
+"name": &"repouso_prata",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_h1rsc")
+}],
+"loop": 1,
+"name": &"repouso_vermelho",
+"speed": 5.0
+}]
