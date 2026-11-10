@@ -4,6 +4,7 @@
 [ext_resource type="TileSet" uid="uid://cok4dv6x4xhkj" path="res://assets/levels/campo_tileset.tres" id="2_tileset"]
 [ext_resource type="PackedScene" path="res://scenes/entities/prego.tscn" id="3_8jnxf"]
 [ext_resource type="Texture2D" uid="uid://k55e4pfoc40q" path="res://assets/ui/torcedores/Arquibancada Pixelada em Festa.png" id="4_2rp2c"]
+[ext_resource type="Texture2D" uid="uid://dkrwixijwclcb" path="res://assets/ui/Textura de Solo Pixelada Retrô.png" id="5_100ur"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7rh4d"]
 size = Vector2(1056, 16)
@@ -205,8 +206,8 @@ time = 1
 cor_time = Color(0.92, 0.24, 0.24, 1)
 
 [node name="ArquibancadaPixeladaEmFesta" type="Sprite2D" parent="." unique_id=1241412953]
-position = Vector2(179.25, 416)
-scale = Vector2(0.17220971, 0.23337092)
+position = Vector2(162, 416)
+scale = Vector2(0.19165727, 0.23337092)
 texture = ExtResource("4_2rp2c")
 
 [node name="ArquibancadaPixeladaEmFesta2" type="Sprite2D" parent="." unique_id=1924999825]
@@ -223,3 +224,39 @@ texture = ExtResource("4_2rp2c")
 position = Vector2(1096, 416)
 scale = Vector2(0.17220971, 0.23337092)
 texture = ExtResource("4_2rp2c")
+
+[node name="ArquibancadaPixeladaEmFesta5" type="Sprite2D" parent="." unique_id=750248384]
+position = Vector2(1019, -92.99999)
+rotation = -3.1345515
+scale = Vector2(0.17220971, 0.23337092)
+texture = ExtResource("4_2rp2c")
+
+[node name="ArquibancadaPixeladaEmFesta6" type="Sprite2D" parent="." unique_id=1575893693]
+position = Vector2(712.99994, -96)
+rotation = -3.1353204
+scale = Vector2(0.17220971, 0.23337092)
+texture = ExtResource("4_2rp2c")
+
+[node name="ArquibancadaPixeladaEmFesta7" type="Sprite2D" parent="." unique_id=1452310501]
+position = Vector2(410, -96.00001)
+rotation = -3.1456513
+scale = Vector2(0.17220971, 0.23337092)
+texture = ExtResource("4_2rp2c")
+
+[node name="ArquibancadaPixeladaEmFesta8" type="Sprite2D" parent="." unique_id=469398752]
+position = Vector2(108, -95.99999)
+rotation = -3.1389375
+scale = Vector2(0.17220971, 0.23337092)
+texture = ExtResource("4_2rp2c")
+
+[node name="TexturaDeSoloPixeladaRetrô" type="Sprite2D" parent="." unique_id=1787823337]
+z_index = -2
+position = Vector2(-241, 180)
+scale = Vector2(0.3424479, 0.45410156)
+texture = ExtResource("5_100ur")
+
+[node name="TexturaDeSoloPixeladaRetrô" type="Sprite2D" parent="TexturaDeSoloPixeladaRetrô" unique_id=588111885]
+z_index = -2
+position = Vector2(4508.7153, -7.6293945e-06)
+scale = Vector2(0.64930034, 0.8457835)
+texture = ExtResource("5_100ur")
