@@ -1,0 +1,90 @@
+[gd_scene format=3 uid="uid://ec8c3nhmq5vm"]
+
+[ext_resource type="Script" uid="uid://c3m9x2kp7w4ne" path="res://scripts/ui/menu_principal.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/ui/menus/menu_principal.png" id="2_arte"]
+[ext_resource type="Theme" uid="uid://b7k3m9qp2x5ve" path="res://assets/ui/tema_futcoin.tres" id="3_tema"]
+[ext_resource type="PackedScene" uid="uid://c6n2v8kp5x4re" path="res://scenes/ui/sounds.tscn" id="4_sounds"]
+
+[node name="MenuPrincipal" type="Control" unique_id=812000001]
+texture_filter = 1
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("3_tema")
+script = ExtResource("1_script")
+
+[node name="FundoArte" type="TextureRect" parent="." unique_id=812000002]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_arte")
+stretch_mode = 2
+
+[node name="Conteudo" type="Control" parent="." unique_id=812000003]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Titulo" type="Label" parent="Conteudo" unique_id=812000004]
+layout_mode = 0
+offset_left = 120.0
+offset_top = 24.0
+offset_right = 520.0
+offset_bottom = 84.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.92, 0.28, 1)
+theme_override_colors/font_outline_color = Color(0.04, 0.03, 0.12, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 44
+text = "FUTCOIN"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PainelBotoes" type="PanelContainer" parent="Conteudo" unique_id=812000005]
+layout_mode = 0
+offset_left = 232.0
+offset_top = 110.0
+offset_right = 408.0
+offset_bottom = 262.0
+mouse_filter = 2
+
+[node name="Botoes" type="VBoxContainer" parent="Conteudo" unique_id=812000006]
+layout_mode = 0
+offset_left = 244.0
+offset_top = 122.0
+offset_right = 396.0
+offset_bottom = 250.0
+theme_override_constants/separation = 10
+
+[node name="BotaoJogar" type="Button" parent="Conteudo/Botoes" unique_id=812000007]
+layout_mode = 2
+focus_neighbor_top = NodePath("../BotaoSair")
+focus_neighbor_bottom = NodePath("../BotaoCreditos")
+text = "JOGAR"
+
+[node name="BotaoCreditos" type="Button" parent="Conteudo/Botoes" unique_id=812000008]
+layout_mode = 2
+text = "CRÉDITOS"
+
+[node name="BotaoSair" type="Button" parent="Conteudo/Botoes" unique_id=812000009]
+layout_mode = 2
+focus_neighbor_top = NodePath("../BotaoCreditos")
+focus_neighbor_bottom = NodePath("../BotaoJogar")
+text = "SAIR DO JOGO"
+
+[node name="Sounds" parent="." unique_id=812000010 instance=ExtResource("4_sounds")]
+
+[connection signal="pressed" from="Conteudo/Botoes/BotaoJogar" to="." method="_on_botao_jogar_pressed"]
+[connection signal="pressed" from="Conteudo/Botoes/BotaoCreditos" to="." method="_on_botao_creditos_pressed"]
+[connection signal="pressed" from="Conteudo/Botoes/BotaoSair" to="." method="_on_botao_sair_pressed"]

@@ -35,7 +35,7 @@ TIMES = (
 )
 FONTES = (
     "campo_estadio.png", "pregos_prata_vermelho.png", "placar_banner.png",
-    "tela_versus.png", "moeda_50_centavos.png",
+    "tela_versus.png", "moeda_50_centavos.png", "menu_principal.png",
 ) + tuple(f"{time}.png" for time in TIMES)
 
 
@@ -545,6 +545,12 @@ def processar_ui() -> None:
     im_v = limpar_alfa_binario(Image.open(os.path.join(DIR_FONTE, "tela_versus.png")))
     versus_final = im_v.resize((640, 360), Image.Resampling.NEAREST)
     versus_final.save(os.path.join(DIR_MENUS, "tela_versus.png"), optimize=True)
+
+    # 4.4 Menu principal (640x360 px, paleta reduzida para visual 16 bits)
+    im_m = Image.open(os.path.join(DIR_FONTE, "menu_principal.png")).convert("RGB")
+    menu_640 = im_m.resize((640, 360), Image.Resampling.BOX)
+    menu_16 = menu_640.quantize(colors=48, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE)
+    menu_16.convert("RGB").save(os.path.join(DIR_MENUS, "menu_principal.png"), optimize=True)
 
 def gerar_assets() -> None:
     # 1. Moedas
