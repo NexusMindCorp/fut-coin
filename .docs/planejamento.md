@@ -4,7 +4,7 @@
 
 Planejamento de passagem para o parceiro: [FEAT-004 — juiz, turnos, gols e cronômetro](../.agent/features/feat-004-juiz-turnos-gols-cronometro.md). Spec pronta, sem implementação. Define transições, contratos reais, gol completo com travessia rápida, relógio e testes. Regras confirmadas em 10/11: novo sorteio independente ao entrar no gol de ouro, obrigatório em empate e sem opção de desativar. Pausa/abandono via menu/saída continuam disponíveis. Restam ajustes de apresentação.
 
-[FEAT-005 — interface, fluxo e áudio](../.agent/features/feat-005-interface-fluxo-audio.md) detalhada antes da implementação da 004, com marco obrigatório de revisão dos contratos reais antes de executar. Pendências imediatas: composição de HUD (44+320 excede viewport em 4 px) e modo de avanço da tela versus. Áudio, fonte e atribuições finais ainda exigem seleção/confirmação. Nenhuma dessas cenas ou infraestrutura de áudio foi implementada nesta preparação.
+[FEAT-005 — interface, fluxo e áudio](../.agent/features/feat-005-interface-fluxo-audio.md) detalhada antes da implementação da 004, com revisão dos contratos reais antes de executar. Escolhas confirmadas em 10/11: preservar banner 44 px e recortar 4 px decorativos do campo, sem afetar área jogável; versus com Começar partida/Voltar e sem avanço automático. Áudio/fontes serão escolhidos depois e créditos finalizados ao fim. Nenhuma dessas cenas ou infraestrutura de áudio foi implementada nesta preparação.
 > Base: requisitos, enunciado e implementação FEAT-002. Scripts/cenas de campo e prévia presentes; HUD ainda provisório. Sem cena principal configurada ou export Linux.
 > Prazo de entrega: **20/11/2026**. Godot 4.7, GDScript, 2D top-down. Datas do roadmap são metas, não evidência de execução.
 > Notas técnicas da seção 3 foram registradas em 06/11; APIs devem ser conferidas durante a implementação. FEAT-002 validada no editor e renderizada no Godot 4.7.2; evidências na spec e no relatório da sessão.
@@ -94,7 +94,7 @@ Valores iniciais em 640×360: HUD ~48 px no topo, campo útil ~312 px de altura,
 A moeda e o prego estão em escalas diferentes (70 contra 10 pixels de arte). Cada asset é reamostrado para seu tamanho final.
 
 **Composição vigente do campo e integração futura do HUD (640×360):**
-Imagem do campo 1152×320 em escala 1, com área interna local entre y=32 e y=288 (256 px de altura). Estudo inicial sugeria deslocamento visual de 40 px e banner de 44 px sobrepondo quatro pixels da moldura superior; isso não foi implementado nem aprovado como composição final. A spec FEAT-005 detalha alternativas e solicita escolha P1: reservar 44 px com recorte decorativo de 4 px, ou adaptar HUD a 40 px e manter arte inteira. Câmera/prévias atuais não são a composição definitiva; não somar deslocamento do campo com ajuste equivalente da câmera duas vezes.
+Imagem do campo 1152×320 em escala 1, com área interna local entre y=32 e y=288 (256 px de altura). Composição aprovada em 10/11 para FEAT-005: preservar banner de 44 px, campo começando visualmente em Y=44 e recorte de 4 px da decoração inferior. Área jogável permanece integral. Ajustar câmera/limites conforme spec, sem mover posições físicas ou somar deslocamento de campo e câmera duas vezes. Composição ainda não implementada/renderizada; estudo anterior de faixa de 40 px não foi adotado.
 
 | Elemento | Tamanho proposto |
 |:---|:---|

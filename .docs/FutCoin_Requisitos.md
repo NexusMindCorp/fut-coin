@@ -112,7 +112,7 @@
 
 ## 6. HUD
 
-Planejamento detalhado de interface/fluxo/áudio na [FEAT-005](../.agent/features/feat-005-interface-fluxo-audio.md), sujeito a revisão dos contratos reais após implementar a FEAT-004. Composição exata do banner/campo e avanço da tela versus aguardam feedback; propostas não são requisitos visuais já aprovados.
+Planejamento detalhado de interface/fluxo/áudio na [FEAT-005](../.agent/features/feat-005-interface-fluxo-audio.md), sujeito a revisão dos contratos reais após implementar a FEAT-004. Aprovado em 10/11: preservar banner de 44 px e recortar apenas 4 px decorativos do campo, mantendo toda a área jogável; versus manual com Começar partida e Voltar. Composição ainda não implementada.
 
 - Reservar faixa **superior** para placar/cronômetro, reutilizando `scenes/ui/hub/hub.tscn` adaptado a 640×360. HUD fixo na tela, sem cobrir o campo jogável ou consumir cliques destinados à moeda. Ajustar composição e câmera em conjunto: os 20 px atuais de margem não comportam automaticamente o banner de 44 px.
 
@@ -129,7 +129,7 @@ Planejamento detalhado de interface/fluxo/áudio na [FEAT-005](../.agent/feature
 ## 7. Telas e fluxo
 
 1. **Menu principal:** Jogar, **Créditos** e Sair.
-2. **Tela versus:** apresenta os times fixos do MVP: Corinthians (P1, prata, esquerda) e Flamengo (P2, vermelho, direita). Segue para a partida; seleção de times fica fora do MVP.
+2. **Tela versus:** apresenta os times fixos do MVP: Corinthians (P1, prata, esquerda) e Flamengo (P2, vermelho, direita). Botões **Começar partida** e **Voltar** ao menu; sem avanço automático. Seleção de times fica fora do MVP.
 3. **Partida (Main Game):** todo o gameplay descrito acima, com **sistema de pause**.
 4. **Tela final:** resultado da partida (incluindo vitória por gol de ouro) com as opções:
    - **Reiniciar** a partida
