@@ -1,0 +1,81 @@
+[gd_resource type="SpriteFrames" load_steps=19 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/entities/moeda_brilho_sheet.png" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/entities/moeda_giro_sheet.png" id="2"]
+
+[sub_resource type="AtlasTexture" id="Quadro_0_0"]
+atlas = ExtResource("1")
+region = Rect2(0, 0, 28, 28)
+
+[sub_resource type="AtlasTexture" id="Quadro_0_1"]
+atlas = ExtResource("1")
+region = Rect2(28, 0, 28, 28)
+
+[sub_resource type="AtlasTexture" id="Quadro_0_2"]
+atlas = ExtResource("1")
+region = Rect2(56, 0, 28, 28)
+
+[sub_resource type="AtlasTexture" id="Quadro_0_3"]
+atlas = ExtResource("1")
+region = Rect2(84, 0, 28, 28)
+
+[sub_resource type="AtlasTexture" id="Quadro_0_4"]
+atlas = ExtResource("1")
+region = Rect2(112, 0, 28, 28)
+
+[sub_resource type="AtlasTexture" id="Quadro_0_5"]
+atlas = ExtResource("1")
+region = Rect2(140, 0, 28, 28)
+
+[sub_resource type="AtlasTexture" id="Quadro_0_6"]
+atlas = ExtResource("1")
+region = Rect2(168, 0, 28, 28)
+
+[sub_resource type="AtlasTexture" id="Quadro_0_7"]
+atlas = ExtResource("1")
+region = Rect2(196, 0, 28, 28)
+
+[sub_resource type="AtlasTexture" id="Quadro_1_0"]
+atlas = ExtResource("2")
+region = Rect2(0, 0, 28, 28)
+
+[sub_resource type="AtlasTexture" id="Quadro_1_1"]
+atlas = ExtResource("2")
+region = Rect2(28, 0, 28, 28)
+
+[sub_resource type="AtlasTexture" id="Quadro_1_2"]
+atlas = ExtResource("2")
+region = Rect2(56, 0, 28, 28)
+
+[sub_resource type="AtlasTexture" id="Quadro_1_3"]
+atlas = ExtResource("2")
+region = Rect2(84, 0, 28, 28)
+
+[sub_resource type="AtlasTexture" id="Quadro_1_4"]
+atlas = ExtResource("2")
+region = Rect2(112, 0, 28, 28)
+
+[sub_resource type="AtlasTexture" id="Quadro_1_5"]
+atlas = ExtResource("2")
+region = Rect2(140, 0, 28, 28)
+
+[sub_resource type="AtlasTexture" id="Quadro_1_6"]
+atlas = ExtResource("2")
+region = Rect2(168, 0, 28, 28)
+
+[sub_resource type="AtlasTexture" id="Quadro_1_7"]
+atlas = ExtResource("2")
+region = Rect2(196, 0, 28, 28)
+
+[resource]
+animations = [{
+"frames": [{"duration": 1.0, "texture": SubResource("Quadro_0_0")}, {"duration": 1.0, "texture": SubResource("Quadro_0_1")}, {"duration": 1.0, "texture": SubResource("Quadro_0_2")}, {"duration": 1.0, "texture": SubResource("Quadro_0_3")}, {"duration": 1.0, "texture": SubResource("Quadro_0_4")}, {"duration": 1.0, "texture": SubResource("Quadro_0_5")}, {"duration": 1.0, "texture": SubResource("Quadro_0_6")}, {"duration": 1.0, "texture": SubResource("Quadro_0_7")}],
+"loop": true,
+"name": &"repouso",
+"speed": 5.0
+}, {
+"frames": [{"duration": 1.0, "texture": SubResource("Quadro_1_0")}, {"duration": 1.0, "texture": SubResource("Quadro_1_1")}, {"duration": 1.0, "texture": SubResource("Quadro_1_2")}, {"duration": 1.0, "texture": SubResource("Quadro_1_3")}, {"duration": 1.0, "texture": SubResource("Quadro_1_4")}, {"duration": 1.0, "texture": SubResource("Quadro_1_5")}, {"duration": 1.0, "texture": SubResource("Quadro_1_6")}, {"duration": 1.0, "texture": SubResource("Quadro_1_7")}],
+"loop": true,
+"name": &"giro",
+"speed": 12.0
+}]
