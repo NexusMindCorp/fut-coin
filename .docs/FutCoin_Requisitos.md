@@ -1,6 +1,6 @@
 # FutCoin: Documento de Requisitos e Contexto
 
-> Contexto atualizado em 09/11/2026 conforme ADR-001 e decisões do planejamento. Descreve o comportamento esperado, não funcionalidades já implementadas. Estado real: M0 concluído; gameplay pendente. Itens **[A DEFINIR]** continuam abertos. O enunciado original está em `Trabalho 2 - 2026.3.md`.
+> Contexto atualizado em 09/11/2026 conforme ADR-001 e decisões do planejamento. Descreve o comportamento esperado. Estado real: M0 e FEAT-002 concluídos, M1 parcial; campo com prévia disponível, moeda e partida jogável pendentes. Itens **[A DEFINIR]** continuam abertos. O enunciado original está em `Trabalho 2 - 2026.3.md`.
 
 ---
 
@@ -155,7 +155,7 @@
 - Cabeça dos pregos: 12×12 px.
 - Brasões: 48×48 px; banner: 320×44 px; tela versus: 640×360 px.
 
-> A análise dos originais e o processamento estão registrados na FEAT-001 e em `.docs/planejamento.md`. Legibilidade, contraste da aura e espaçamento entre colisões ainda precisam ser conferidos nas cenas.
+> A análise dos originais e o processamento estão registrados na FEAT-001 e em `.docs/planejamento.md`. Espaçamento estático e passagens dos goleiros foram conferidos na FEAT-002; legibilidade da moeda, contraste da aura e comportamento dinâmico ainda dependem da FEAT-003.
 
 ---
 

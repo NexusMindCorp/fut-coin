@@ -26,7 +26,7 @@
 | `default_bus_layout.tres` ausente | Será criado no editor na fase de áudio | Sem ação agora |
 | Dados dos times | DTO estático e times fixos aprovados; sem `resources/times/` | Implementar conforme ADR-001 |
 | `project.godot` (Forward Plus + `d3d12`) | Renderer mantido por decisão do usuário | Reavaliar no M5 com o ambiente Linux alvo |
-| Assets | Processados em `assets/`; originais em `assets/_fonte/` com `.gdignore` | Integrar spritesheets e tiles animados às cenas no M1/M4 |
+| Assets | Processados em `assets/`; tiles e recursos de animação dos pregos integrados pela FEAT-002 | Integrar animação da moeda e disparo de impacto por colisão na FEAT-003 |
 | Gameplay e HUD | Campo e pregos implementados; HUD provisório em coordenadas antigas | Implementar FEAT-003 e adaptar HUD no M3 |
 
 ### Estrutura-alvo
@@ -49,7 +49,7 @@ fut-coin/
 
 ## 2. Análise dos assets originais (histórico de 06/11)
 
-Esta seção descreve os originais anteriores ao pipeline. As necessidades de recorte, extensão e geração de imagens abaixo foram atendidas pela FEAT-001; resultados finais na seção 2.1. A integração em cenas permanece pendente.
+Esta seção descreve os originais anteriores ao pipeline. As necessidades de recorte, extensão e geração de imagens abaixo foram atendidas pela FEAT-001; resultados finais na seção 2.1. Campo, tiles e pregos foram integrados pela FEAT-002; moeda e demais telas continuam pendentes.
 
 | Asset | Dimensão | Observação |
 |:---|:---|:---|
@@ -89,8 +89,8 @@ Valores iniciais em 640×360: HUD ~48 px no topo, campo útil ~312 px de altura,
 
 A moeda e o prego estão em escalas diferentes (70 contra 10 pixels de arte). Cada asset é reamostrado para seu tamanho final.
 
-**Layout de tela proposto, ainda a validar nas cenas (640×360):**
-HUD 40 + parede 16 + campo jogável 288 (18 tiles) + parede 16 = 360. Escala do campo: 288/662 ≈ 0,435.
+**Composição vigente do campo e integração futura do HUD (640×360):**
+Imagem do campo 1152×320 em escala 1, com área interna local entre y=32 e y=288 (256 px de altura). Na partida futura, campo em y=40: faixa superior 40 + imagem 320 = 360. Banner de 44 px pode ocupar quatro pixels da moldura superior, sem cobrir a área jogável, que começa em y=72 no viewport. Composição final do HUD/brasões ainda precisa ser aprovada na FEAT-005.
 
 | Elemento | Tamanho proposto |
 |:---|:---|
@@ -99,7 +99,7 @@ HUD 40 + parede 16 + campo jogável 288 (18 tiles) + parede 16 = 360. Escala do 
 | Gol (abertura) | ~72 px (4,5 tiles), reduzido da arte original (~117 px na escala 0,435) |
 | Campo em largura | ~1100 a 1200 px (a arte atual daria só ~560 px; inserir ~500 a 600 px de grama entre a grande área e o círculo central, lado oposto espelhado) |
 
-**Derivações dos originais já geradas pela FEAT-001.** A tabela descreve o planejamento da geração; a integração em cenas ainda falta:
+**Derivações dos originais já geradas pela FEAT-001.** A tabela descreve o planejamento histórico da geração; campo, tiles e recursos de animação dos pregos foram integrados na FEAT-002. Moeda e demais telas ainda serão integradas:
 | Item | Origem atual | Geração por script |
 |:---|:---|:---|
 | Moeda | 1 quadro estático | Sheets de brilho, giro 2D top-down e flip (8 quadros), com versão dourada. Decisão vigente: usar giro/brilho por quadros, sem rotação física; flip guardado |
@@ -225,6 +225,8 @@ Regra: **todo PR é revisado por quem não escreveu**. Antes da apresentação, 
 | P12 | **Pause:** menu com Continuar, Reiniciar e Menu (`WHEN_PAUSED`) | **Aprovado** (`ADR-001`) |
 | P13 | **Testes:** só F6 + scaffolding (Nível 1), sem GUT | **Decidido:** Validar no editor com scaffolding F6 |
 | P14 | **Distribuição de papéis** da Seção 5 e integrantes nos créditos | **A definir pelo grupo** |
+
+**Decisão de balanceamento após FEAT-002:** manter os goleiros em `(51,160)` e `(1100,160)`, incluindo assimetria de 1 px. Quando a moeda estiver jogável, avaliar a dificuldade; poderá haver retorno às posições originais `(104,160)`/`(1048,160)` ou busca de novas posições, mediante alinhamento. Não ajustar automaticamente.
 
 ---
 
