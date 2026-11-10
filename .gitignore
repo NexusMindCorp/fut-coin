@@ -1,3 +1,7 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+
+# Ambiente e cache locais do pipeline de assets
+assets/_fonte/.venv/
+assets/_fonte/__pycache__/

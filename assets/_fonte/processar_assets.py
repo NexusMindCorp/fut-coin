@@ -5,9 +5,20 @@ Le exclusivamente de assets/_fonte/ (intacto) e gera os assets finais otimizados
 para a resolucao base 640x360 (filtro Nearest, pixel art 16 bits).
 """
 
+from __future__ import annotations
+
+import argparse
+import hashlib
 import math
 import os
-from PIL import Image
+from pathlib import Path
+import sys
+import tempfile
+
+try:
+    from PIL import Image, __version__ as versao_pillow
+except ImportError:
+    sys.exit("Pillow ausente. Instale assets/_fonte/requirements.txt no ambiente do pipeline.")
 
 RAIZ = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 DIR_FONTE = os.path.join(RAIZ, "assets", "_fonte")
@@ -16,6 +27,16 @@ DIR_LEVELS = os.path.join(RAIZ, "assets", "levels")
 DIR_HUD = os.path.join(RAIZ, "assets", "ui", "hud")
 DIR_MENUS = os.path.join(RAIZ, "assets", "ui", "menus")
 DIR_TIMES = os.path.join(RAIZ, "assets", "ui", "times")
+
+VERSAO_PILLOW = "12.3.0"
+TIMES = (
+    "atletico_mineiro", "botafogo", "corinthians", "cruzeiro",
+    "flamengo", "fluminense", "palmeiras", "sao_paulo", "vasco",
+)
+FONTES = (
+    "campo_estadio.png", "pregos_prata_vermelho.png", "placar_banner.png",
+    "tela_versus.png", "moeda_50_centavos.png",
+) + tuple(f"{time}.png" for time in TIMES)
 
 
 def limpar_alfa_binario(im: Image.Image, limiar: int = 128) -> Image.Image:
@@ -515,11 +536,7 @@ def processar_ui() -> None:
     banner_final.save(os.path.join(DIR_HUD, "placar_banner.png"), optimize=True)
 
     # 4.2 9 Brasoes (grade nativa exata 48x48 px a partir de 2400x2400)
-    times = [
-        "atletico_mineiro", "botafogo", "corinthians", "cruzeiro",
-        "flamengo", "fluminense", "palmeiras", "sao_paulo", "vasco",
-    ]
-    for time in times:
+    for time in TIMES:
         im_t = limpar_alfa_binario(Image.open(os.path.join(DIR_FONTE, f"{time}.png")))
         im_48 = im_t.resize((48, 48), Image.Resampling.NEAREST)
         im_48.save(os.path.join(DIR_TIMES, f"{time}.png"), optimize=True)
@@ -529,16 +546,7 @@ def processar_ui() -> None:
     versus_final = im_v.resize((640, 360), Image.Resampling.NEAREST)
     versus_final.save(os.path.join(DIR_MENUS, "tela_versus.png"), optimize=True)
 
-    # Remover arquivo antigo com espacos e seu .import se existirem
-    for obsoleto in [
-        os.path.join(DIR_MENUS, "Retro Pixel Stadium Matchup Screen.png"),
-        os.path.join(DIR_MENUS, "Retro Pixel Stadium Matchup Screen.png.import"),
-    ]:
-        if os.path.exists(obsoleto):
-            os.remove(obsoleto)
-
-
-def main() -> None:
+def gerar_assets() -> None:
     # 1. Moedas
     moeda_prata = gerar_moeda_base(PALETA_PRATA)
     moeda_prata.save(os.path.join(DIR_ENTITIES, "moeda_50_centavos.png"), optimize=True)
@@ -574,10 +582,6 @@ def main() -> None:
         os.path.join(DIR_ENTITIES, "prego_vermelho_colisao_sheet.png"), optimize=True
     )
 
-    prego_antigo = os.path.join(DIR_ENTITIES, "pregos_prata_vermelho.png")
-    if os.path.exists(prego_antigo):
-        os.remove(prego_antigo)
-
     # 3. Campo e Tileset
     campo_final, atlas_tiles = processar_campo_e_tileset()
     campo_final.save(os.path.join(DIR_LEVELS, "campo_estadio.png"), optimize=True)
@@ -585,6 +589,94 @@ def main() -> None:
 
     # 4. UI
     processar_ui()
+
+
+def conferir_fontes() -> dict[str, str]:
+    """Confere as entradas antes de gravar qualquer arquivo de saida."""
+    hashes: dict[str, str] = {}
+    for nome in FONTES:
+        caminho = Path(DIR_FONTE) / nome
+        with Image.open(caminho) as imagem:
+            imagem.verify()
+        hashes[nome] = hashlib.sha256(caminho.read_bytes()).hexdigest()
+    return hashes
+
+
+def configurar_destinos(raiz_saida: Path) -> None:
+    """Mantem a estrutura dos assets, protegendo originais e links simbolicos."""
+    global DIR_ENTITIES, DIR_LEVELS, DIR_HUD, DIR_MENUS, DIR_TIMES
+    fonte = Path(DIR_FONTE).resolve()
+    destinos = [
+        raiz_saida / "sprites" / "entities", raiz_saida / "levels",
+        raiz_saida / "ui" / "hud", raiz_saida / "ui" / "menus",
+        raiz_saida / "ui" / "times",
+    ]
+    # Examinar todos os caminhos antes de criar qualquer diretorio.
+    for destino in destinos:
+        resolvido = destino.resolve()
+        if resolvido == fonte or fonte in resolvido.parents or resolvido in fonte.parents:
+            raise ValueError("A saida nao pode conter ou sobrescrever assets/_fonte/.")
+        # Um PNG de saida existente tambem pode ser um link para um original.
+        if destino.exists():
+            for caminho in destino.glob("*.png"):
+                if caminho.is_symlink() or (caminho.is_file() and caminho.stat().st_nlink > 1):
+                    raise ValueError(f"PNG de destino com link nao permitido: {caminho}")
+    for destino in destinos:
+        destino.mkdir(parents=True, exist_ok=True)
+    DIR_ENTITIES, DIR_LEVELS, DIR_HUD, DIR_MENUS, DIR_TIMES = map(str, destinos)
+
+
+def conferir_resultado(raiz_gerada: Path, referencia: Path) -> None:
+    """Compara pixels decodificados; compressao PNG pode variar entre plataformas."""
+    caminhos = sorted(raiz_gerada.rglob("*.png"))
+    if len(caminhos) != 24:
+        raise ValueError(f"Esperados 24 PNGs gerados; encontrados {len(caminhos)}.")
+    divergencias: list[str] = []
+    for caminho in caminhos:
+        relativo = caminho.relative_to(raiz_gerada)
+        atual = referencia / relativo
+        if not atual.is_file():
+            divergencias.append(f"ausente: {relativo}")
+            continue
+        with Image.open(caminho) as gerada, Image.open(atual) as existente:
+            if (gerada.size != existente.size or gerada.mode != existente.mode
+                    or gerada.tobytes() != existente.tobytes()):
+                divergencias.append(f"pixels/dimensoes/modo diferentes: {relativo}")
+    if divergencias:
+        raise ValueError("Divergencias na reproducao:\n" + "\n".join(divergencias))
+    print("24 PNGs conferidos: dimensoes, modo e pixels identicos aos assets atuais.")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Gera os assets do FutCoin ou confere sua reproducao sem sobrescreve-los."
+    )
+    opcoes = parser.add_mutually_exclusive_group()
+    opcoes.add_argument("--saida", type=Path, help="Pasta alternativa que recebera a estrutura de assets.")
+    opcoes.add_argument("--conferir", action="store_true", help="Gera em pasta temporaria e compara com assets/.")
+    argumentos = parser.parse_args()
+    try:
+        if sys.version_info < (3, 10):
+            raise ValueError("Use Python 3.10 ou superior no ambiente do pipeline.")
+        if versao_pillow != VERSAO_PILLOW:
+            raise ValueError(f"Use Pillow {VERSAO_PILLOW}; instale assets/_fonte/requirements.txt.")
+        hashes_antes = conferir_fontes()
+        if argumentos.conferir:
+            with tempfile.TemporaryDirectory(prefix="futcoin-assets-") as temporaria:
+                raiz_temporaria = Path(temporaria)
+                configurar_destinos(raiz_temporaria)
+                gerar_assets()
+                conferir_resultado(raiz_temporaria, Path(RAIZ) / "assets")
+        else:
+            saida = (argumentos.saida or Path(RAIZ) / "assets").resolve()
+            configurar_destinos(saida)
+            gerar_assets()
+            print(f"Assets gerados em {saida}")
+        if conferir_fontes() != hashes_antes:
+            raise ValueError("Os originais mudaram durante a execucao; revise antes de continuar.")
+        print("14 originais preservados (SHA-256).")
+    except (OSError, ValueError) as erro:
+        parser.exit(1, f"Falha no pipeline: {erro}\n")
 
 
 if __name__ == "__main__":
