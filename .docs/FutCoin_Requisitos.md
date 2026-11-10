@@ -112,6 +112,8 @@
 
 ## 6. HUD
 
+Planejamento detalhado de interface/fluxo/áudio na [FEAT-005](../.agent/features/feat-005-interface-fluxo-audio.md), sujeito a revisão dos contratos reais após implementar a FEAT-004. Composição exata do banner/campo e avanço da tela versus aguardam feedback; propostas não são requisitos visuais já aprovados.
+
 - Reservar faixa **superior** para placar/cronômetro, reutilizando `scenes/ui/hub/hub.tscn` adaptado a 640×360. HUD fixo na tela, sem cobrir o campo jogável ou consumir cliques destinados à moeda. Ajustar composição e câmera em conjunto: os 20 px atuais de margem não comportam automaticamente o banner de 44 px.
 
 - **Placar no estilo futebol**, contendo:
