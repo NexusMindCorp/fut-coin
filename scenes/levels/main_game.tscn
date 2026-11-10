@@ -12,7 +12,6 @@
 
 [node name="MainGame" type="Node2D" unique_id=1072508289]
 script = ExtResource("1")
-duracao_partida = 1.0
 
 [node name="Campo" parent="." unique_id=1876622246 instance=ExtResource("2")]
 
