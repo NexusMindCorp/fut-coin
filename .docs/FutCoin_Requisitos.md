@@ -46,7 +46,8 @@
 ### 3.2 Mecânica de lançamento
 - Estilo "estilingue": o jogador **clica e arrasta** o mouse, simulando puxar a moeda para trás, e uma **seta** indica **direção e força**. Ao soltar, a moeda é lançada.
 - Direção livre em **360°**.
-- **Limite de força perto da parede:** se a moeda estiver muito próxima da parede e o jogador tentar puxar na direção da parede, a força máxima é limitada.
+- **Parede em contato (esclarecimento em 09/11/2026):** bloquear lançamento contra a parede já encostada, evitando ricochete imediato; permitir saída para o campo ou tangente. Sem contato, permitir ricochetes normais. Considerar direção de lançamento, oposta à puxada, conforme FEAT-003.
+- A seta aponta para onde a moeda será lançada. Força cresce com a puxada para fora da moeda e retorna a zero ao voltar à moeda.
 - Valores de força mínima, máxima e escala do arrasto devem ser **configuráveis** (`@export`).
 
 ### 3.3 Duração e fim de partida
@@ -165,7 +166,7 @@
 - **Pregos e paredes:** `StaticBody2D` com colisão.
 - **Gols:** `Area2D` posicionada atrás da linha do gol.
 - **Estados do jogo:** aguardando jogada, mirando, moeda em movimento, gol animando e fim de partida. Pause pertence ao `SceneTree`; gol de ouro é uma flag, conforme ADR-001.
-- **Configurações em variáveis exportadas (`@export`):** duração da partida, força máxima/mínima, atrito, limite de força perto da parede e ativação do gol de ouro.
+- **Configurações em variáveis exportadas (`@export`):** duração da partida, força máxima, zona morta/escala do arrasto (força mínima zero), amortecimento, tolerância de contato com paredes e ativação do gol de ouro.
 - **Organização:** cenas separadas para menu, versus, partida (`main_game`), pause, tela final, créditos, moeda, prego, gol e HUD. Seguir ADR-001, sem `TelaBase` ou `TimeDados` como Resource. Código legível e comentado, pois cada integrante será questionado sobre ele.
 - **Exportação:** exportar e testar o executável **Linux** desde cedo (não só no dia da entrega), e deixá-lo na pasta `build/` do repositório (**público** no GitHub).
 

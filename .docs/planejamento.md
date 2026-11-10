@@ -162,7 +162,7 @@ flowchart TD
 - **Autoload:** apenas `AudioManager` (música contínua entre cenas, mudo de SFX no pause). Os demais ficam locais.
 - **Pregos:** `prego.tscn` instanciado 22× como filhos de `Marker2D`, com posições ajustáveis no editor (Seção 4 dos requisitos). Espelho do lado B por duplicação, com `@export` do time dono.
 - **Mira:** `_unhandled_input` + `get_global_mouse_position()` (a câmera se move). Ações no Input Map (`mira_clique`, `pausar`), sem teclas fixas no código.
-- **Parâmetros `@export`:** duração, força mín/máx, escala do arrasto, atrito, limite perto da parede, gol de ouro.
+- **Parâmetros `@export`:** duração, força máxima, zona morta/escala do arrasto, amortecimento, tolerância de contato e gol de ouro. Esclarecimento de 09/11: força retorna a zero junto à moeda; parede em contato bloqueia tiro contra ela, sem reduzir força apenas por proximidade. Contratos e critérios em [FEAT-003](../.agent/features/feat-003-moeda-mira-camera.md).
 
 ### Alternativa descartada no alinhamento inicial
 Cena `partida` com **um único script grande** (moeda, turnos, HUD e pause inline) e sem `TelaBase` (cada menu com seu `change_scene_to_file`). **Prós:** menos arquivos, começa mais rápido. **Contras:** código duplicado, `partida.gd` com 400+ linhas, mais difícil de explicar na arguição individual e de dividir entre 4 pessoas. Não recomendada, dado o critério de "qualidade do código".
@@ -189,7 +189,7 @@ Mantidos: `AudioManager` (autoload, 5 barramentos, mudo no pause), componente de
 | Marco | Datas | Entregas | Critério de pronto |
 |:---|:---|:---|:---|
 | **M0 Fundação (CONCLUÍDO)** | 06/11 | Respostas da Seção 6; `ADR-001`; `FEAT-000` (Project Settings 640×360 + Input Map `mira_clique`/`pausar`); `FEAT-001` (pipeline de assets + `.import`) | Projeto abre em 640×360 pixel perfect; 24 assets finais importados (commits `5ccfcd8`, `18bbc6b`, `d0ea75a`) |
-| **M1 Núcleo físico (parcial)** | 08 a 11/11 | FEAT-002 concluída: campo, paredes, 22 pregos e tiles animados. FEAT-003 pendente: moeda (`28×28`), mira, limite perto da parede, parada e câmera horizontal | Dá para lançar, quicar, parar. Sem tunelamento nem jitter; prévia do campo já disponível no F6 |
+| **M1 Núcleo físico (parcial)** | 08 a 11/11 | FEAT-002 concluída: campo, paredes, 22 pregos e tiles animados. FEAT-003 especificada, implementação pendente: moeda (`28×28`), mira, bloqueio de tiro contra parede em contato, parada e câmera horizontal | Dá para lançar, quicar, parar. Sem tunelamento nem jitter; prévia do campo já disponível no F6 |
 | **M2 Regras** | 11 a 14/11 | Gols (`Area2D`), animação de gol, placar, turnos, cronômetro, gol de ouro, tempo esgotado em movimento, estados | Partida completa jogável do início ao fim |
 | **M3 Fluxo e UI** | 12 a 16/11 | Menu, tela versus, tela final, créditos, pause, HUD (`hub.tscn` em 640×360) com banner e brasões, `AudioManager` + barramentos | Fluxo menu → partida → final → menu, sem travar |
 | **M4 Arte e polimento** | 15 a 18/11 | Animação de sprite, de tile e Tweens, SFX/música, balanceamento, tremor de câmera (opcional) | Checklist do enunciado 100% |
