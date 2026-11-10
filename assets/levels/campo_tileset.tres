@@ -1,0 +1,65 @@
+[gd_resource type="TileSet" format=3 uid="uid://cok4dv6x4xhkj"]
+
+[ext_resource type="Texture2D" uid="uid://y5ou77dmq0eq" path="res://assets/levels/campo_tileset.png" id="1_q7n3g"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_7lf4s"]
+texture = ExtResource("1_q7n3g")
+0:4/animation_columns = 4
+0:4/animation_speed = 6.0
+0:4/animation_frame_0/duration = 1.0
+0:4/animation_frame_1/duration = 1.0
+0:4/animation_frame_2/duration = 1.0
+0:4/animation_frame_3/duration = 1.0
+0:4/0 = 0
+4:4/animation_columns = 4
+4:4/animation_speed = 6.0
+4:4/animation_frame_0/duration = 1.0
+4:4/animation_frame_1/duration = 1.0
+4:4/animation_frame_2/duration = 1.0
+4:4/animation_frame_3/duration = 1.0
+4:4/0 = 0
+0:5/animation_columns = 4
+0:5/animation_speed = 6.0
+0:5/animation_frame_0/duration = 1.0
+0:5/animation_frame_1/duration = 1.0
+0:5/animation_frame_2/duration = 1.0
+0:5/animation_frame_3/duration = 1.0
+0:5/0 = 0
+4:5/animation_columns = 4
+4:5/animation_speed = 6.0
+4:5/animation_frame_0/duration = 1.0
+4:5/animation_frame_1/duration = 1.0
+4:5/animation_frame_2/duration = 1.0
+4:5/animation_frame_3/duration = 1.0
+4:5/0 = 0
+0:6/animation_columns = 4
+0:6/animation_speed = 6.0
+0:6/animation_frame_0/duration = 1.0
+0:6/animation_frame_1/duration = 1.0
+0:6/animation_frame_2/duration = 1.0
+0:6/animation_frame_3/duration = 1.0
+0:6/0 = 0
+4:6/animation_columns = 4
+4:6/animation_speed = 6.0
+4:6/animation_frame_0/duration = 1.0
+4:6/animation_frame_1/duration = 1.0
+4:6/animation_frame_2/duration = 1.0
+4:6/animation_frame_3/duration = 1.0
+4:6/0 = 0
+0:7/animation_columns = 4
+0:7/animation_speed = 4.0
+0:7/animation_frame_0/duration = 1.0
+0:7/animation_frame_1/duration = 1.0
+0:7/animation_frame_2/duration = 1.0
+0:7/animation_frame_3/duration = 1.0
+0:7/0 = 0
+4:7/animation_columns = 4
+4:7/animation_speed = 4.0
+4:7/animation_frame_0/duration = 1.0
+4:7/animation_frame_1/duration = 1.0
+4:7/animation_frame_2/duration = 1.0
+4:7/animation_frame_3/duration = 1.0
+4:7/0 = 0
+
+[resource]
+sources/0 = SubResource("TileSetAtlasSource_7lf4s")
