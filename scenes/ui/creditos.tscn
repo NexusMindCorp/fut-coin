@@ -1,0 +1,59 @@
+[gd_scene format=3 uid="uid://dap4w7kp1x2ne"]
+
+[ext_resource type="Script" uid="uid://d5n2v8kp3x7qe" path="res://scripts/ui/creditos.gd" id="1_script"]
+[ext_resource type="Theme" uid="uid://b7k3m9qp2x5ve" path="res://assets/ui/tema_futcoin.tres" id="2_tema"]
+[ext_resource type="PackedScene" uid="uid://c6n2v8kp5x4re" path="res://scenes/ui/sounds.tscn" id="3_sounds"]
+
+[node name="Creditos" type="Control" unique_id=811000001]
+texture_filter = 1
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_tema")
+script = ExtResource("1_script")
+
+[node name="Fundo" type="ColorRect" parent="." unique_id=811000002]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.03, 0.05, 0.1, 1)
+
+[node name="Painel" type="PanelContainer" parent="." unique_id=811000003]
+layout_mode = 0
+offset_left = 80.0
+offset_top = 20.0
+offset_right = 560.0
+offset_bottom = 340.0
+
+[node name="Margem" type="MarginContainer" parent="Painel" unique_id=811000004]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="Coluna" type="VBoxContainer" parent="Painel/Margem" unique_id=811000005]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Texto" type="RichTextLabel" parent="Painel/Margem/Coluna" unique_id=811000006]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+
+[node name="BotaoVoltar" type="Button" parent="Painel/Margem/Coluna" unique_id=811000007]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "VOLTAR"
+
+[node name="Sounds" parent="." unique_id=811000008 instance=ExtResource("3_sounds")]
+
+[connection signal="pressed" from="Painel/Margem/Coluna/BotaoVoltar" to="." method="_on_botao_voltar_pressed"]
