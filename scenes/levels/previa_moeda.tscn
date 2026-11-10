@@ -1,0 +1,45 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/levels/previa_moeda.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/levels/campo.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/entities/moeda.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/entities/mira.tscn" id="4"]
+[ext_resource type="Script" path="res://scripts/levels/camera_partida.gd" id="5"]
+
+[node name="PreviaMoeda" type="Node2D"]
+script = ExtResource("1")
+
+[node name="Campo" parent="." instance=ExtResource("2")]
+
+[node name="Moeda" parent="." instance=ExtResource("3")]
+position = Vector2(576, 160)
+
+[node name="Mira" parent="." node_paths=PackedStringArray("moeda") instance=ExtResource("4")]
+moeda = NodePath("../Moeda")
+
+[node name="CameraPartida" type="Camera2D" parent="." node_paths=PackedStringArray("alvo")]
+process_callback = 0
+position = Vector2(576, 160)
+limit_left = 0
+limit_top = -20
+limit_right = 1152
+limit_bottom = 340
+position_smoothing_enabled = true
+position_smoothing_speed = 8.0
+script = ExtResource("5")
+alvo = NodePath("../Moeda")
+
+[node name="Instrucoes" type="CanvasLayer" parent="."]
+
+[node name="Indicacao" type="Label" parent="Instrucoes"]
+offset_left = 8.0
+offset_top = 1.0
+offset_right = 630.0
+offset_bottom = 20.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.92, 0.94, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "Clique na moeda e puxe | Solte para lancar | Parede encostada: atire para fora"
+
+[connection signal="lancamento_solicitado" from="Mira" to="." method="_on_lancamento_solicitado"]
+[connection signal="parou" from="Moeda" to="." method="_on_moeda_parou"]
