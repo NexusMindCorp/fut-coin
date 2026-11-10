@@ -3,6 +3,7 @@ extends SceneTree
 # --- CONSTANTES ---
 const CENA_PARTIDA: PackedScene = preload("res://scenes/levels/main_game.tscn")
 const CENA_TELA_FINAL: PackedScene = preload("res://scenes/ui/tela_final.tscn")
+const CENA_TELA_VERSUS: PackedScene = preload("res://scenes/ui/tela_versus.tscn")
 
 # --- ESTADO ---
 var falhas: int = 0
@@ -47,6 +48,7 @@ func _executar() -> void:
 	await _testar_permutacoes_mesmo_tick()
 	await _testar_gol_de_ouro_e_sorteio_independente()
 	await _testar_pausa_abandono_e_reinicio()
+	await _testar_selecao_times_e_propagacao()
 	await _testar_isolamento_duas_partidas()
 
 	partida.queue_free()
@@ -479,6 +481,25 @@ func _testar_pausa_abandono_e_reinicio() -> void:
 	partida.reiniciar_partida()
 	await _quadros(2)
 
+	# Regressao: remover Pause da SceneTree durante menu_solicitado nao pode causar erro de get_tree().root nulo.
+	var pause_temp: Pause = preload("res://scenes/ui/pause.tscn").instantiate() as Pause
+	var container_temp: Node = Node.new()
+	root.add_child(container_temp)
+	container_temp.add_child(pause_temp)
+	await _quadros(1)
+	pause_temp.exibir()
+	pause_temp.menu_solicitado.connect(func() -> void:
+		if container_temp.is_inside_tree():
+			root.remove_child(container_temp)
+	)
+	pause_temp._on_botao_menu_pressed()
+	_verificar(
+		not pause_temp.is_inside_tree() and pause_temp.acao_em_andamento,
+		"Botao Sair do Pause tolera remocao sincrona da SceneTree sem acessar get_tree().root nulo"
+	)
+	container_temp.queue_free()
+	await process_frame
+
 
 func _testar_isolamento_duas_partidas() -> void:
 	var segunda_partida: MainGame = CENA_PARTIDA.instantiate() as MainGame
@@ -500,6 +521,126 @@ func _testar_isolamento_duas_partidas() -> void:
 
 	segunda_partida.queue_free()
 	await process_frame
+
+
+func _testar_selecao_times_e_propagacao() -> void:
+	Hub.restaurar_times_padrao()
+	var tela_versus: TelaVersus = CENA_TELA_VERSUS.instantiate() as TelaVersus
+	root.add_child(tela_versus)
+	await _quadros(2)
+
+	_verificar(
+		tela_versus != null
+		and tela_versus.chave_esquerda_atual == &"corinthians"
+		and tela_versus.chave_direita_atual == &"flamengo"
+		and tela_versus.nome_time_esquerdo.text == "CORINTHIANS"
+		and tela_versus.nome_time_direito.text == "FLAMENGO",
+		"TelaVersus inicia com Corinthians (P1/Prata) e Flamengo (P2/Vermelho) por padrao"
+	)
+
+	# Alternar P1 por passo +1 deve pular Flamengo (ja escolhido por P2) e selecionar Atletico-MG.
+	tela_versus.alternar_time_esquerdo(1)
+	_verificar(
+		tela_versus.chave_esquerda_atual == &"atletico_mineiro"
+		and tela_versus.chave_esquerda_atual != tela_versus.chave_direita_atual
+		and tela_versus.nome_time_esquerdo.text == "ATLÉTICO-MG",
+		"Alternancia de P1 na TelaVersus pula time ja ocupado por P2"
+	)
+
+	# Seleciona Palmeiras (P1) x Vasco (P2) e valida propagacao para MainGame, Hub, GolUI e TelaFinal.
+	tela_versus.selecionar_time_esquerdo(&"palmeiras")
+	tela_versus.selecionar_time_direito(&"vasco")
+	tela_versus.confirmar_e_iniciar_partida()
+	_verificar(
+		Hub.time_esquerdo_selecionado == &"palmeiras"
+		and Hub.time_direito_selecionado == &"vasco",
+		"Confirmacao na TelaVersus grava DTO estatico de Palmeiras x Vasco no Hub"
+	)
+
+	tela_versus.queue_free()
+	await process_frame
+
+	partida.duracao_apresentacao_gol = 0.08
+	partida.reiniciar_partida()
+	await _quadros(2)
+	var cor_palmeiras: Color = Hub.obter_cor_time(&"palmeiras")
+	var cor_vasco: Color = Hub.obter_cor_time(&"vasco")
+	var prego_esq: Prego = partida.get_node("Campo/Pregos/GoleiroCorinthians") as Prego
+	var prego_dir: Prego = partida.get_node("Campo/Pregos/GoleiroFlamengo") as Prego
+	_verificar(
+		partida.hub.chave_time_esquerdo == &"palmeiras"
+		and partida.hub.chave_time_direito == &"vasco"
+		and partida.hub.brazao_esquerdo.texture == Hub.obter_textura_time(&"palmeiras")
+		and partida.hub.brazao_direito.texture == Hub.obter_textura_time(&"vasco"),
+		"MainGame aplica brasoes selecionados (Palmeiras x Vasco) no Hub ao iniciar partida"
+	)
+	_verificar(
+		partida.sprites_times.size() == 9
+		and partida.cores_times.size() == 9
+		and prego_esq != null
+		and prego_dir != null
+		and prego_esq.cor_time.is_equal_approx(cor_palmeiras)
+		and prego_dir.cor_time.is_equal_approx(cor_vasco),
+		"Lista @export (sprites_times/cores_times) colore pregos esquerdos (Palmeiras) e direitos (Vasco)"
+	)
+	partida._habilitar_turno(Prego.Equipe.CORINTHIANS, false)
+	var aura_esq_ok: bool = moeda.cor_posse.is_equal_approx(cor_palmeiras)
+	partida._habilitar_turno(Prego.Equipe.FLAMENGO, false)
+	var aura_dir_ok: bool = moeda.cor_posse.is_equal_approx(cor_vasco)
+	_verificar(
+		aura_esq_ok and aura_dir_ok,
+		"Aura de posse da moeda muda conforme a cor do time selecionado em cada lado"
+	)
+
+	# Inverte lados (Flamengo na esquerda e Corinthians na direita) para provar que os lados nao estao travados.
+	Hub.definir_times_selecionados(&"flamengo", &"corinthians")
+	partida.reiniciar_partida()
+	await _quadros(2)
+	_verificar(
+		prego_esq.cor_time.is_equal_approx(Hub.obter_cor_time(&"flamengo"))
+		and prego_dir.cor_time.is_equal_approx(Hub.obter_cor_time(&"corinthians")),
+		"Lados nao ficam travados: Flamengo na esquerda deixa pregos esquerdos vermelhos e direitos prata/azul"
+	)
+
+	# Restaura Palmeiras x Vasco para validar GolUI e TelaFinal.
+	Hub.definir_times_selecionados(&"palmeiras", &"vasco")
+	partida.reiniciar_partida()
+	await _quadros(2)
+
+	# Marca gol com o time esquerdo (Palmeiras) no gol direito (defendido pelo Vasco).
+	moeda.reposicionar(Vector2(1070.0, 139.0))
+	await _quadros(2)
+	partida._on_lancamento_solicitado(Vector2(550.0, 0.0))
+	await _aguardar_estado(MainGame.Estado.GOL_ANIMANDO, 60)
+	_verificar(
+		partida.gol_ui.rotulo_detalhe.text == "PALMEIRAS  |  PAL 1 x 0 VAS"
+		and partida.gol_ui.brasao_equipe.texture == Hub.obter_textura_time(&"palmeiras"),
+		"GolUI exibe nome, siglas e brasao dos clubes escolhidos (PALMEIRAS | PAL 1 x 0 VAS)"
+	)
+	await _aguardar_estado(MainGame.Estado.AGUARDANDO_JOGADA, 40)
+
+	# Encerra partida por tempo com 1x0 para Palmeiras e valida TelaFinal.
+	partida._on_cronometro_timeout()
+	await _quadros(2)
+	_verificar(
+		TelaFinal.resultado_pendente
+		and TelaFinal.chave_vencedor_registrada == &"palmeiras",
+		"Fim de partida propaga chave do clube vencedor selecionado (palmeiras) para TelaFinal"
+	)
+	var tela_final_sel: TelaFinal = CENA_TELA_FINAL.instantiate() as TelaFinal
+	root.add_child(tela_final_sel)
+	await _quadros(2)
+	_verificar(
+		tela_final_sel.rotulo_equipe_placar.text == "PALMEIRAS  (1 x 0)"
+		and tela_final_sel.sprite_brasao.texture == Hub.obter_textura_time(&"palmeiras"),
+		"TelaFinal exibe nome e brasao do clube vencedor selecionado (PALMEIRAS)"
+	)
+	tela_final_sel.queue_free()
+	await process_frame
+
+	Hub.restaurar_times_padrao()
+	partida.reiniciar_partida()
+	await _quadros(2)
 
 
 # --- AUXILIARES / SETTERS ---

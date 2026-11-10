@@ -140,14 +140,16 @@ func _on_botao_menu_pressed() -> void:
 		return
 	acao_em_andamento = true
 	_definir_botoes_desabilitados(true)
+	var isolado_na_raiz: bool = is_inside_tree() and get_parent() == get_tree().root
 	menu_solicitado.emit()
-	if get_parent() == get_tree().root:
-		if ResourceLoader.exists(CAMINHO_MENU_PRINCIPAL):
-			get_tree().paused = false
-			var erro: Error = get_tree().change_scene_to_file(CAMINHO_MENU_PRINCIPAL)
-			if erro != OK:
-				push_error("Falha ao transicionar para '%s' (erro %d)." % [CAMINHO_MENU_PRINCIPAL, erro])
-				acao_em_andamento = false
-				_definir_botoes_desabilitados(false)
-		else:
-			get_tree().quit()
+	if not isolado_na_raiz or not is_inside_tree():
+		return
+	if ResourceLoader.exists(CAMINHO_MENU_PRINCIPAL):
+		get_tree().paused = false
+		var erro: Error = get_tree().change_scene_to_file(CAMINHO_MENU_PRINCIPAL)
+		if erro != OK:
+			push_error("Falha ao transicionar para '%s' (erro %d)." % [CAMINHO_MENU_PRINCIPAL, erro])
+			acao_em_andamento = false
+			_definir_botoes_desabilitados(false)
+	else:
+		get_tree().quit()
