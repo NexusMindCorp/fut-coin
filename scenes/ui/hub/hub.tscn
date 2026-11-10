@@ -1,66 +1,90 @@
-[gd_scene format=3 uid="uid://dmye2xr72lgiw"]
+[gd_scene load_steps=7 format=3 uid="uid://dmye2xr72lgiw"]
 
-[ext_resource type="Texture2D" uid="uid://cqjdegmcekplh" path="res://icon.svg" id="1_1ldeg"]
+[ext_resource type="Texture2D" uid="uid://dq1scfafo5hh7" path="res://assets/ui/times/corinthians.png" id="1_1ldeg"]
 [ext_resource type="Texture2D" uid="uid://cjn6mvcqmwhfc" path="res://assets/ui/hud/placar_banner.png" id="2_hmy7e"]
+[ext_resource type="Texture2D" uid="uid://d3hanob0osu3p" path="res://assets/ui/times/flamengo.png" id="3_flamengo"]
+[ext_resource type="Script" path="res://scripts/ui/hub.gd" id="4_hub"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_yf5fn"]
-font_size = 32
+font_size = 13
 
 [sub_resource type="LabelSettings" id="LabelSettings_g4v7s"]
-font_size = 32
+font_size = 13
 
 [node name="Hub" type="Node2D" unique_id=60231731]
+script = ExtResource("4_hub")
 
 [node name="Brazoes" type="Node2D" parent="." unique_id=2126953946]
-position = Vector2(428, 97.00001)
-scale = Vector2(0.6718747, 0.64062506)
+position = Vector2(200, 13)
 
 [node name="Brazao2" type="Sprite2D" parent="Brazoes" unique_id=477537096]
 z_index = 1
-position = Vector2(528.3721, -18.73175)
-scale = Vector2(0.9767444, 0.96341455)
-texture = ExtResource("1_1ldeg")
+position = Vector2(240, 0)
+scale = Vector2(0.375, 0.375)
+texture = ExtResource("3_flamengo")
 
 [node name="Brazao1" type="Sprite2D" parent="Brazoes" unique_id=1441314137]
 z_index = 1
-position = Vector2(-2.9766846, -17.170715)
-scale = Vector2(0.99999994, 1)
+scale = Vector2(0.375, 0.375)
 texture = ExtResource("1_1ldeg")
 
 [node name="Estrutura" type="Sprite2D" parent="." unique_id=389940401]
 process_priority = -1
-position = Vector2(603.73645, 101.22444)
-scale = Vector2(1.3858527, 2.262525)
+position = Vector2(320, 22)
 texture = ExtResource("2_hmy7e")
 
 [node name="Control" type="Control" parent="." unique_id=1458836710]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 640.0
+offset_bottom = 44.0
+mouse_filter = 2
 
 [node name="p1" type="Label" parent="Control" unique_id=1982044214]
 layout_mode = 0
-offset_left = 669.0
-offset_top = 59.0
-offset_right = 709.0
-offset_bottom = 104.0
+offset_left = 240.0
+offset_top = 3.0
+offset_right = 296.0
+offset_bottom = 22.0
+mouse_filter = 2
 text = "0"
 label_settings = SubResource("LabelSettings_yf5fn")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="p2" type="Label" parent="Control" unique_id=272623640]
 layout_mode = 0
-offset_left = 523.0
-offset_top = 58.0
-offset_right = 568.0
-offset_bottom = 103.0
+offset_left = 344.0
+offset_top = 3.0
+offset_right = 400.0
+offset_bottom = 22.0
+mouse_filter = 2
 text = "0"
 label_settings = SubResource("LabelSettings_g4v7s")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="timer" type="Label" parent="Control" unique_id=1477439671]
 layout_mode = 0
-offset_left = 574.0
-offset_top = 117.0
-offset_right = 664.0
-offset_bottom = 144.0
-text = "00:00:00"
+offset_left = 281.0
+offset_top = 26.0
+offset_right = 359.0
+offset_bottom = 41.0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 10
+text = "03:00"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BotaoPausar" type="Button" parent="Control" unique_id=837261945]
+layout_mode = 0
+offset_left = 598.0
+offset_top = 6.0
+offset_right = 632.0
+offset_bottom = 30.0
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 0.92, 0.4, 1)
+theme_override_font_sizes/font_size = 10
+text = "||"
+
+[connection signal="pressed" from="Control/BotaoPausar" to="." method="_on_botao_pausar_pressed"]
