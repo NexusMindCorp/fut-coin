@@ -1,6 +1,8 @@
 # FutCoin: Planejamento Técnico
 
 > Status em **10/11/2026**: **M0 e M1 concluídos**. FEAT-002/003 implementadas: campo, pregos, moeda, mira, câmera e prévias F6. Próximo: **FEAT-004 — juiz, turnos, gols e cronômetro**. Balanceamento físico segue ajustável por feedback.
+
+Planejamento de passagem para o parceiro: [FEAT-004 — juiz, turnos, gols e cronômetro](../.agent/features/feat-004-juiz-turnos-gols-cronometro.md). Spec pronta, sem implementação. Define transições, contratos reais, gol completo com travessia rápida, relógio e testes. Regras confirmadas em 10/11: novo sorteio independente ao entrar no gol de ouro, obrigatório em empate e sem opção de desativar. Pausa/abandono via menu/saída continuam disponíveis. Restam ajustes de apresentação. FEAT-005 tem escopo no roadmap, sem especificação própria até esta revisão.
 > Base: requisitos, enunciado e implementação FEAT-002. Scripts/cenas de campo e prévia presentes; HUD ainda provisório. Sem cena principal configurada ou export Linux.
 > Prazo de entrega: **20/11/2026**. Godot 4.7, GDScript, 2D top-down. Datas do roadmap são metas, não evidência de execução.
 > Notas técnicas da seção 3 foram registradas em 06/11; APIs devem ser conferidas durante a implementação. FEAT-002 validada no editor e renderizada no Godot 4.7.2; evidências na spec e no relatório da sessão.
@@ -128,7 +130,7 @@ Imagem do campo 1152×320 em escala 1, com área interna local entre y=32 e y=28
 3. **Física:** gravidade 2D zero e `physics/common/physics_interpolation=true` já configurados. Comportamento da moeda e da câmera ainda será verificado no M1.
 4. **Moeda (`RigidBody2D`):** `continuous_cd = CAST_SHAPE`; `linear_damp_mode = REPLACE`; `PhysicsMaterial` (bounce ~0,6 a 0,8, friction ~0); `lock_rotation = true` (rotação arbitrária de pixel art gera serrilhado, então o "rolar" é feito por animação de frames). Lançamento por `apply_central_impulse`. **O limite de velocidade não existe nativamente: clampar em `_integrate_forces(state)`.** Nunca alterar `linear_velocity` em `_physics_process`. Atenção: um corpo dormindo para de chamar `_integrate_forces`.
 5. **"Moeda parada":** velocidade abaixo de um limiar (`@export`) por um tempo curto (`Timer` ou contador), em vez de confiar só no *sleep* do motor. Fallback: sinal `sleeping_state_changed`.
-6. **Gol "inteiramente dentro" sem código extra:** posicionar a `Area2D` com a borda interna a **2× o raio da moeda** além da linha. Quando `body_entered` dispara, o centro já está 1 raio dentro da linha, ou seja, a moeda está toda dentro. Mais robusto que checar sobreposição parcial. CCD evita tunelamento.
+6. **Gol inteiramente dentro:** a simplificação inicial de afastar Area e confiar em CCD foi substituída pelo planejamento da FEAT-004. Validar círculo completo além da linha (centro X≤34 ou ≥1118, Y=138..182) e amostrar deslocamento entre passos para travessias rápidas. Area gera candidatos; sobreposição parcial não pontua e CCD não garante evento de sensor. Proposta ainda exige testes na implementação.
 7. **Câmera:** `Camera2D` fora do `RigidBody2D`, com script que copia só `x` da moeda. `y` fixo. `limit_left/right` calculados a partir do campo. `process_callback = PHYSICS`. Smoothing ligado, com teste de jitter já na Fase 1. Se persistir: desligar smoothing e arredondar a posição. Ao reposicionar a moeda após gol: `reset_smoothing()` + `reset_physics_interpolation()`.
 8. **Pause:** `get_tree().paused = true`. O menu de pause com `process_mode = WHEN_PAUSED`. `AudioManager` com `ALWAYS`. Nós `Timer` e física (padrão `INHERIT`) congelam sozinhos. Para pausar o cronômetro durante a animação de gol: `Timer.paused = true`.
 9. **Tiles animados:** `TileMapLayer` (o `TileMap` está depreciado) + `TileSetAtlasSource` com animação por tile (frames na horizontal, colunas, duração por frame). Atende "animação de tiles" com pouca arte.
@@ -165,7 +167,7 @@ flowchart TD
 - **Autoload:** apenas `AudioManager` (música contínua entre cenas, mudo de SFX no pause). Os demais ficam locais.
 - **Pregos:** `prego.tscn` instanciado 22× como filhos de `Marker2D`, com posições ajustáveis no editor (Seção 4 dos requisitos). Espelho do lado B por duplicação, com `@export` do time dono.
 - **Mira:** `_unhandled_input` + `get_global_mouse_position()` (a câmera se move). Ações no Input Map (`mira_clique`, `pausar`), sem teclas fixas no código.
-- **Parâmetros `@export`:** duração, força máxima, zona morta/escala do arrasto, amortecimento, tolerância de contato e gol de ouro. Esclarecimento de 09/11: força retorna a zero junto à moeda; parede em contato bloqueia tiro contra ela, sem reduzir força apenas por proximidade. Contratos e critérios em [FEAT-003](../.agent/features/feat-003-moeda-mira-camera.md).
+- **Parâmetros `@export`:** duração, força máxima, zona morta/escala do arrasto, amortecimento e tolerância de contato. Gol de ouro é obrigatório, sem parâmetro de desativação (decisão de 10/11). Esclarecimento de 09/11: força retorna a zero junto à moeda; parede em contato bloqueia tiro contra ela, sem reduzir força apenas por proximidade. Contratos e critérios em [FEAT-003](../.agent/features/feat-003-moeda-mira-camera.md).
 
 ### Alternativa descartada no alinhamento inicial
 Cena `partida` com **um único script grande** (moeda, turnos, HUD e pause inline) e sem `TelaBase` (cada menu com seu `change_scene_to_file`). **Prós:** menos arquivos, começa mais rápido. **Contras:** código duplicado, `partida.gd` com 400+ linhas, mais difícil de explicar na arguição individual e de dividir entre 4 pessoas. Não recomendada, dado o critério de "qualidade do código".
@@ -223,7 +225,7 @@ Regra: **todo PR é revisado por quem não escreveu**. Antes da apresentação, 
 | P7 | **Versionamento da governança** | **Atualizado em 09/11:** `AGENTS.md`, `.agent/` e `relatorios/` versionados no Git local por autorização do usuário; publicação remota não verificada nesta revisão. `assets/_fonte/` também versionada |
 | P8 | **Times:** Corinthians (P1, prata, esquerda) e Flamengo (P2, vermelho, direita) fixos; aura na moeda indica a posse | **Decidido:** Seleção de times fica para depois dos testes |
 | P9 | **Project Settings** e **Export Linux** | **Concluído:** `640×360` + `Nearest` + `snap` + gravidade zero + Input Map aplicados; tudo referente a Linux fica para o M5 |
-| P10 | **Início do gol de ouro** (pendência dos requisitos) | **Em aberto para M2:** definir quem inicia, inclusive no 0×0. Quem sofreu o último gol é apenas sugestão para partidas com gols |
+| P10 | **Gol de ouro** | **Decidido em 10/11:** novo sorteio independente, inclusive no 0×0; obrigatório em empate após fim do tempo/última jogada, sem desativação. Primeiro gol decide; pausa/menu/saída disponíveis |
 | P11 | **Áudio:** origem da música e SFX (ex.: Kenney, OpenGameArt, freesound, CC0) | **Em aberto para M3/M4:** Preferir CC0 para simplificar os créditos |
 | P12 | **Pause:** menu com Continuar, Reiniciar e Menu (`WHEN_PAUSED`) | **Aprovado** (`ADR-001`) |
 | P13 | **Testes:** só F6 + scaffolding (Nível 1), sem GUT | **Decidido:** Validar no editor com scaffolding F6 |

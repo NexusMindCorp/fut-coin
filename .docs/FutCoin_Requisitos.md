@@ -57,6 +57,7 @@
   - A moeda troca para um **sprite dourado especial**.
   - O **próximo gol encerra a partida**, e quem marcar vence.
   - A tela final mostra o resultado normalmente.
+  - Obrigatório, sem configuração de desativação e sem novo limite de tempo; a partida só tem conclusão esportiva após o primeiro gol dessa fase. Pausar, voltar ao menu e sair do aplicativo continuam disponíveis; abandonar não declara vencedor ou empate final.
 - **Tempo esgotado com a moeda em movimento:** o jogo **espera a moeda parar totalmente** antes de contabilizar o resultado final. Se a moeda entrar no gol durante essa espera, o gol **conta normalmente**. Só depois que a moeda parar (ou após um gol) o placar é verificado: se houver diferença, a partida termina; se estiver empatado, entra o gol de ouro.
 
 ### 3.4 Gols
@@ -68,7 +69,7 @@
 ### 3.5 Início de partida e reinício após gol
 - **Início da partida:** o time que começa com a moeda é escolhido de forma **aleatória**.
 - **Após um gol:** a moeda volta ao **centro do campo** e **quem sofreu o gol começa jogando**.
-- **Gol de ouro:** o time que começa o gol de ouro com a moeda no centro segue a mesma lógica de início (**[A DEFINIR no planejamento]**: aleatório ou quem sofreu o último gol).
+- **Gol de ouro:** moeda no centro e **novo sorteio independente** para definir quem começa, inclusive no empate em 0×0 (confirmado em 10/11/2026).
 
 ---
 
@@ -170,7 +171,7 @@
 - **Pregos e paredes:** `StaticBody2D` com colisão.
 - **Gols:** `Area2D` posicionada atrás da linha do gol.
 - **Estados do jogo:** aguardando jogada, mirando, moeda em movimento, gol animando e fim de partida. Pause pertence ao `SceneTree`; gol de ouro é uma flag, conforme ADR-001.
-- **Configurações em variáveis exportadas (`@export`):** duração da partida, força máxima, zona morta/escala do arrasto (força mínima zero), amortecimento, tolerância de contato com paredes e ativação do gol de ouro.
+- **Configurações em variáveis exportadas (`@export`):** duração da partida, força máxima, zona morta/escala do arrasto (força mínima zero), amortecimento e tolerância de contato com paredes. Gol de ouro é regra obrigatória e não possui controle de desativação.
 - **Organização:** cenas separadas para menu, versus, partida (`main_game`), pause, tela final, créditos, moeda, prego, gol e HUD. Seguir ADR-001, sem `TelaBase` ou `TimeDados` como Resource. Código legível e comentado, pois cada integrante será questionado sobre ele.
 - **Exportação:** exportar e testar o executável **Linux** desde cedo (não só no dia da entrega), e deixá-lo na pasta `build/` do repositório (**público** no GitHub).
 
@@ -205,4 +206,3 @@ Estes pontos serão definidos depois e **não precisam estar fechados** para ini
 2. Conferir condições de uso/atribuição dos brasões de `_EasilyImpressed` e fechar nomes/funções dos integrantes nos créditos.
 3. Validar nas cenas os tamanhos já definidos, o contraste da aura e o espaçamento entre pregos (M1/M3).
 4. Música e SFX: origem dos arquivos e créditos.
-5. Quem começa o gol de ouro (detalhe menor, ver seção 3.5).
