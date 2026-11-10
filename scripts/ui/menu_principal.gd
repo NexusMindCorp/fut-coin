@@ -5,7 +5,11 @@ extends Control
 const CAMINHO_TELA_VERSUS: String = "res://scenes/ui/tela_versus.tscn"
 const CAMINHO_CREDITOS: String = "res://scenes/ui/creditos.tscn"
 
+# --- EXPORTS ---
+@export_range(0.0, 1.0, 0.01) var probabilidade_tigre: float = 0.10
+
 # --- REFERENCIAS A NODES ---
+@onready var tigre_moeda: TextureRect = $FundoArte/TigreMoeda
 @onready var botao_jogar: Button = $Conteudo/Botoes/BotaoJogar
 @onready var botao_creditos: Button = $Conteudo/Botoes/BotaoCreditos
 @onready var botao_sair: Button = $Conteudo/Botoes/BotaoSair
@@ -17,12 +21,28 @@ var transicionando: bool = false
 # --- INICIALIZACAO E LOOP DE FISICA/PROCESSAMENTO ---
 func _ready() -> void:
 	AudioManager.tocar_musica_menu()
+	sortear_exibicao_tigre()
 	_conectar_foco_mouse_botoes()
 	if botao_jogar != null:
 		botao_jogar.grab_focus.call_deferred()
 
 
 # --- DOMINIO PRINCIPAL / PROCESSADORES DE ESTADO ---
+func sortear_exibicao_tigre() -> bool:
+	var ativo: bool = randf() < probabilidade_tigre
+	definir_exibicao_tigre(ativo)
+	return ativo
+
+
+func definir_exibicao_tigre(ativo: bool) -> void:
+	if tigre_moeda != null:
+		tigre_moeda.visible = ativo
+
+
+func obter_exibicao_tigre() -> bool:
+	return tigre_moeda != null and tigre_moeda.visible
+
+
 func _transicionar_para(caminho_cena: String) -> void:
 	if transicionando:
 		return

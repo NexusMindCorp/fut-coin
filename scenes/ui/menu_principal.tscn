@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" path="res://assets/ui/menus/menu_principal.png" id="2_arte"]
 [ext_resource type="Theme" uid="uid://b7k3m9qp2x5ve" path="res://assets/ui/tema_futcoin.tres" id="3_tema"]
 [ext_resource type="PackedScene" uid="uid://c6n2v8kp5x4re" path="res://scenes/ui/sounds.tscn" id="4_sounds"]
+[ext_resource type="Texture2D" uid="uid://bpa4d4e408iru" path="res://assets/ui/menus/tigre_moeda.png" id="5_tigre"]
 
 [node name="MenuPrincipal" type="Control" unique_id=812000001]
 texture_filter = 1
@@ -25,6 +26,17 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 texture = ExtResource("2_arte")
+stretch_mode = 2
+
+[node name="TigreMoeda" type="TextureRect" parent="FundoArte" unique_id=812000011]
+visible = false
+layout_mode = 0
+offset_left = 106.0
+offset_top = 253.0
+offset_right = 158.0
+offset_bottom = 315.0
+mouse_filter = 2
+texture = ExtResource("5_tigre")
 stretch_mode = 2
 
 [node name="Conteudo" type="Control" parent="." unique_id=812000003]

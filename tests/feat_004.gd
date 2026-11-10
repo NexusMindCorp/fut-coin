@@ -523,6 +523,27 @@ func _testar_menu_creditos_e_musica() -> void:
 		and ResourceLoader.exists(MenuPrincipal.CAMINHO_CREDITOS),
 		"MenuPrincipal tem Jogar/Creditos/Sair e destinos existentes"
 	)
+	_verificar(
+		is_equal_approx(menu.probabilidade_tigre, 0.10)
+		and menu.tigre_moeda != null
+		and menu.tigre_moeda.texture != null
+		and is_equal_approx(menu.tigre_moeda.offset_left, 106.0)
+		and is_equal_approx(menu.tigre_moeda.offset_top, 253.0),
+		"MenuPrincipal possui export de probabilidade 10% e node de overlay do tigre alinhado a moeda"
+	)
+	menu.definir_exibicao_tigre(true)
+	var tigre_ligado: bool = menu.obter_exibicao_tigre()
+	menu.definir_exibicao_tigre(false)
+	var tigre_desligado: bool = not menu.obter_exibicao_tigre()
+	menu.probabilidade_tigre = 1.0
+	var sorteio_sempre: bool = menu.sortear_exibicao_tigre() and menu.obter_exibicao_tigre()
+	menu.probabilidade_tigre = 0.0
+	var sorteio_nunca: bool = (not menu.sortear_exibicao_tigre()) and (not menu.obter_exibicao_tigre())
+	menu.probabilidade_tigre = 0.10
+	_verificar(
+		tigre_ligado and tigre_desligado and sorteio_sempre and sorteio_nunca,
+		"Controle e sorteio de probabilidade do easter egg do tigre na moeda funcionam deterministicamente"
+	)
 	var stream_antes: AudioStream = gerenciador.player_musica.stream
 	var tela_versus_musica: TelaVersus = CENA_TELA_VERSUS.instantiate() as TelaVersus
 	root.add_child(tela_versus_musica)
