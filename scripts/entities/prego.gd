@@ -5,22 +5,46 @@ extends StaticBody2D
 # --- ENUMS DE ESTADO ---
 enum Equipe { CORINTHIANS, FLAMENGO }
 
+# --- CONSTANTES ---
+const SHADER_COR_TIME: Shader = preload("res://assets/shaders/prego_cor_time.gdshader")
+const COR_PADRAO_ESQUERDA: Color = Color(0.55, 0.72, 0.92, 1.0)
+const COR_PADRAO_DIREITA: Color = Color(0.92, 0.24, 0.24, 1.0)
+
 # --- PARAMETROS CONFIGURAVEIS ---
 @export var time: Equipe = Equipe.CORINTHIANS:
 	set(valor):
 		time = valor
+		if not cor_customizada:
+			cor_time = COR_PADRAO_ESQUERDA if time == Equipe.CORINTHIANS else COR_PADRAO_DIREITA
 		_atualizar_visual()
+@export var cor_time: Color = COR_PADRAO_ESQUERDA:
+	set(valor):
+		cor_time = valor
+		_aplicar_cor_material()
 
 # --- REFERENCIAS A NODES ---
 @onready var animacao: AnimatedSprite2D = $Animacao
 
+# --- ESTADO ---
+var cor_customizada: bool = false
+var material_cor: ShaderMaterial
+
 
 # --- INICIALIZACAO E LOOP DE FISICA/PROCESSAMENTO ---
 func _ready() -> void:
+	if not cor_customizada:
+		cor_time = COR_PADRAO_ESQUERDA if time == Equipe.CORINTHIANS else COR_PADRAO_DIREITA
+	_garantir_material_cor()
 	_atualizar_visual()
 
 
 # --- API PUBLICA ---
+func definir_cor_time(nova_cor: Color) -> void:
+	cor_customizada = true
+	cor_time = nova_cor
+	_aplicar_cor_material()
+
+
 func reagir_ao_impacto() -> void:
 	if not is_node_ready():
 		return
@@ -29,15 +53,34 @@ func reagir_ao_impacto() -> void:
 
 
 # --- AUXILIARES / SETTERS ---
-func _atualizar_visual() -> void:
-	if not is_node_ready():
+func _garantir_material_cor() -> void:
+	if animacao == null:
 		return
+	if material_cor == null:
+		material_cor = ShaderMaterial.new()
+		material_cor.shader = SHADER_COR_TIME
+	animacao.material = material_cor
+	_aplicar_cor_material()
+
+
+func _aplicar_cor_material() -> void:
+	if not is_node_ready() or animacao == null:
+		return
+	if material_cor == null:
+		_garantir_material_cor()
+		return
+	material_cor.set_shader_parameter(&"cor_time", cor_time)
+
+
+func _atualizar_visual() -> void:
+	if not is_node_ready() or animacao == null:
+		return
+	_aplicar_cor_material()
 	animacao.play(_nome_animacao("repouso"))
 
 
 func _nome_animacao(acao: String) -> StringName:
-	var cor: String = "prata" if time == Equipe.CORINTHIANS else "vermelho"
-	return StringName("%s_%s" % [acao, cor])
+	return StringName("%s_prata" % acao)
 
 
 func _on_animacao_animation_finished() -> void:

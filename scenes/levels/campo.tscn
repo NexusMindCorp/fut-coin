@@ -1,8 +1,9 @@
 [gd_scene format=4 uid="uid://c4dnbpkrgl3hq"]
 
 [ext_resource type="Texture2D" uid="uid://b0gr75wvwtyo2" path="res://assets/levels/campo_estadio.png" id="1_2rp2c"]
-[ext_resource type="TileSet" path="res://assets/levels/campo_tileset.tres" id="2_tileset"]
+[ext_resource type="TileSet" uid="uid://cok4dv6x4xhkj" path="res://assets/levels/campo_tileset.tres" id="2_tileset"]
 [ext_resource type="PackedScene" path="res://scenes/entities/prego.tscn" id="3_8jnxf"]
+[ext_resource type="Texture2D" uid="uid://k55e4pfoc40q" path="res://assets/ui/torcedores/Arquibancada Pixelada em Festa.png" id="4_2rp2c"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7rh4d"]
 size = Vector2(1056, 16)
@@ -151,43 +152,74 @@ position = Vector2(504, 232)
 [node name="GoleiroFlamengo" parent="Pregos" unique_id=834867195 instance=ExtResource("3_8jnxf")]
 position = Vector2(1100, 160)
 time = 1
+cor_time = Color(0.92, 0.24, 0.24, 1)
 
 [node name="ZagueiroSuperiorFlamengo" parent="Pregos" unique_id=1721349385 instance=ExtResource("3_8jnxf")]
 position = Vector2(992, 112)
 time = 1
+cor_time = Color(0.92, 0.24, 0.24, 1)
 
 [node name="ZagueiroInferiorFlamengo" parent="Pregos" unique_id=1637508826 instance=ExtResource("3_8jnxf")]
 position = Vector2(992, 208)
 time = 1
+cor_time = Color(0.92, 0.24, 0.24, 1)
 
 [node name="LateralSuperiorFlamengo" parent="Pregos" unique_id=2054263263 instance=ExtResource("3_8jnxf")]
 position = Vector2(912, 72)
 time = 1
+cor_time = Color(0.92, 0.24, 0.24, 1)
 
 [node name="LateralInferiorFlamengo" parent="Pregos" unique_id=1482695349 instance=ExtResource("3_8jnxf")]
 position = Vector2(912, 248)
 time = 1
+cor_time = Color(0.92, 0.24, 0.24, 1)
 
 [node name="VolanteFlamengo" parent="Pregos" unique_id=1039204855 instance=ExtResource("3_8jnxf")]
 position = Vector2(848, 160)
 time = 1
+cor_time = Color(0.92, 0.24, 0.24, 1)
 
 [node name="MeiaSuperiorFlamengo" parent="Pregos" unique_id=35398189 instance=ExtResource("3_8jnxf")]
 position = Vector2(776, 104)
 time = 1
+cor_time = Color(0.92, 0.24, 0.24, 1)
 
 [node name="MeiaInferiorFlamengo" parent="Pregos" unique_id=111975388 instance=ExtResource("3_8jnxf")]
 position = Vector2(776, 216)
 time = 1
+cor_time = Color(0.92, 0.24, 0.24, 1)
 
 [node name="MeiaOfensivoFlamengo" parent="Pregos" unique_id=472236728 instance=ExtResource("3_8jnxf")]
 position = Vector2(704, 160)
 time = 1
+cor_time = Color(0.92, 0.24, 0.24, 1)
 
 [node name="AtacanteSuperiorFlamengo" parent="Pregos" unique_id=1946548824 instance=ExtResource("3_8jnxf")]
 position = Vector2(648, 88)
 time = 1
+cor_time = Color(0.92, 0.24, 0.24, 1)
 
 [node name="AtacanteInferiorFlamengo" parent="Pregos" unique_id=268581187 instance=ExtResource("3_8jnxf")]
 position = Vector2(648, 232)
 time = 1
+cor_time = Color(0.92, 0.24, 0.24, 1)
+
+[node name="ArquibancadaPixeladaEmFesta" type="Sprite2D" parent="." unique_id=1241412953]
+position = Vector2(179.25, 416)
+scale = Vector2(0.17220971, 0.23337092)
+texture = ExtResource("4_2rp2c")
+
+[node name="ArquibancadaPixeladaEmFesta2" type="Sprite2D" parent="." unique_id=1924999825]
+position = Vector2(485.00003, 416.00003)
+scale = Vector2(0.17220971, 0.23337092)
+texture = ExtResource("4_2rp2c")
+
+[node name="ArquibancadaPixeladaEmFesta3" type="Sprite2D" parent="." unique_id=1573043412]
+position = Vector2(790.99994, 416)
+scale = Vector2(0.17220971, 0.23337092)
+texture = ExtResource("4_2rp2c")
+
+[node name="ArquibancadaPixeladaEmFesta4" type="Sprite2D" parent="." unique_id=253513754]
+position = Vector2(1096, 416)
+scale = Vector2(0.17220971, 0.23337092)
+texture = ExtResource("4_2rp2c")
