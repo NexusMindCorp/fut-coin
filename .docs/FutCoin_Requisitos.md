@@ -1,6 +1,6 @@
 # FutCoin: Documento de Requisitos e Contexto
 
-> Documento de contexto para planejamento do projeto com a IA. Descreve o conceito, as regras, os requisitos do Trabalho 2 e os pontos ainda em aberto. Itens marcados como **[A DEFINIR]** devem ser discutidos e fechados no planejamento.
+> Contexto atualizado em 09/11/2026 conforme ADR-001 e decisões do planejamento. Descreve o comportamento esperado, não funcionalidades já implementadas. Estado real: M0 concluído; gameplay pendente. Itens **[A DEFINIR]** continuam abertos. O enunciado original está em `Trabalho 2 - 2026.3.md`.
 
 ---
 
@@ -22,7 +22,7 @@
 | Requisito do trabalho | Como o FutCoin atende |
 |---|---|
 | Tela inicial com opção de iniciar o jogo | Menu principal com Jogar, Créditos e Sair |
-| Animação de sprites e tiles | Sprite da moeda (rolagem/giro), animação de gol, moeda de ouro, tiles/pregos animados (ex.: brilho ao colidir) |
+| Animação de sprites e tiles | Animações da moeda/pregos e tiles animados do campo em `TileMapLayer`; ambos precisam funcionar nas cenas, não apenas existir como imagens |
 | Animação geral sem sprites | Tweens: seta de força, placar pulsando ao gol, transições de tela, tremor de câmera |
 | Colisão (Godot ou manual) | Moeda × paredes × pregos (física) e sensores nos gols |
 | Áudio e HUD | Música, SFX (batida, gol, apito) e placar/cronômetro |
@@ -121,43 +121,41 @@
 ## 7. Telas e fluxo
 
 1. **Menu principal:** Jogar, **Créditos** e Sair.
-2. **Seleção de times:** navegação por **setinhas**. No protótipo existem **2 times pré-definidos**. Botão **Play** leva direto à partida.
+2. **Tela versus:** apresenta os times fixos do MVP: Corinthians (P1, prata, esquerda) e Flamengo (P2, vermelho, direita). Segue para a partida; seleção de times fica fora do MVP.
 3. **Partida (Main Game):** todo o gameplay descrito acima, com **sistema de pause**.
 4. **Tela final:** resultado da partida (incluindo vitória por gol de ouro) com as opções:
    - **Reiniciar** a partida
-   - **Voltar à seleção de times**
    - **Voltar ao menu**
    - (Sugestão) botão de **Créditos**
 5. **Créditos:** acessível pelo menu principal (e opcionalmente pela tela final). A mesma cena pode ser reaproveitada nos dois lugares. Deve conter:
    - Integrantes do grupo e suas funções
-   - **Artista externo responsável pelos brasões** **[A DEFINIR: nome e licença/condições de uso]**
+   - **Artista dos brasões: `_EasilyImpressed`**, com prova de autorização em `image.png`; conferir condições de uso e atribuição antes da entrega.
    - Demais fontes de assets (música, SFX, fontes tipográficas, etc.)
 
 ### Pause
 - Sistema de pause durante a partida (congelar física, cronômetro e animações de jogo), com opções como continuar, reiniciar e voltar ao menu.
-- **[A DEFINIR]** Implementação conforme as recomendações da infraestrutura de IA do grupo.
+- Decisão aprovada: pausa pelo `SceneTree`, menu ativo durante a pausa e opções Continuar, Reiniciar e Menu. Não é um estado adicional da máquina da partida.
 
 ---
 
 ## 8. Direção de arte e resolução
 
 - **Estilo:** pixel art **16 bits**, em todos os elementos (campo, pregos, moeda, HUD, menus, brasões).
-- **Resolução base recomendada: 480×270 (16:9)**, com **escala inteira** (×2 = 960×540, ×4 = 1920×1080).
+- **Resolução base aprovada: 640×360 (16:9)**, com **escala inteira** (×2 = 1280×720, ×3 = 1920×1080), conforme ADR-001.
 
 ### Configuração sugerida na Godot
 - Stretch Mode `viewport`, Aspect `keep`, Scale Mode `integer`.
 - Filtro de textura padrão `Nearest`.
-- Evitar janelas que não sejam múltiplos inteiros de 480×270 (ex.: 1280×720 resulta em escala de 2,67×).
+- Janela de desenvolvimento em 1280×720 (escala ×2); preservar escala inteira em outros tamanhos.
 - Ativar o *snap 2D transforms to pixel* e verificar se a câmera não gera jitter.
 
-### Tamanhos de referência (estimativas iniciais)
-Valores aproximados para 480×270, **apenas ponto de partida**:
-- HUD no topo: ~32 a 40 px de altura (sobrando ~230 px para o campo).
-- Moeda: ~14 a 16 px de diâmetro.
-- Cabeça dos pregos: ~8 a 10 px.
-- Brasões: ~24 a 32 px (ou múltiplos, para reduzir sem borrar).
+### Tamanhos dos assets processados (FEAT-001)
+- Campo: 1152×320 px; composição com HUD e paredes a conferir no M1/M3.
+- Moeda: 28×28 px; giro/brilho por quadros, sem rotação física.
+- Cabeça dos pregos: 12×12 px.
+- Brasões: 48×48 px; banner: 320×44 px; tela versus: 640×360 px.
 
-> ⚠️ **Instrução importante para a IA:** os tamanhos acima são estimativas. **Analise os assets que o grupo já possui** (imagens existentes no repositório/projeto, incluindo os brasões do artista externo) **e ajuste as recomendações** de resolução base, tamanho da moeda, dos pregos, do HUD e dos brasões com base nas **dimensões e no nível de detalhe reais dessas imagens**. Se os assets existentes sugerirem outra resolução base, **proponha o ajuste e justifique**.
+> A análise dos originais e o processamento estão registrados na FEAT-001 e em `.docs/planejamento.md`. Legibilidade, contraste da aura e espaçamento entre colisões ainda precisam ser conferidos nas cenas.
 
 ---
 
@@ -166,9 +164,9 @@ Valores aproximados para 480×270, **apenas ponto de partida**:
 - **Moeda:** `RigidBody2D` com material de física (bounce/fricção) e `linear_damp` para frear naturalmente. Ativar `continuous_cd` e limitar a velocidade máxima para evitar **tunelamento** através de pregos e paredes.
 - **Pregos e paredes:** `StaticBody2D` com colisão.
 - **Gols:** `Area2D` posicionada atrás da linha do gol.
-- **Estados do jogo:** usar uma máquina de estados simples para o fluxo da partida (por exemplo: aguardando jogada, mirando, moeda em movimento, gol, fim de partida, pausado).
+- **Estados do jogo:** aguardando jogada, mirando, moeda em movimento, gol animando e fim de partida. Pause pertence ao `SceneTree`; gol de ouro é uma flag, conforme ADR-001.
 - **Configurações em variáveis exportadas (`@export`):** duração da partida, força máxima/mínima, atrito, limite de força perto da parede e ativação do gol de ouro.
-- **Organização:** cenas separadas para menu, seleção de times, partida, tela final, créditos, moeda, prego, gol e HUD. Código **legível e comentado**, pois cada integrante será questionado sobre ele.
+- **Organização:** cenas separadas para menu, versus, partida (`main_game`), pause, tela final, créditos, moeda, prego, gol e HUD. Seguir ADR-001, sem `TelaBase` ou `TimeDados` como Resource. Código legível e comentado, pois cada integrante será questionado sobre ele.
 - **Exportação:** exportar e testar o executável **Linux** desde cedo (não só no dia da entrega), e deixá-lo na pasta `build/` do repositório (**público** no GitHub).
 
 ---
@@ -176,7 +174,7 @@ Valores aproximados para 480×270, **apenas ponto de partida**:
 ## 10. Escopo e prioridades (prazo: 20/11/2026)
 
 **Essencial (MVP):**
-1. Menu principal, seleção de times, partida, tela final e créditos
+1. Menu principal, versus com times fixos, partida, tela final e créditos
 2. Moeda com lançamento por arrasto e física (paredes e pregos)
 3. Turnos entre 2 jogadores locais, com liberação só com a moeda parada
 4. Gols com sensor, animação de gol e placar
@@ -187,6 +185,7 @@ Valores aproximados para 480×270, **apenas ponto de partida**:
 **Desejável (se sobrar tempo):**
 - Efeitos extras (tremor de câmera, brilho nos pregos, partículas)
 - Mais times além dos 2 iniciais
+- Seleção de times (após os testes do MVP)
 - Ajustes de balanceamento (força, atrito, duração)
 
 **Fora do escopo do protótipo:** jogador contra CPU, multiplayer online, mais de 2 times jogáveis.
@@ -197,8 +196,8 @@ Valores aproximados para 480×270, **apenas ponto de partida**:
 
 Estes pontos serão definidos depois e **não precisam estar fechados** para iniciar o planejamento:
 
-1. Implementação do pause conforme as recomendações da infraestrutura de IA.
-2. Nome do artista dos brasões e condições de uso/licença, para os créditos.
-3. Ajuste final de resolução e tamanhos com base nos assets reais do grupo.
+1. Implementar o pause já aprovado na ADR-001 (M3).
+2. Conferir condições de uso/atribuição dos brasões de `_EasilyImpressed` e fechar nomes/funções dos integrantes nos créditos.
+3. Validar nas cenas os tamanhos já definidos, o contraste da aura e o espaçamento entre pregos (M1/M3).
 4. Música e SFX: origem dos arquivos e créditos.
 5. Quem começa o gol de ouro (detalhe menor, ver seção 3.5).

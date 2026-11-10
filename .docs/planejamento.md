@@ -1,15 +1,15 @@
 # FutCoin: Planejamento Técnico
 
-> Status: **Marco 0 (Fundação) CONCLUÍDO** (`ADR-001`, `FEAT-000`, `FEAT-001` e Input Map implementados; commits `5ccfcd8`, `18bbc6b`, `d0ea75a`). Pronto para iniciar o **Marco 1 (Núcleo Físico)**.
-> Base: `.docs/FutCoin_Requisitos.md` + `.docs/Trabalho 2 - 2026.3.md` + auditoria do repositório (06/11/2026).
-> Prazo de entrega: **20/11/2026** (14 dias). Godot 4.7, GDScript, 2D top-down.
-> Fontes técnicas: documentação oficial do Godot 4 (docs.godotengine.org), consultada via busca web. O MCP Context7 não estava exposto nesta sessão. Usar nas próximas, se disponível.
+> Status em **09/11/2026**: **M0 concluído** (configuração, Input Map e assets; commits `5ccfcd8`, `18bbc6b`, `d0ea75a`). ADR-001 aprovada; componentes de gameplay ainda não implementados. Próximo: **M1 — Núcleo Físico**.
+> Base: requisitos, enunciado e revisão documental/inventário de 09/11/2026. Não há `.gd`, cena principal configurada ou export Linux; a única cena é o esboço do HUD.
+> Prazo de entrega: **20/11/2026**. Godot 4.7, GDScript, 2D top-down. Datas do roadmap são metas, não evidência de execução.
+> Notas técnicas da seção 3 foram registradas em 06/11; APIs e configuração devem ser conferidas na documentação oficial durante a implementação. Esta revisão não executou o Godot.
 
 ---
 
 ## 1. Auditoria de diretórios (vs. skill `godot-game-dev`)
 
-### Já aplicado nesta sessão
+### Organização realizada em 06/11
 | Ação | Motivo |
 |:---|:---|
 | Renomeados 13 PNGs para `snake_case` sem acento ou espaço (ex.: `Estádio de Futebol em Pixel Art.png` → `campo_estadio.png`) | Skill exige `snake_case`. Espaços e acentos dão problema em scripts e `res://`. Nenhum arquivo era referenciado ainda. |
@@ -17,16 +17,17 @@
 | Removidas as pastas vazias `scenes/referencia`, `scripts/referencia`, `scenes/ui/times`, `scripts/ui/times`, `assets/sprites/field` | YAGNI. `referencia` é para easter eggs, `ui/times` não espelhava nada, `sprites/field` duplicava `assets/levels`. |
 | Criada `build/` (com `.gitkeep`) | Exigida pelo enunciado e pela skill. |
 
-### Divergências restantes (precisam de decisão, ver Seção 6)
+### Estado atual e pendências
 | Item | Situação | Recomendação |
 |:---|:---|:---|
-| `.gitignore` ignora `.agent/` e `GEMINI.md` | `AGENTS.md` é versionado e aponta para `.agent/`, que não vai ao GitHub | Decidir se a governança é pública ou local (P7) |
+| Governança | `AGENTS.md`, `.agent/` e `relatorios/` rastreados no Git local | Versionamento autorizado em 09/11; publicação remota não verificada nesta revisão |
 | `image.png` (prova de autorização) na raiz | O Godot a importa como recurso. Está linkada no README | Mover para `.docs/creditos/` + `.gdignore`, ajustando o link do README (só com seu aval) |
 | `README.md` | Conteúdo correto. A URL do Reddit carrega parâmetros de anti-bot (`js_challenge`, `jsc_token`) | Limpar a URL para o link base do post (só com seu aval) |
 | `default_bus_layout.tres` ausente | Será criado no editor na fase de áudio | Sem ação agora |
-| Dados dos times (`.tres`) sem pasta definida | A skill não prevê `resources/` | Propor `resources/times/` (P6) |
-| `project.godot` (Forward Plus + `d3d12`) | Ver Seção 3, item 1 | Mudar na Fase 0, depois do aval |
-| Assets brutos de 1536 a 2400 px dentro do projeto | Serão importados e pesam no repositório | Assets processados em `assets/`. Originais em `assets/_fonte/` com `.gdignore` (P3) |
+| Dados dos times | DTO estático e times fixos aprovados; sem `resources/times/` | Implementar conforme ADR-001 |
+| `project.godot` (Forward Plus + `d3d12`) | Renderer mantido por decisão do usuário | Reavaliar no M5 com o ambiente Linux alvo |
+| Assets | Processados em `assets/`; originais em `assets/_fonte/` com `.gdignore` | Integrar spritesheets e tiles animados às cenas no M1/M4 |
+| Gameplay e HUD | Sem `.gd`; HUD provisório em coordenadas antigas | Implementar FEAT-002/003 e adaptar HUD no M3 |
 
 ### Estrutura-alvo
 ```text
@@ -38,7 +39,6 @@ fut-coin/
 │   ├── sprites/entities/             (moeda, pregos)
 │   └── ui/{hud,menus,times}/
 ├── build/                            (executável Linux)
-├── resources/times/                  (TimeDados .tres, proposta P6)
 ├── scenes/{entities,levels,ui}/
 ├── scripts/{autoload,entities,levels,ui}/
 ├── default_bus_layout.tres
@@ -47,7 +47,9 @@ fut-coin/
 
 ---
 
-## 2. Análise dos assets reais (exigida na Seção 8 dos requisitos)
+## 2. Análise dos assets originais (histórico de 06/11)
+
+Esta seção descreve os originais anteriores ao pipeline. As necessidades de recorte, extensão e geração de imagens abaixo foram atendidas pela FEAT-001; resultados finais na seção 2.1. A integração em cenas permanece pendente.
 
 | Asset | Dimensão | Observação |
 |:---|:---|:---|
@@ -65,7 +67,7 @@ fut-coin/
 5. **O banner do HUD está pronto para receber** brasões, gols e tempo como `Control` por cima. Precisa de recorte e redução.
 6. **Créditos:** os brasões são de `_EasilyImpressed` (README, com prova de autorização). Os demais assets parecem gerados por IA. Declarar a origem na tela de créditos.
 
-### Resolução base: recomendação
+### Comparação histórica de resolução (decisão vigente: 640×360)
 | Opção | Escalas inteiras | Moeda / prego / brasão | Comentário |
 |:---|:---|:---|:---|
 | 480×270 (proposta original) | ×2 = 960×540, ×4 = 1080p. **720p não é inteiro** | ~16 / 10 / 24 px | Moeda ilegível. Em notebook 1366×768 ou 720p, fica com borda preta |
@@ -87,7 +89,7 @@ Valores iniciais em 640×360: HUD ~48 px no topo, campo útil ~312 px de altura,
 
 A moeda e o prego estão em escalas diferentes (70 contra 10 pixels de arte). Cada asset é reamostrado para seu tamanho final.
 
-**Layout de tela proposto (640×360, múltiplos de 16 px):**
+**Layout de tela proposto, ainda a validar nas cenas (640×360):**
 HUD 40 + parede 16 + campo jogável 288 (18 tiles) + parede 16 = 360. Escala do campo: 288/662 ≈ 0,435.
 
 | Elemento | Tamanho proposto |
@@ -97,10 +99,10 @@ HUD 40 + parede 16 + campo jogável 288 (18 tiles) + parede 16 = 360. Escala do 
 | Gol (abertura) | ~72 px (4,5 tiles), reduzido da arte original (~117 px na escala 0,435) |
 | Campo em largura | ~1100 a 1200 px (a arte atual daria só ~560 px; inserir ~500 a 600 px de grama entre a grande área e o círculo central, lado oposto espelhado) |
 
-**Os sprites atuais não bastam como estão, mas não requerem arte nova.** Os quadros são gerados por script a partir dos originais:
+**Derivações dos originais já geradas pela FEAT-001.** A tabela descreve o planejamento da geração; a integração em cenas ainda falta:
 | Item | Origem atual | Geração por script |
 |:---|:---|:---|
-| Moeda | 1 quadro estático | Brilho passando (6 a 8 quadros); flip no lançamento e gol (8 quadros); versão dourada por recolorização da paleta (gol de ouro). Rolagem: rotacionar o sprite com filtro *Nearest*, avaliar no M1 |
+| Moeda | 1 quadro estático | Sheets de brilho, giro 2D top-down e flip (8 quadros), com versão dourada. Decisão vigente: usar giro/brilho por quadros, sem rotação física; flip guardado |
 | Moeda (texto) | "50 CENTAVOS" | Remover "CENTAVOS", manter "50" e estrelas (ilegível em 28 px) |
 | Prego | 2 quadros estáticos (prata e vermelho) | Piscada e achatamento ao colidir (3 a 4 quadros) |
 | Campo | Imagem única, sem tiles | Recortar em `TileMapLayer` de 16 px (grama, linhas, paredes, cantos, gol); a extensão vira repetição de tiles |
@@ -118,11 +120,11 @@ HUD 40 + parede 16 + campo jogável 288 (18 tiles) + parede 16 = 360. Escala do 
 
 ---
 
-## 3. Recomendações técnicas validadas na documentação do Godot
+## 3. Notas técnicas do planejamento inicial (conferir APIs ao implementar)
 
-1. **Renderer: `gl_compatibility`.** Forward+ exige Vulkan. Um Linux de laboratório ou de VM sem Vulkan não abre o jogo. O Compatibility (OpenGL 3.3) cobre quase todo Linux, e para 2D pixel art não perde nada. Remover `rendering_device/driver.windows=d3d12`. O `3d/physics_engine=Jolt` é irrelevante (2D), pode ficar.
-2. **Pixel perfect:** `display/window/stretch/mode="viewport"`, `aspect="keep"`, `scale_mode="integer"`; `rendering/textures/canvas_textures/default_texture_filter=Nearest`; `rendering/2d/snap/snap_2d_transforms_to_pixel=true`. Hoje o projeto está com `canvas_items` + `expand`, que **não** é pixel perfect.
-3. **Física:** gravidade 2D = 0 no projeto (top-down). Ligar `physics/common/physics_interpolation`, que reduz jitter em monitores de taxa de atualização alta. Taxa fixa de 60 ticks.
+1. **Renderer:** mantido `Forward Plus`, com driver Windows `d3d12`, por decisão do usuário. A sugestão inicial de trocar para Compatibility não foi adotada. Compatibilidade com a máquina Linux alvo será verificada no M5, antes de decidir qualquer mudança.
+2. **Pixel perfect:** já configurados viewport 640×360, stretch `viewport`, escala `integer`, filtro `Nearest` e snap 2D. Verificação visual integrada ainda depende das cenas de gameplay/HUD.
+3. **Física:** gravidade 2D zero e `physics/common/physics_interpolation=true` já configurados. Comportamento da moeda e da câmera ainda será verificado no M1.
 4. **Moeda (`RigidBody2D`):** `continuous_cd = CAST_SHAPE`; `linear_damp_mode = REPLACE`; `PhysicsMaterial` (bounce ~0,6 a 0,8, friction ~0); `lock_rotation = true` (rotação arbitrária de pixel art gera serrilhado, então o "rolar" é feito por animação de frames). Lançamento por `apply_central_impulse`. **O limite de velocidade não existe nativamente: clampar em `_integrate_forces(state)`.** Nunca alterar `linear_velocity` em `_physics_process`. Atenção: um corpo dormindo para de chamar `_integrate_forces`.
 5. **"Moeda parada":** velocidade abaixo de um limiar (`@export`) por um tempo curto (`Timer` ou contador), em vez de confiar só no *sleep* do motor. Fallback: sinal `sleeping_state_changed`.
 6. **Gol "inteiramente dentro" sem código extra:** posicionar a `Area2D` com a borda interna a **2× o raio da moeda** além da linha. Quando `body_entered` dispara, o centro já está 1 raio dentro da linha, ou seja, a moeda está toda dentro. Mais robusto que checar sobreposição parcial. CCD evita tunelamento.
@@ -134,18 +136,18 @@ HUD 40 + parede 16 + campo jogável 288 (18 tiles) + parede 16 = 360. Escala do 
 
 ---
 
-## 4. Arquitetura aprovada (`ADR-001` registrado e implementado)
+## 4. Arquitetura aprovada (ADR-001; componentes a implementar)
 
-### Opção recomendada: Juiz + componentes + `TelaBase`
+### Juiz + componentes + dados estáticos
 Segue o catálogo da skill: *Call Down, Signal Up*, estado explícito e DRY de transição.
 
 ```mermaid
 flowchart TD
-  P["partida.tscn (partida.gd = Juiz, enum Estado)"] --> C["campo.tscn (paredes, pregos, gols, markers)"]
+  P["main_game.tscn (main_game.gd = Juiz, enum Estado)"] --> C["campo.tscn (paredes, pregos, gols, markers)"]
   P --> M["moeda.tscn (RigidBody2D, sinais: lancada, parou)"]
   P --> MI["mira.tscn (seta de direção e força)"]
   P --> CAM["Camera2D (camera_partida.gd)"]
-  P --> H["hud.tscn (CanvasLayer)"]
+  P --> H["hub.tscn (HUD a adaptar para CanvasLayer/Control)"]
   P --> PA["pause.tscn (WHEN_PAUSED)"]
   P --> T["Timers: cronômetro, pausa de gol"]
   C --> G["gol.tscn (Area2D, sinal gol_marcado)"]
@@ -155,14 +157,14 @@ flowchart TD
 - **Estados da partida** (`enum Estado`): `AGUARDANDO_JOGADA`, `MIRANDO`, `MOEDA_EM_MOVIMENTO`, `GOL_ANIMANDO`, `FIM_DE_PARTIDA`. Pause é do `SceneTree`, não um estado. O gol de ouro é uma *flag* (`gol_de_ouro_ativo`).
 - **Tempo esgotado em movimento:** flag `tempo_esgotado`, avaliada no sinal `moeda.parou` (e após gol). Atende a Seção 3.3.
 - **Dados entre cenas:** classe com `static var` (`PartidaConfig`: time A, time B, duração), sem autoload só para transporte.
-- **Times:** `TimeDados` (`Resource`: nome, brasão, cor/sprite do prego). Os `.tres` são editáveis no Inspector e escalam para os 9 brasões quase de graça.
-- **UI:** `TelaBase` (`class_name`, `extends Control`) com `_transicionar_para(caminho)` DRY (desabilita botões, toca som, despausa, troca de cena). Menu, seleção, final e créditos herdam dela.
+- **Times:** Corinthians/P1/prata/esquerda e Flamengo/P2/vermelho/direita fixos, com dados estáticos; sem `TimeDados` como Resource e sem pasta `resources/`.
+- **UI:** cada tela implementa `_transicionar_para(caminho)` com componente `Sounds` (desabilita botões, toca som, despausa e troca de cena); sem herança de `TelaBase`.
 - **Autoload:** apenas `AudioManager` (música contínua entre cenas, mudo de SFX no pause). Os demais ficam locais.
 - **Pregos:** `prego.tscn` instanciado 22× como filhos de `Marker2D`, com posições ajustáveis no editor (Seção 4 dos requisitos). Espelho do lado B por duplicação, com `@export` do time dono.
 - **Mira:** `_unhandled_input` + `get_global_mouse_position()` (a câmera se move). Ações no Input Map (`mira_clique`, `pausar`), sem teclas fixas no código.
 - **Parâmetros `@export`:** duração, força mín/máx, escala do arrasto, atrito, limite perto da parede, gol de ouro.
 
-### Alternativa KISS
+### Alternativa descartada no alinhamento inicial
 Cena `partida` com **um único script grande** (moeda, turnos, HUD e pause inline) e sem `TelaBase` (cada menu com seu `change_scene_to_file`). **Prós:** menos arquivos, começa mais rápido. **Contras:** código duplicado, `partida.gd` com 400+ linhas, mais difícil de explicar na arguição individual e de dividir entre 4 pessoas. Não recomendada, dado o critério de "qualidade do código".
 
 ### 4.1 Alinhamento com o catálogo da skill (decisão do usuário, 06/11)
@@ -198,7 +200,7 @@ Mantidos: `AudioManager` (autoload, 5 barramentos, mudo no pause), componente de
 |:---|:---|:---|
 | A (Física) | Moeda, mira, pregos, câmera | B |
 | B (Regras) | Juiz da partida, estados, gols, cronômetro | A |
-| C (UI/Fluxo) | `TelaBase`, menus, seleção, final, créditos, pause, HUD | D |
+| C (UI/Fluxo) | Menus, versus com times fixos, final, créditos, pause, HUD e componente Sounds | D |
 | D (Arte/Áudio/Export) | Pipeline de assets, animações, áudio, créditos, build Linux | C |
 
 Regra: **todo PR é revisado por quem não escreveu**. Antes da apresentação, cada um explica o módulo de outro.
@@ -212,13 +214,13 @@ Regra: **todo PR é revisado por quem não escreveu**. Antes da apresentação, 
 | P1 | **Resolução base:** 480×270 ou 640×360? | **Concluído:** `640×360` aplicada no `project.godot` (`5ccfcd8`) |
 | P2 | **Campo:** estender a arte atual (corta/insere grama/espelha)? | **Concluído:** Campo estendido para `1152×320` com gol de `~72 px` (`18bbc6b`) |
 | P3 | **Pipeline de assets:** reamostrar/redesenhar cada asset para o tamanho final? | **Concluído:** Gerado por `assets/_fonte/processar_assets.py` (moeda `28×28`, pregos `12×12`, brasões `48×48`, banner `320×44`, versus `640×360`) |
-| P4 | **Requisito "animação de tiles" e spritesheets:** | **Concluído:** `campo_tileset.png` com 4 linhas de tiles animados + spritesheets de brilho, giro 2D top-down, flip e colisão dos pregos |
+| P4 | **Requisito "animação de tiles" e spritesheets:** | **Assets concluídos:** atlas e spritesheets gerados. Requisito funcional pendente de integração e verificação nas cenas M1/M4 |
 | P5 | **Moeda sem rotação física** (`lock_rotation`) com animação por quadros (`moeda_giro_sheet.png` / `moeda_brilho_sheet.png`) | **Decidido:** Usar giro 2D top-down / brilho no deslize; manter `moeda_flip_sheet.png` guardado |
 | P6 | **Pasta `resources/times/`** vs. DTO estático da skill | **Decidido:** Seguir a skill (DTO estático `static var`, sem `resources/`) |
-| P7 | **Governança no GitHub:** `.agent/` e `AGENTS.md` locais; `assets/_fonte/` versionada | **Concluído:** `.agent/`, `AGENTS.md` e `relatorios/` locais; `assets/_fonte/` mantida versionada |
+| P7 | **Versionamento da governança** | **Atualizado em 09/11:** `AGENTS.md`, `.agent/` e `relatorios/` versionados no Git local por autorização do usuário; publicação remota não verificada nesta revisão. `assets/_fonte/` também versionada |
 | P8 | **Times:** Corinthians (P1, prata, esquerda) e Flamengo (P2, vermelho, direita) fixos; aura na moeda indica a posse | **Decidido:** Seleção de times fica para depois dos testes |
 | P9 | **Project Settings** e **Export Linux** | **Concluído:** `640×360` + `Nearest` + `snap` + gravidade zero + Input Map aplicados; tudo referente a Linux fica para o M5 |
-| P10 | **Início do gol de ouro** (pendência dos requisitos) | **Em aberto para M2:** Sugestão: quem sofreu o último gol, igual ao fluxo normal |
+| P10 | **Início do gol de ouro** (pendência dos requisitos) | **Em aberto para M2:** definir quem inicia, inclusive no 0×0. Quem sofreu o último gol é apenas sugestão para partidas com gols |
 | P11 | **Áudio:** origem da música e SFX (ex.: Kenney, OpenGameArt, freesound, CC0) | **Em aberto para M3/M4:** Preferir CC0 para simplificar os créditos |
 | P12 | **Pause:** menu com Continuar, Reiniciar e Menu (`WHEN_PAUSED`) | **Aprovado** (`ADR-001`) |
 | P13 | **Testes:** só F6 + scaffolding (Nível 1), sem GUT | **Decidido:** Validar no editor com scaffolding F6 |
