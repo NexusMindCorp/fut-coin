@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/entities/moeda.gd" id="1"]
 [ext_resource type="SpriteFrames" path="res://assets/sprites/entities/moeda_animacoes.tres" id="2"]
+[ext_resource type="Script" uid="uid://c9m4v7kp2x6re" path="res://scripts/entities/audio_moeda.gd" id="3"]
 
 [sub_resource type="CircleShape2D" id="Forma"]
 radius = 14.0
@@ -35,6 +36,9 @@ shape = SubResource("Forma")
 process_callback = 0
 wait_time = 0.2
 one_shot = true
+
+[node name="AudioMoeda" type="Node" parent="."]
+script = ExtResource("3")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="timeout" from="TempoParada" to="." method="_on_tempo_parada_timeout"]
