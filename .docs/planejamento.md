@@ -1,6 +1,6 @@
 # FutCoin: Planejamento Técnico
 
-> Status em **09/11/2026**: **M0 concluído; M1 parcial**. FEAT-002 implementada: campo, paredes, 22 pregos, tiles animados e prévia F6. Próximo: **FEAT-003 — moeda, mira e câmera de jogo**.
+> Status em **10/11/2026**: **M0 e M1 concluídos**. FEAT-002/003 implementadas: campo, pregos, moeda, mira, câmera e prévias F6. Próximo: **FEAT-004 — juiz, turnos, gols e cronômetro**. Balanceamento físico segue ajustável por feedback.
 > Base: requisitos, enunciado e implementação FEAT-002. Scripts/cenas de campo e prévia presentes; HUD ainda provisório. Sem cena principal configurada ou export Linux.
 > Prazo de entrega: **20/11/2026**. Godot 4.7, GDScript, 2D top-down. Datas do roadmap são metas, não evidência de execução.
 > Notas técnicas da seção 3 foram registradas em 06/11; APIs devem ser conferidas durante a implementação. FEAT-002 validada no editor e renderizada no Godot 4.7.2; evidências na spec e no relatório da sessão.
@@ -26,8 +26,8 @@
 | `default_bus_layout.tres` ausente | Será criado no editor na fase de áudio | Sem ação agora |
 | Dados dos times | DTO estático e times fixos aprovados; sem `resources/times/` | Implementar conforme ADR-001 |
 | `project.godot` (Forward Plus + `d3d12`) | Renderer mantido por decisão do usuário | Reavaliar no M5 com o ambiente Linux alvo |
-| Assets | Processados em `assets/`; tiles e recursos de animação dos pregos integrados pela FEAT-002 | Integrar animação da moeda e disparo de impacto por colisão na FEAT-003 |
-| Gameplay e HUD | Campo e pregos implementados; HUD provisório em coordenadas antigas | Implementar FEAT-003 e adaptar HUD no M3 |
+| Assets | Campo, tiles, pregos e moeda integrados pelas FEAT-002/003; impacto dos pregos acionado por colisão | Integrar telas e variante dourada nas features consumidoras |
+| Gameplay e HUD | Núcleo físico jogável em `previa_moeda.tscn`; HUD provisório em coordenadas antigas | Implementar juiz na FEAT-004 e adaptar HUD no M3 |
 
 ### Estrutura-alvo
 ```text
@@ -49,7 +49,7 @@ fut-coin/
 
 ## 2. Análise dos assets originais (histórico de 06/11)
 
-Esta seção descreve os originais anteriores ao pipeline. As necessidades de recorte, extensão e geração de imagens abaixo foram atendidas pela FEAT-001; resultados finais na seção 2.1. Campo, tiles e pregos foram integrados pela FEAT-002; moeda e demais telas continuam pendentes.
+Esta seção descreve os originais anteriores ao pipeline. As necessidades de recorte, extensão e geração de imagens abaixo foram atendidas pela FEAT-001; resultados finais na seção 2.1. Campo, tiles e pregos foram integrados pela FEAT-002 e moeda pela FEAT-003; demais telas continuam pendentes.
 
 | Asset | Dimensão | Observação |
 |:---|:---|:---|
@@ -114,7 +114,8 @@ Imagem do campo 1152×320 em escala 1, com área interna local entre y=32 e y=28
 - **Times fixos nesta fase (decisão do usuário, 06/11):** **não há seleção de times por enquanto**. Os dois times ficam estáticos para testes, antes de implementar a tela de seleção. **Corinthians = player 1, prego prata, lado esquerdo. Flamengo = player 2, prego vermelho, lado direito.** Na seleção futura, o time da esquerda será o player 1 e o da direita o player 2. Os outros 7 brasões ficam importados, fora do MVP. O lado que começa continua sorteado (ver P10).
 - **Mouse compartilhado:** os dois jogadores usam o mesmo mouse (coop local) e se revezam. Não há dono fixo de dispositivo.
 - **Contraste prego × moeda (decisão do usuário):** o prego prata será **escurecido e ganhará leve tom azulado (aço/grafite)** no pipeline, para se distinguir do cinza claro da moeda, mantendo contorno preto e brilho. Verificação visual no M1 continua valendo; se ainda parecer próximo, escurecer mais.
-- **Indicador de posse/vez (decisão do usuário):** uma **aura na própria moeda, na cor do time que tem a posse** (aura prata/aço para o Corinthians, vermelha para o Flamengo). Fica ativa enquanto o time pode jogar (`AGUARDANDO_JOGADA` e `MIRANDO`) e some ou esmaece com a moeda em movimento. Implementação proposta: nó filho da moeda (sprite de halo ou `Polygon2D`/shader simples) com `modulate` na cor do time, pulsando por `Tween` (conta como animação geral sem sprites). **Atenção:** a aura prata tem pouco contraste com a moeda cinza, então usar contorno ou halo mais claro e verificar no M1. O HUD pode ter, opcionalmente, um destaque no placar como reforço.
+- **Indicador de posse/vez (decisão do usuário):** borda pulsante **rente à moeda**, com a cor do time autorizado a jogar: aço azulado dos pregos do Corinthians ou vermelho dos pregos do Flamengo. FEAT-003 implementou arco de raio 14/traço 2, pulso por Tween e parâmetro `cor_posse`; a prévia ainda usa cor fixa esbranquiçada. FEAT-004 atualizará a cor a cada turno; FEAT-005/M4 conferirá paleta/contraste. Fica ativa em `AGUARDANDO_JOGADA`/`MIRANDO` e some em movimento. O HUD pode reforçar a indicação de vez.
+- **Seta (alinhamento de 10/11):** amarelo mantido por enquanto. Experimentar cor por equipe e luminosidade/saturação pela força no polimento é viável; comprimento e direção permanecem a indicação principal. Degradê não foi aprovado como arte final nem solicitado para implementação agora.
 
 **Backup e reprodutibilidade:** os 14 originais (13 iniciais mais a tela de matchup do Gianlucca, `tela_versus.png`) estão em `assets/_fonte/` (com `.gdignore`, o Godot não os importa). O processamento foi automatizado pelo script versionado `assets/_fonte/processar_assets.py` (**FEAT-001 concluída**, commit `18bbc6b`), incluindo spritesheets de brilho, giro 2D top-down (`moeda_giro_sheet.png` e `moeda_dourada_giro_sheet.png`), flip, pregos de 12×12 px (`prego_prata.png` em tom aço e `prego_vermelho.png`) + colisão, campo estendido `1152×320`, `campo_tileset.png` (`128×128` com 4 linhas de tiles animados), banner `320×44`, 9 brasões em `48×48` e `tela_versus.png` em `640×360`.
 
@@ -140,6 +141,8 @@ Imagem do campo 1152×320 em escala 1, com área interna local entre y=32 e y=28
 
 ### Juiz + componentes + dados estáticos
 Segue o catálogo da skill: *Call Down, Signal Up*, estado explícito e DRY de transição.
+
+**Alinhamento de gameplay em 10/11:** prévias são ferramentas isoladas F6; a partida final será `main_game.tscn`, integrando os componentes existentes. FEAT-004 deve ocultar moeda/mira ao confirmar gol e coordenar animação/reinício. FEAT-005 deve reutilizar `hub.tscn` e reservar espaço superior para placar/cronômetro, ajustando composição e câmera sem cobrir campo jogável. A margem atual de 20 px não acomoda automaticamente o banner de 44 px. Física aceita pelo usuário; câmera aceita provisoriamente e reavaliada com HUD integrado.
 
 ```mermaid
 flowchart TD
@@ -189,7 +192,7 @@ Mantidos: `AudioManager` (autoload, 5 barramentos, mudo no pause), componente de
 | Marco | Datas | Entregas | Critério de pronto |
 |:---|:---|:---|:---|
 | **M0 Fundação (CONCLUÍDO)** | 06/11 | Respostas da Seção 6; `ADR-001`; `FEAT-000` (Project Settings 640×360 + Input Map `mira_clique`/`pausar`); `FEAT-001` (pipeline de assets + `.import`) | Projeto abre em 640×360 pixel perfect; 24 assets finais importados (commits `5ccfcd8`, `18bbc6b`, `d0ea75a`) |
-| **M1 Núcleo físico (parcial)** | 08 a 11/11 | FEAT-002 concluída: campo, paredes, 22 pregos e tiles animados. FEAT-003 especificada, implementação pendente: moeda (`28×28`), mira, bloqueio de tiro contra parede em contato, parada e câmera horizontal | Dá para lançar, quicar, parar. Sem tunelamento nem jitter; prévia do campo já disponível no F6 |
+| **M1 Núcleo físico (concluído)** | 08 a 11/11 | FEAT-002/003 concluídas: campo, 22 pregos, tiles, moeda (`28×28`), mira, bloqueio contra parede em contato, parada e câmera | Prévia F6 jogável; revisão de borda/seleção com 8.288 verificações sem falhas, editor e renderização conferidos. Física aceita; ambiente Linux sujeito a avaliação |
 | **M2 Regras** | 11 a 14/11 | Gols (`Area2D`), animação de gol, placar, turnos, cronômetro, gol de ouro, tempo esgotado em movimento, estados | Partida completa jogável do início ao fim |
 | **M3 Fluxo e UI** | 12 a 16/11 | Menu, tela versus, tela final, créditos, pause, HUD (`hub.tscn` em 640×360) com banner e brasões, `AudioManager` + barramentos | Fluxo menu → partida → final → menu, sem travar |
 | **M4 Arte e polimento** | 15 a 18/11 | Animação de sprite, de tile e Tweens, SFX/música, balanceamento, tremor de câmera (opcional) | Checklist do enunciado 100% |
@@ -214,7 +217,7 @@ Regra: **todo PR é revisado por quem não escreveu**. Antes da apresentação, 
 | P1 | **Resolução base:** 480×270 ou 640×360? | **Concluído:** `640×360` aplicada no `project.godot` (`5ccfcd8`) |
 | P2 | **Campo:** estender a arte atual (corta/insere grama/espelha)? | **Concluído:** Campo estendido para `1152×320` com gol de `~72 px` (`18bbc6b`) |
 | P3 | **Pipeline de assets:** reamostrar/redesenhar cada asset para o tamanho final? | **Concluído:** Gerado por `assets/_fonte/processar_assets.py` (moeda `28×28`, pregos `12×12`, brasões `48×48`, banner `320×44`, versus `640×360`) |
-| P4 | **Requisito "animação de tiles" e spritesheets:** | **Parcialmente integrado:** TileMapLayer animado e recurso de impacto dos pregos na FEAT-002; animação da moeda e verificação de gameplay pendentes em FEAT-003/M4 |
+| P4 | **Requisito "animação de tiles" e spritesheets:** | **Integrado no núcleo:** TileMapLayer animado, impacto de pregos por colisão e giro/brilho da moeda; animações de telas e variante dourada nas próximas features |
 | P5 | **Moeda sem rotação física** (`lock_rotation`) com animação por quadros (`moeda_giro_sheet.png` / `moeda_brilho_sheet.png`) | **Decidido:** Usar giro 2D top-down / brilho no deslize; manter `moeda_flip_sheet.png` guardado |
 | P6 | **Pasta `resources/times/`** vs. DTO estático da skill | **Decidido:** Seguir a skill (DTO estático `static var`, sem `resources/`) |
 | P7 | **Versionamento da governança** | **Atualizado em 09/11:** `AGENTS.md`, `.agent/` e `relatorios/` versionados no Git local por autorização do usuário; publicação remota não verificada nesta revisão. `assets/_fonte/` também versionada |

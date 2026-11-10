@@ -1,6 +1,6 @@
 # FutCoin: Documento de Requisitos e Contexto
 
-> Contexto atualizado em 09/11/2026 conforme ADR-001 e decisões do planejamento. Descreve o comportamento esperado. Estado real: M0 e FEAT-002 concluídos, M1 parcial; campo com prévia disponível, moeda e partida jogável pendentes. Itens **[A DEFINIR]** continuam abertos. O enunciado original está em `Trabalho 2 - 2026.3.md`.
+> Contexto atualizado em 10/11/2026 conforme ADR-001 e decisões do planejamento. Descreve o comportamento esperado. Estado real: M0/M1 e FEAT-002/003 concluídos; núcleo físico jogável na prévia F6, partida com regras ainda pendente. Itens **[A DEFINIR]** continuam abertos. O enunciado original está em `Trabalho 2 - 2026.3.md`.
 
 ---
 
@@ -63,6 +63,7 @@
 - Cada gol tem um **sensor** (`Area2D`) para detectar a moeda.
 - Para evitar gols falsos pela borda, o gol só conta quando a moeda estiver **inteiramente dentro** (ou depois de passar totalmente da linha).
 - Ao marcar: a moeda é **escondida**, toca a **animação de gol** (com SFX), o placar é atualizado e a jogada é reiniciada.
+- Alinhamento em 10/11: ocultar também indicador ativo/mira e bloquear novos tiros durante `GOL_ANIMANDO`; restaurar no reinício. Detecção/coordenação na FEAT-004 e apresentação/áudio integrados na FEAT-005/M4.
 
 ### 3.5 Início de partida e reinício após gol
 - **Início da partida:** o time que começa com a moeda é escolhido de forma **aleatória**.
@@ -110,12 +111,15 @@
 
 ## 6. HUD
 
+- Reservar faixa **superior** para placar/cronômetro, reutilizando `scenes/ui/hub/hub.tscn` adaptado a 640×360. HUD fixo na tela, sem cobrir o campo jogável ou consumir cliques destinados à moeda. Ajustar composição e câmera em conjunto: os 20 px atuais de margem não comportam automaticamente o banner de 44 px.
+
 - **Placar no estilo futebol**, contendo:
   - **Brasões** dos dois times.
   - **Gols** de cada time.
   - **Cronômetro** da partida.
 - Sugestão: **indicador de vez**, destacando o time que joga no turno.
 - A **seta de mira** (direção e força) faz parte da interface de jogo.
+- Borda pulsante rente à moeda indica a vez: aço azulado dos pregos para Corinthians, vermelho dos pregos para Flamengo. Atualizar a cada turno; na prévia FEAT-003 a cor é fixa e provisória. Cor por equipe/degradê da seta permanece sugestão de polimento, sem definição final; amarelo atual mantido.
 
 ---
 
@@ -156,7 +160,7 @@
 - Cabeça dos pregos: 12×12 px.
 - Brasões: 48×48 px; banner: 320×44 px; tela versus: 640×360 px.
 
-> A análise dos originais e o processamento estão registrados na FEAT-001 e em `.docs/planejamento.md`. Espaçamento estático e passagens dos goleiros foram conferidos na FEAT-002; legibilidade da moeda, contraste da aura e comportamento dinâmico ainda dependem da FEAT-003.
+> A análise dos originais e o processamento estão registrados na FEAT-001 e em `.docs/planejamento.md`. Espaçamento estático foi conferido na FEAT-002; FEAT-003 conferiu passagens dinâmicas, legibilidade da moeda e aura na prévia. Dificuldade e balanceamento continuam sujeitos a feedback.
 
 ---
 
