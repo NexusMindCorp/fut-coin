@@ -14,6 +14,7 @@ const VOLUME_MUSICA_PAUSE_DB: float = -12.0
 
 const CAMINHO_MUSICA_PARTIDA_NORMAL: String = "res://assets/sounds/music/jogo_normal_sound.mp3"
 const CAMINHO_MUSICA_GOL_DE_OURO: String = "res://assets/sounds/music/bola_ouro_sound.mp3"
+const CAMINHO_MUSICA_MENU: String = "res://assets/sounds/music/menu_sound.mp3"
 const CAMINHO_SFX_INICIO_PARTIDA: String = "res://assets/sounds/sfx/start_sound.mp3"
 const CAMINHO_SFX_GOL: String = "res://assets/sounds/sfx/gol_sound.mp3"
 const CAMINHO_SFX_VITORIA: String = "res://assets/sounds/sfx/vitoria_sound.mp3"
@@ -27,8 +28,8 @@ const CAMINHO_SFX_FOGOS: String = "res://assets/sounds/sfx/fogos_artificios.mp3"
 @export var sfx_gol: AudioStream = null
 @export var sfx_vitoria_trofeu: AudioStream = null
 @export var sfx_fogos_artificio: AudioStream = null
-@export_group("Streams Opcionais Pendentes")
 @export var musica_menu: AudioStream = null
+@export_group("Streams Opcionais Pendentes")
 @export var som_ambiente_torcida: AudioStream = null
 @export var sfx_apito_final: AudioStream = null
 
@@ -162,6 +163,8 @@ static func tocar_tela_vitoria() -> void:
 static func tocar_musica_menu() -> void:
 	if instancia == null:
 		return
+	instancia._sincronizar_estado_pausa_imediato()
+	instancia._cancelar_tween_ducking()
 	instancia.parar_fogos()
 	if instancia.musica_menu != null:
 		instancia.executar_musica(instancia.musica_menu)
@@ -256,6 +259,8 @@ func aplicar_ducking_temporario(volume_alvo_db: float, duracao: float) -> void:
 func _cancelar_tween_ducking() -> void:
 	if tween_ducking != null and tween_ducking.is_valid():
 		tween_ducking.kill()
+
+
 func _garantir_barramentos() -> void:
 	for nome_bus: StringName in [BUS_SFX, BUS_MUSIC, BUS_AMBIENTE, BUS_UI]:
 		if AudioServer.get_bus_index(nome_bus) == -1:
@@ -278,6 +283,11 @@ func _carregar_streams_padrao() -> void:
 		sfx_vitoria_trofeu = load(CAMINHO_SFX_VITORIA) as AudioStream
 	if sfx_fogos_artificio == null:
 		sfx_fogos_artificio = load(CAMINHO_SFX_FOGOS) as AudioStream
+	if musica_menu == null:
+		musica_menu = load(CAMINHO_MUSICA_MENU) as AudioStream
+	var mp3_menu: AudioStreamMP3 = musica_menu as AudioStreamMP3
+	if mp3_menu != null:
+		mp3_menu.loop = true
 	var mp3_normal: AudioStreamMP3 = musica_partida_normal as AudioStreamMP3
 	if mp3_normal != null:
 		mp3_normal.loop = true
