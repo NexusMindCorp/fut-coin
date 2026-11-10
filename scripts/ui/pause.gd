@@ -59,13 +59,15 @@ func ocultar() -> void:
 
 # --- AUXILIARES / SETTERS ---
 func _configurar_foco_mouse() -> void:
-	for botao: Button in [botao_continuar, botao_reiniciar, botao_menu]:
-		if botao == null:
-			continue
-		if not botao.mouse_entered.is_connected(_on_botao_mouse_entered.bind(botao)):
-			botao.mouse_entered.connect(_on_botao_mouse_entered.bind(botao))
-		if not botao.mouse_exited.is_connected(_on_botao_mouse_exited.bind(botao)):
-			botao.mouse_exited.connect(_on_botao_mouse_exited.bind(botao))
+	if botao_continuar != null:
+		botao_continuar.mouse_entered.connect(_focar_botao_continuar)
+		botao_continuar.mouse_exited.connect(_desfocar_botao_continuar)
+	if botao_reiniciar != null:
+		botao_reiniciar.mouse_entered.connect(_focar_botao_reiniciar)
+		botao_reiniciar.mouse_exited.connect(_desfocar_botao_reiniciar)
+	if botao_menu != null:
+		botao_menu.mouse_entered.connect(_focar_botao_menu)
+		botao_menu.mouse_exited.connect(_desfocar_botao_menu)
 
 
 func _limpar_foco_botoes() -> void:
@@ -82,6 +84,30 @@ func _on_botao_mouse_entered(botao: Button) -> void:
 func _on_botao_mouse_exited(botao: Button) -> void:
 	if botao != null and botao.has_focus():
 		botao.release_focus()
+
+
+func _focar_botao_continuar() -> void:
+	_on_botao_mouse_entered(botao_continuar)
+
+
+func _desfocar_botao_continuar() -> void:
+	_on_botao_mouse_exited(botao_continuar)
+
+
+func _focar_botao_reiniciar() -> void:
+	_on_botao_mouse_entered(botao_reiniciar)
+
+
+func _desfocar_botao_reiniciar() -> void:
+	_on_botao_mouse_exited(botao_reiniciar)
+
+
+func _focar_botao_menu() -> void:
+	_on_botao_mouse_entered(botao_menu)
+
+
+func _desfocar_botao_menu() -> void:
+	_on_botao_mouse_exited(botao_menu)
 
 
 func _definir_botoes_desabilitados(desabilitado: bool) -> void:

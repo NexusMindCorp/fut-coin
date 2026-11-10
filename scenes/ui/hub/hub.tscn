@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://cjn6mvcqmwhfc" path="res://assets/ui/hud/placar_banner.png" id="2_hmy7e"]
 [ext_resource type="Texture2D" uid="uid://d3hanob0osu3p" path="res://assets/ui/times/flamengo.png" id="3_flamengo"]
 [ext_resource type="Script" path="res://scripts/ui/hub.gd" id="4_hub"]
+[ext_resource type="PackedScene" uid="uid://c6n2v8kp5x4re" path="res://scenes/ui/sounds.tscn" id="5_sounds"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_yf5fn"]
 font_size = 13
@@ -86,5 +87,7 @@ focus_mode = 0
 theme_override_colors/font_color = Color(1, 0.92, 0.4, 1)
 theme_override_font_sizes/font_size = 10
 text = "||"
+
+[node name="Sounds" parent="." unique_id=528374619 instance=ExtResource("5_sounds")]
 
 [connection signal="pressed" from="Control/BotaoPausar" to="." method="_on_botao_pausar_pressed"]

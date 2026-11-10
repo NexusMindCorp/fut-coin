@@ -27,6 +27,7 @@ func _initialize() -> void:
 # --- DOMINIO PRINCIPAL / PROCESSADORES DE ESTADO ---
 func _executar() -> void:
 	partida = CENA_PARTIDA.instantiate() as MainGame
+	partida.duracao_partida = 180.0
 	root.add_child(partida)
 	moeda = partida.get_node("Moeda") as Moeda
 	mira = partida.get_node("Mira") as Mira
@@ -396,10 +397,10 @@ func _testar_gol_de_ouro_e_sorteio_independente() -> void:
 		tela_final != null
 		and tela_final.rotulo_vencedor.text == "VENCEDOR"
 		and tela_final.sprite_brasao.texture != null
-		and tela_final.confete_esquerdo.emitting
-		and tela_final.confete_direito.emitting
-		and tela_final.confete_central.emitting,
-		"TelaFinal instancia trofeu com brasao do vencedor, texto VENCEDOR e estouro de confete"
+		and tela_final.fogos_esquerdo.emitting
+		and tela_final.fogos_direito.emitting
+		and tela_final.fogos_central.emitting,
+		"TelaFinal instancia trofeu com brasao do vencedor, texto VENCEDOR e fogos de artificio"
 	)
 	tela_final.queue_free()
 	await process_frame

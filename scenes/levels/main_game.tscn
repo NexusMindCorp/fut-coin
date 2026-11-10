@@ -8,7 +8,7 @@
 [ext_resource type="PackedScene" path="res://scenes/entities/gol.tscn" id="6"]
 [ext_resource type="PackedScene" uid="uid://dmye2xr72lgiw" path="res://scenes/ui/hub/hub.tscn" id="7"]
 [ext_resource type="PackedScene" path="res://scenes/ui/gol.tscn" id="8"]
-[ext_resource type="PackedScene" uid="uid://b4n9v6kp2x8re" path="res://scenes/ui/pause.tscn" id="9"]
+[ext_resource type="PackedScene" uid="uid://b4oav6kp2x8re" path="res://scenes/ui/pause.tscn" id="9"]
 
 [node name="MainGame" type="Node2D" unique_id=1072508289]
 script = ExtResource("1")

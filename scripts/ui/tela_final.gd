@@ -3,13 +3,31 @@ extends Control
 
 # --- CONSTANTES ---
 const CAMINHO_PARTIDA: String = "res://scenes/levels/main_game.tscn"
-const CORES_CONFETE: Array[Color] = [
-	Color(1.0, 0.88, 0.22, 1.0),
-	Color(0.95, 0.24, 0.28, 1.0),
-	Color(0.28, 0.76, 1.0, 1.0),
-	Color(0.32, 0.92, 0.48, 1.0),
-	Color(0.98, 0.52, 0.18, 1.0),
-	Color(0.96, 0.96, 1.0, 1.0),
+const CORES_FOGOS: Array[Color] = [
+	Color(1.0, 0.9, 0.25, 1.0),
+	Color(1.0, 0.28, 0.34, 1.0),
+	Color(0.28, 0.85, 1.0, 1.0),
+	Color(0.35, 1.0, 0.52, 1.0),
+	Color(1.0, 0.55, 0.18, 1.0),
+	Color(0.92, 0.42, 1.0, 1.0),
+]
+const POSICOES_FOGOS_ESQUERDA: Array[Vector2] = [
+	Vector2(96.0, 88.0),
+	Vector2(142.0, 128.0),
+	Vector2(78.0, 152.0),
+	Vector2(124.0, 72.0),
+]
+const POSICOES_FOGOS_DIREITA: Array[Vector2] = [
+	Vector2(544.0, 88.0),
+	Vector2(498.0, 128.0),
+	Vector2(562.0, 152.0),
+	Vector2(516.0, 72.0),
+]
+const POSICOES_FOGOS_CENTRO: Array[Vector2] = [
+	Vector2(320.0, 74.0),
+	Vector2(228.0, 82.0),
+	Vector2(412.0, 82.0),
+	Vector2(320.0, 110.0),
 ]
 
 # --- REFERENCIAS A NODES ---
@@ -19,9 +37,10 @@ const CORES_CONFETE: Array[Color] = [
 @onready var sprite_brasao: Sprite2D = $Conteudo/AreaTrofeu/TrofeuSprite/BrasaoVencedor
 @onready var rotulo_equipe_placar: Label = $Conteudo/NomeEquipePlacar
 @onready var botao_jogar_novamente: Button = $Conteudo/BotaoJogarNovamente
-@onready var confete_esquerdo: CPUParticles2D = $CamadaConfete/ConfeteEsquerdo
-@onready var confete_direito: CPUParticles2D = $CamadaConfete/ConfeteDireito
-@onready var confete_central: CPUParticles2D = $CamadaConfete/ConfeteCentral
+@onready var fogos_esquerdo: CPUParticles2D = $CamadaFogos/FogosEsquerdo
+@onready var fogos_direito: CPUParticles2D = $CamadaFogos/FogosDireito
+@onready var fogos_central: CPUParticles2D = $CamadaFogos/FogosCentral
+@onready var ciclo_fogos: Timer = $CicloFogos
 
 # --- ESTADO ---
 static var resultado_pendente: bool = false
@@ -35,6 +54,7 @@ var placar_atual: Vector2i = Vector2i(1, 0)
 var por_gol_de_ouro_atual: bool = false
 var chave_vencedor_atual: StringName = &"corinthians"
 var transicionando: bool = false
+var indice_salva_fogos: int = 0
 var tween_entrada: Tween
 
 
@@ -46,7 +66,8 @@ func _ready() -> void:
 		_consumir_resultado_estatico()
 
 	_atualizar_interface_vencedor()
-	_animar_entrada_trofeu_e_confetes()
+	_animar_entrada_trofeu_e_fogos()
+	AudioManager.tocar_tela_vitoria()
 	if botao_jogar_novamente != null:
 		botao_jogar_novamente.grab_focus.call_deferred()
 
@@ -75,8 +96,8 @@ func _atualizar_interface_vencedor() -> void:
 		)
 
 
-func _animar_entrada_trofeu_e_confetes() -> void:
-	_disparar_estouro_confete()
+func _animar_entrada_trofeu_e_fogos() -> void:
+	_disparar_salva_fogos()
 
 	if tween_entrada != null and tween_entrada.is_valid():
 		tween_entrada.kill()
@@ -103,22 +124,42 @@ func _animar_entrada_trofeu_e_confetes() -> void:
 		).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
 
-func _disparar_estouro_confete() -> void:
-	var gradiente: Gradient = Gradient.new()
-	gradiente.offsets = PackedFloat32Array([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
-	gradiente.colors = PackedColorArray(CORES_CONFETE)
+func _disparar_salva_fogos() -> void:
+	var idx_pos: int = indice_salva_fogos % POSICOES_FOGOS_ESQUERDA.size()
+	var idx_cor_esq: int = (indice_salva_fogos * 2) % CORES_FOGOS.size()
+	var idx_cor_dir: int = (indice_salva_fogos * 2 + 1) % CORES_FOGOS.size()
+	var idx_cor_cen: int = (indice_salva_fogos * 2 + 3) % CORES_FOGOS.size()
+	indice_salva_fogos += 1
 
-	for emissor: CPUParticles2D in [confete_esquerdo, confete_direito, confete_central]:
-		if emissor != null:
-			emissor.color_initial_ramp = gradiente
-			emissor.restart()
-			emissor.emitting = true
+	_explodir_emissor_fogo(fogos_esquerdo, POSICOES_FOGOS_ESQUERDA[idx_pos], CORES_FOGOS[idx_cor_esq])
+	_explodir_emissor_fogo(fogos_direito, POSICOES_FOGOS_DIREITA[idx_pos], CORES_FOGOS[idx_cor_dir])
+	_explodir_emissor_fogo(fogos_central, POSICOES_FOGOS_CENTRO[idx_pos], CORES_FOGOS[idx_cor_cen])
+
+
+func _explodir_emissor_fogo(emissor: CPUParticles2D, posicao: Vector2, cor_principal: Color) -> void:
+	if emissor == null:
+		return
+	var rampa_vida: Gradient = Gradient.new()
+	rampa_vida.offsets = PackedFloat32Array([0.0, 0.18, 0.68, 1.0])
+	rampa_vida.colors = PackedColorArray([
+		Color(1.0, 1.0, 0.96, 1.0),
+		cor_principal,
+		cor_principal.lightened(0.18),
+		Color(cor_principal.r, cor_principal.g, cor_principal.b, 0.0),
+	])
+	emissor.position = posicao
+	emissor.color_ramp = rampa_vida
+	emissor.restart()
+	emissor.emitting = true
 
 
 func _transicionar_para(caminho_cena: String) -> void:
 	if transicionando:
 		return
 	transicionando = true
+	if ciclo_fogos != null:
+		ciclo_fogos.stop()
+	AudioManager.parar_audio_partida()
 	if botao_jogar_novamente != null:
 		botao_jogar_novamente.disabled = true
 	if is_inside_tree():
@@ -171,6 +212,11 @@ func _carregar_dados_padrao_teste() -> void:
 	placar_atual = Vector2i(2, 1)
 	por_gol_de_ouro_atual = false
 	chave_vencedor_atual = &"corinthians"
+
+
+func _on_ciclo_fogos_timeout() -> void:
+	if not transicionando:
+		_disparar_salva_fogos()
 
 
 func _on_botao_jogar_novamente_pressed() -> void:

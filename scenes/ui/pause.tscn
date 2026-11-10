@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://b4oav6kp2x8re"]
 
 [ext_resource type="Script" uid="uid://c7m8x4qp9w2ne" path="res://scripts/ui/pause.gd" id="1_pause"]
+[ext_resource type="PackedScene" uid="uid://c6n2v8kp5x4re" path="res://scenes/ui/sounds.tscn" id="2_sounds"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_painel"]
 bg_color = Color(0.06, 0.09, 0.14, 0.96)
@@ -165,6 +166,8 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_botao_press")
 theme_override_styles/hover = SubResource("StyleBoxFlat_botao_foco")
 theme_override_styles/focus = SubResource("StyleBoxFlat_botao_foco")
 text = "SAIR"
+
+[node name="Sounds" parent="." unique_id=619283745 instance=ExtResource("2_sounds")]
 
 [connection signal="pressed" from="PainelPause/MargemInterna/Conteudo/BotaoContinuar" to="." method="_on_botao_continuar_pressed"]
 [connection signal="pressed" from="PainelPause/MargemInterna/Conteudo/BotaoReiniciar" to="." method="_on_botao_reiniciar_pressed"]
