@@ -26,26 +26,47 @@ func _ready() -> void:
 
 
 # --- API PUBLICA ---
-func exibir_gol(equipe_marcadora: Prego.Equipe, placar: Vector2i, duracao: float = 1.2) -> void:
+func exibir_gol(
+	equipe_marcadora: Prego.Equipe,
+	placar: Vector2i,
+	duracao: float = 1.2,
+	chave_esquerda: StringName = &"",
+	chave_direita: StringName = &""
+) -> void:
 	_cancelar_tween()
 	animando = true
 	visible = true
 
-	var eh_corinthians: bool = equipe_marcadora == Prego.Equipe.CORINTHIANS
-	var nome_time: String = "CORINTHIANS" if eh_corinthians else "FLAMENGO"
-	var cor_destaque: Color = (
-		Color(0.68, 0.84, 1.0, 1.0)
-		if eh_corinthians
-		else Color(1.0, 0.36, 0.36, 1.0)
+	var eh_esquerda: bool = equipe_marcadora == Prego.Equipe.CORINTHIANS
+	var chave_esq: StringName = (
+		chave_esquerda
+		if chave_esquerda != &""
+		else Hub.time_esquerdo_selecionado
 	)
+	var chave_dir: StringName = (
+		chave_direita
+		if chave_direita != &""
+		else Hub.time_direito_selecionado
+	)
+	var chave_marcadora: StringName = chave_esq if eh_esquerda else chave_dir
+	var nome_time: String = Hub.obter_nome_time(chave_marcadora)
+	var sigla_esq: String = Hub.obter_sigla_time(chave_esq)
+	var sigla_dir: String = Hub.obter_sigla_time(chave_dir)
+	var cor_destaque: Color = Hub.obter_cor_time(chave_marcadora).lightened(0.22)
 
 	if brasao_equipe != null:
-		brasao_equipe.texture = TEXTURA_CORINTHIANS if eh_corinthians else TEXTURA_FLAMENGO
+		brasao_equipe.texture = Hub.obter_textura_time(chave_marcadora)
 	if rotulo_titulo != null:
 		rotulo_titulo.text = "GOOOL!"
 		rotulo_titulo.modulate = Color(1.0, 0.94, 0.32, 1.0)
 	if rotulo_detalhe != null:
-		rotulo_detalhe.text = "%s  |  COR %d x %d FLA" % [nome_time, placar.x, placar.y]
+		rotulo_detalhe.text = "%s  |  %s %d x %d %s" % [
+			nome_time,
+			sigla_esq,
+			placar.x,
+			placar.y,
+			sigla_dir,
+		]
 		rotulo_detalhe.modulate = cor_destaque
 
 	if painel_central != null:

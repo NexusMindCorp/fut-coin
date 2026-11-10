@@ -3,6 +3,7 @@ extends Control
 
 # --- CONSTANTES ---
 const CAMINHO_PARTIDA: String = "res://scenes/levels/main_game.tscn"
+const CAMINHO_TELA_VERSUS: String = "res://scenes/ui/tela_versus.tscn"
 const CORES_FOGOS: Array[Color] = [
 	Color(1.0, 0.9, 0.25, 1.0),
 	Color(1.0, 0.28, 0.34, 1.0),
@@ -37,6 +38,7 @@ const POSICOES_FOGOS_CENTRO: Array[Vector2] = [
 @onready var sprite_brasao: Sprite2D = $Conteudo/AreaTrofeu/TrofeuSprite/BrasaoVencedor
 @onready var rotulo_equipe_placar: Label = $Conteudo/NomeEquipePlacar
 @onready var botao_jogar_novamente: Button = $Conteudo/BotaoJogarNovamente
+@onready var botao_trocar_times: Button = $Conteudo/BotaoTrocarTimes
 @onready var fogos_esquerdo: CPUParticles2D = $CamadaFogos/FogosEsquerdo
 @onready var fogos_direito: CPUParticles2D = $CamadaFogos/FogosDireito
 @onready var fogos_central: CPUParticles2D = $CamadaFogos/FogosCentral
@@ -67,6 +69,7 @@ func _ready() -> void:
 
 	_atualizar_interface_vencedor()
 	_animar_entrada_trofeu_e_fogos()
+	_conectar_foco_mouse_botoes()
 	AudioManager.tocar_tela_vitoria()
 	if botao_jogar_novamente != null:
 		botao_jogar_novamente.grab_focus.call_deferred()
@@ -74,8 +77,7 @@ func _ready() -> void:
 
 # --- DOMINIO PRINCIPAL / PROCESSADORES DE ESTADO ---
 func _atualizar_interface_vencedor() -> void:
-	var eh_corinthians: bool = vencedor_atual == Prego.Equipe.CORINTHIANS
-	var nome_equipe: String = "CORINTHIANS" if eh_corinthians else "FLAMENGO"
+	var nome_equipe: String = Hub.obter_nome_time(chave_vencedor_atual)
 	var sufixo_ouro: String = " — GOL DE OURO!" if por_gol_de_ouro_atual else ""
 
 	if rotulo_vencedor != null:
@@ -89,11 +91,7 @@ func _atualizar_interface_vencedor() -> void:
 			placar_atual.y,
 			sufixo_ouro,
 		]
-		rotulo_equipe_placar.modulate = (
-			Color(0.72, 0.88, 1.0, 1.0)
-			if eh_corinthians
-			else Color(1.0, 0.45, 0.45, 1.0)
-		)
+		rotulo_equipe_placar.modulate = Hub.obter_cor_time(chave_vencedor_atual).lightened(0.22)
 
 
 func _animar_entrada_trofeu_e_fogos() -> void:
@@ -162,6 +160,8 @@ func _transicionar_para(caminho_cena: String) -> void:
 	AudioManager.parar_audio_partida()
 	if botao_jogar_novamente != null:
 		botao_jogar_novamente.disabled = true
+	if botao_trocar_times != null:
+		botao_trocar_times.disabled = true
 	if is_inside_tree():
 		get_tree().paused = false
 		var erro: Error = get_tree().change_scene_to_file(caminho_cena)
@@ -171,6 +171,8 @@ func _transicionar_para(caminho_cena: String) -> void:
 			if botao_jogar_novamente != null:
 				botao_jogar_novamente.disabled = false
 				botao_jogar_novamente.grab_focus()
+			if botao_trocar_times != null:
+				botao_trocar_times.disabled = false
 
 
 # --- API PUBLICA ---
@@ -187,9 +189,9 @@ static func definir_resultado(
 		chave_vencedor_registrada = chave_time
 	else:
 		chave_vencedor_registrada = (
-			&"corinthians"
+			Hub.time_esquerdo_selecionado
 			if vencedor == Prego.Equipe.CORINTHIANS
-			else &"flamengo"
+			else Hub.time_direito_selecionado
 		)
 	resultado_pendente = true
 
@@ -214,6 +216,23 @@ func _carregar_dados_padrao_teste() -> void:
 	chave_vencedor_atual = &"corinthians"
 
 
+func _conectar_foco_mouse_botoes() -> void:
+	if botao_jogar_novamente != null and not botao_jogar_novamente.mouse_entered.is_connected(_on_mouse_entered_jogar_novamente):
+		botao_jogar_novamente.mouse_entered.connect(_on_mouse_entered_jogar_novamente)
+	if botao_trocar_times != null and not botao_trocar_times.mouse_entered.is_connected(_on_mouse_entered_trocar_times):
+		botao_trocar_times.mouse_entered.connect(_on_mouse_entered_trocar_times)
+
+
+func _on_mouse_entered_jogar_novamente() -> void:
+	if not transicionando and botao_jogar_novamente != null and not botao_jogar_novamente.disabled:
+		botao_jogar_novamente.grab_focus()
+
+
+func _on_mouse_entered_trocar_times() -> void:
+	if not transicionando and botao_trocar_times != null and not botao_trocar_times.disabled:
+		botao_trocar_times.grab_focus()
+
+
 func _on_ciclo_fogos_timeout() -> void:
 	if not transicionando:
 		_disparar_salva_fogos()
@@ -221,3 +240,7 @@ func _on_ciclo_fogos_timeout() -> void:
 
 func _on_botao_jogar_novamente_pressed() -> void:
 	_transicionar_para(CAMINHO_PARTIDA)
+
+
+func _on_botao_trocar_times_pressed() -> void:
+	_transicionar_para(CAMINHO_TELA_VERSUS)

@@ -1,0 +1,299 @@
+[gd_scene format=3 uid="uid://d2p8v4kp1x7re"]
+
+[ext_resource type="Script" uid="uid://c8w4v2kqax6re" path="res://scripts/ui/tela_versus.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://omhea2h1vb6j" path="res://assets/ui/menus/tela_versus.png" id="2_fundo"]
+[ext_resource type="Texture2D" uid="uid://dq1scfafo5hh7" path="res://assets/ui/times/corinthians.png" id="3_corinthians"]
+[ext_resource type="Texture2D" uid="uid://d3hanob0osu3p" path="res://assets/ui/times/flamengo.png" id="4_flamengo"]
+[ext_resource type="PackedScene" uid="uid://c6n2v8kp5x4re" path="res://scenes/ui/sounds.tscn" id="5_sounds"]
+
+[node name="TelaVersus" type="Control" unique_id=719283610]
+texture_filter = 1
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+cores_times = Array[Color]([Color(0.55, 0.72, 0.92, 1), Color(0.92533237, 0.049644113, 9.62615e-07, 1), Color(0.95, 0.78, 0.22, 1), Color(0.78, 0.82, 0.88, 1), Color(0.18, 0.52, 0.98, 1), Color(0.7254902, 0.07058824, 0.3254902, 1), Color(0.18, 0.8, 0.36, 1), Color(0.98, 0.38, 0.2, 1), Color(0.22, 0.82, 0.78, 1)])
+
+[node name="FundoEstadio" type="TextureRect" parent="." unique_id=719283611]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_fundo")
+stretch_mode = 2
+
+[node name="Conteudo" type="Control" parent="." unique_id=719283612]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 29.0
+offset_top = 16.0
+offset_right = 29.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="FaixaTopo" type="ColorRect" parent="Conteudo" unique_id=719283613]
+layout_mode = 0
+offset_left = 170.0
+offset_top = 12.0
+offset_right = 470.0
+offset_bottom = 44.0
+mouse_filter = 2
+color = Color(0.05, 0.08, 0.16, 0.86)
+
+[node name="TituloSelecao" type="Label" parent="Conteudo" unique_id=719283614]
+layout_mode = 0
+offset_left = 170.0
+offset_top = 14.0
+offset_right = 470.0
+offset_bottom = 42.0
+theme_override_colors/font_color = Color(1, 0.92, 0.28, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 18
+text = "SELEÇÃO DE TIMES"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MolduraEsquerda" type="Control" parent="Conteudo" unique_id=719283615]
+anchors_preset = 0
+offset_left = 60.0
+offset_top = 104.0
+offset_right = 261.0
+offset_bottom = 252.0
+mouse_filter = 2
+
+[node name="FundoCabecalhoEsquerdo" type="ColorRect" parent="Conteudo/MolduraEsquerda" unique_id=719283616]
+layout_mode = 0
+offset_left = 4.0
+offset_top = -36.0
+offset_right = 197.0
+offset_bottom = -14.0
+mouse_filter = 2
+color = Color(0.06, 0.1, 0.18, 0.9)
+
+[node name="RotuloJogadorEsquerdo" type="Label" parent="Conteudo/MolduraEsquerda" unique_id=719283617]
+layout_mode = 0
+offset_left = 13.0
+offset_top = -36.0
+offset_right = 206.0
+offset_bottom = -14.0
+theme_override_colors/font_color = Color(0.7, 0.88, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 12
+text = "JOGADOR 1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BrasaoEsquerdo" type="Sprite2D" parent="Conteudo/MolduraEsquerda" unique_id=719283618]
+texture_filter = 1
+position = Vector2(100, 56)
+scale = Vector2(2, 2)
+texture = ExtResource("3_corinthians")
+
+[node name="BotaoAnteriorEsquerdo" type="Button" parent="Conteudo/MolduraEsquerda" unique_id=719283619]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 38.0
+offset_right = 38.0
+offset_bottom = 74.0
+focus_neighbor_right = NodePath("../BotaoProximoEsquerdo")
+focus_neighbor_bottom = NodePath("../../BotoesAcao/BotaoComecar")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 0.92, 0.28, 1)
+theme_override_colors/font_hover_color = Color(1, 0.92, 0.28, 1)
+theme_override_font_sizes/font_size = 16
+text = "<"
+
+[node name="BotaoProximoEsquerdo" type="Button" parent="Conteudo/MolduraEsquerda" unique_id=719283620]
+layout_mode = 0
+offset_left = 163.0
+offset_top = 38.0
+offset_right = 195.0
+offset_bottom = 74.0
+focus_neighbor_left = NodePath("../BotaoAnteriorEsquerdo")
+focus_neighbor_right = NodePath("../../MolduraDireita/BotaoAnteriorDireito")
+focus_neighbor_bottom = NodePath("../../BotoesAcao/BotaoComecar")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 0.92, 0.28, 1)
+theme_override_colors/font_hover_color = Color(1, 0.92, 0.28, 1)
+theme_override_font_sizes/font_size = 16
+text = ">"
+
+[node name="FundoNomeEsquerdo" type="ColorRect" parent="Conteudo/MolduraEsquerda" unique_id=719283621]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 114.0
+offset_right = 193.0
+offset_bottom = 142.0
+mouse_filter = 2
+color = Color(0.06, 0.1, 0.18, 0.94)
+
+[node name="NomeTimeEsquerdo" type="Label" parent="Conteudo/MolduraEsquerda" unique_id=719283622]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 114.0
+offset_right = 193.0
+offset_bottom = 142.0
+theme_override_colors/font_color = Color(0.75, 0.9, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 13
+text = "CORINTHIANS"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MolduraDireita" type="Control" parent="Conteudo" unique_id=719283623]
+anchors_preset = 0
+offset_left = 324.0
+offset_top = 101.0
+offset_right = 525.0
+offset_bottom = 249.0
+mouse_filter = 2
+
+[node name="FundoCabecalhoDireito" type="ColorRect" parent="Conteudo/MolduraDireita" unique_id=719283624]
+layout_mode = 0
+offset_left = 4.0
+offset_top = -36.0
+offset_right = 197.0
+offset_bottom = -14.0
+mouse_filter = 2
+color = Color(0.18, 0.06, 0.08, 0.9)
+
+[node name="RotuloJogadorDireito" type="Label" parent="Conteudo/MolduraDireita" unique_id=719283625]
+layout_mode = 0
+offset_left = 4.0
+offset_top = -36.0
+offset_right = 197.0
+offset_bottom = -14.0
+theme_override_colors/font_color = Color(1, 0.45, 0.45, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 12
+text = "JOGADOR 2"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BrasaoDireito" type="Sprite2D" parent="Conteudo/MolduraDireita" unique_id=719283626]
+texture_filter = 1
+position = Vector2(101, 56)
+scale = Vector2(2, 2)
+texture = ExtResource("4_flamengo")
+
+[node name="BotaoAnteriorDireito" type="Button" parent="Conteudo/MolduraDireita" unique_id=719283627]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 38.0
+offset_right = 38.0
+offset_bottom = 74.0
+focus_neighbor_left = NodePath("../../MolduraEsquerda/BotaoProximoEsquerdo")
+focus_neighbor_right = NodePath("../BotaoProximoDireito")
+focus_neighbor_bottom = NodePath("../../BotoesAcao/BotaoVoltar")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 0.92, 0.28, 1)
+theme_override_colors/font_hover_color = Color(1, 0.92, 0.28, 1)
+theme_override_font_sizes/font_size = 16
+text = "<"
+
+[node name="BotaoProximoDireito" type="Button" parent="Conteudo/MolduraDireita" unique_id=719283628]
+layout_mode = 0
+offset_left = 163.0
+offset_top = 38.0
+offset_right = 195.0
+offset_bottom = 74.0
+focus_neighbor_left = NodePath("../BotaoAnteriorDireito")
+focus_neighbor_bottom = NodePath("../../BotoesAcao/BotaoVoltar")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 0.92, 0.28, 1)
+theme_override_colors/font_hover_color = Color(1, 0.92, 0.28, 1)
+theme_override_font_sizes/font_size = 16
+text = ">"
+
+[node name="FundoNomeDireito" type="ColorRect" parent="Conteudo/MolduraDireita" unique_id=719283629]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 114.0
+offset_right = 193.0
+offset_bottom = 142.0
+mouse_filter = 2
+color = Color(0.18, 0.06, 0.08, 0.94)
+
+[node name="NomeTimeDireito" type="Label" parent="Conteudo/MolduraDireita" unique_id=719283630]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 114.0
+offset_right = 193.0
+offset_bottom = 142.0
+theme_override_colors/font_color = Color(1, 0.55, 0.55, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 13
+text = "FLAMENGO"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="InfoMouseCompartilhado" type="Label" parent="Conteudo" unique_id=719283631]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 274.0
+offset_right = 540.0
+offset_bottom = 294.0
+theme_override_colors/font_color = Color(0.95, 0.98, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 11
+text = "COOP LOCAL: MOUSE COMPARTILHADO (TURNOS ALTERNADOS)"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BotoesAcao" type="Control" parent="Conteudo" unique_id=719283632]
+anchors_preset = 0
+offset_left = 132.0
+offset_top = 300.0
+offset_right = 508.0
+offset_bottom = 344.0
+mouse_filter = 2
+
+[node name="BotaoComecar" type="Button" parent="Conteudo/BotoesAcao" unique_id=719283633]
+layout_mode = 0
+offset_right = 224.0
+offset_bottom = 40.0
+focus_neighbor_top = NodePath("../../MolduraEsquerda/BotaoAnteriorEsquerdo")
+focus_neighbor_right = NodePath("../BotaoVoltar")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 0.92, 0.28, 1)
+theme_override_colors/font_hover_color = Color(1, 0.92, 0.28, 1)
+theme_override_font_sizes/font_size = 15
+text = "COMEÇAR PARTIDA"
+
+[node name="BotaoVoltar" type="Button" parent="Conteudo/BotoesAcao" unique_id=719283634]
+layout_mode = 0
+offset_left = 240.0
+offset_right = 376.0
+offset_bottom = 40.0
+focus_neighbor_left = NodePath("../BotaoComecar")
+focus_neighbor_top = NodePath("../../MolduraDireita/BotaoAnteriorDireito")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 0.92, 0.28, 1)
+theme_override_colors/font_hover_color = Color(1, 0.92, 0.28, 1)
+theme_override_font_sizes/font_size = 15
+text = "VOLTAR"
+
+[node name="Sounds" parent="." unique_id=719283635 instance=ExtResource("5_sounds")]
+
+[connection signal="pressed" from="Conteudo/MolduraEsquerda/BotaoAnteriorEsquerdo" to="." method="_on_botao_anterior_esquerdo_pressed"]
+[connection signal="pressed" from="Conteudo/MolduraEsquerda/BotaoProximoEsquerdo" to="." method="_on_botao_proximo_esquerdo_pressed"]
+[connection signal="pressed" from="Conteudo/MolduraDireita/BotaoAnteriorDireito" to="." method="_on_botao_anterior_direito_pressed"]
+[connection signal="pressed" from="Conteudo/MolduraDireita/BotaoProximoDireito" to="." method="_on_botao_proximo_direito_pressed"]
+[connection signal="pressed" from="Conteudo/BotoesAcao/BotaoComecar" to="." method="_on_botao_comecar_pressed"]
+[connection signal="pressed" from="Conteudo/BotoesAcao/BotaoVoltar" to="." method="_on_botao_voltar_pressed"]

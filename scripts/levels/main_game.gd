@@ -22,12 +22,36 @@ signal partida_encerrada(vencedor: Prego.Equipe, placar: Vector2i, por_gol_de_ou
 # --- CONSTANTES ---
 const POSICAO_PADRAO_CENTRO: Vector2 = Vector2(576.0, 160.0)
 const CAMINHO_TELA_FINAL: String = "res://scenes/ui/tela_final.tscn"
+const CAMINHO_TELA_VERSUS: String = "res://scenes/ui/tela_versus.tscn"
 const CAMINHO_MENU_PRINCIPAL: String = "res://scenes/ui/menu_principal.tscn"
 
 # --- PARAMETROS CONFIGURAVEIS ---
 @export_group("Regras")
 @export_range(1.0, 600.0) var duracao_partida: float = 180.0
 @export_range(0.05, 5.0) var duracao_apresentacao_gol: float = 1.2
+@export_group("Cores dos Times (Sprite -> Cor)")
+@export var sprites_times: Array[Texture2D] = [
+	preload("res://assets/ui/times/corinthians.png"),
+	preload("res://assets/ui/times/flamengo.png"),
+	preload("res://assets/ui/times/atletico_mineiro.png"),
+	preload("res://assets/ui/times/botafogo.png"),
+	preload("res://assets/ui/times/cruzeiro.png"),
+	preload("res://assets/ui/times/fluminense.png"),
+	preload("res://assets/ui/times/palmeiras.png"),
+	preload("res://assets/ui/times/sao_paulo.png"),
+	preload("res://assets/ui/times/vasco.png"),
+]
+@export var cores_times: Array[Color] = [
+	Color(0.55, 0.72, 0.92, 1.0),
+	Color(0.92, 0.24, 0.24, 1.0),
+	Color(0.95, 0.78, 0.22, 1.0),
+	Color(0.78, 0.82, 0.88, 1.0),
+	Color(0.18, 0.52, 0.98, 1.0),
+	Color(0.72, 0.18, 0.32, 1.0),
+	Color(0.18, 0.80, 0.36, 1.0),
+	Color(0.98, 0.38, 0.20, 1.0),
+	Color(0.22, 0.82, 0.78, 1.0),
+]
 @export_group("Apresentacao")
 @export var cor_corinthians: Color = Color(0.55, 0.72, 0.92)
 @export var cor_flamengo: Color = Color(0.92, 0.24, 0.24)
@@ -258,7 +282,11 @@ func _encerrar_partida(vencedor: Prego.Equipe, por_gol_de_ouro: bool) -> void:
 func _obter_chave_brasao_equipe(equipe: Prego.Equipe) -> StringName:
 	if hub != null:
 		return hub.chave_time_esquerdo if equipe == Prego.Equipe.CORINTHIANS else hub.chave_time_direito
-	return &"corinthians" if equipe == Prego.Equipe.CORINTHIANS else &"flamengo"
+	return (
+		Hub.time_esquerdo_selecionado
+		if equipe == Prego.Equipe.CORINTHIANS
+		else Hub.time_direito_selecionado
+	)
 
 
 func _ir_para_tela_final(geracao_esperada: int) -> void:
@@ -300,6 +328,7 @@ func iniciar_partida() -> void:
 		get_tree().paused = false
 	if menu_pause != null:
 		menu_pause.ocultar()
+	_aplicar_cores_times_na_partida()
 
 	_cancelar_tween_aviso()
 	_ocultar_aviso_central()
@@ -339,6 +368,11 @@ func cancelar_partida() -> void:
 		get_tree().paused = false
 	if menu_pause != null:
 		menu_pause.ocultar()
+	if hub != null:
+		hub.definir_brasoes_por_chave(
+			Hub.time_esquerdo_selecionado,
+			Hub.time_direito_selecionado
+		)
 	_cancelar_tween_aviso()
 	_ocultar_aviso_central()
 	pausa_gol.stop()
@@ -462,11 +496,39 @@ func _obter_vencedor_atual() -> Prego.Equipe:
 
 
 func _cor_equipe(equipe: Prego.Equipe) -> Color:
-	return cor_corinthians if equipe == Prego.Equipe.CORINTHIANS else cor_flamengo
+	var chave: StringName = _obter_chave_brasao_equipe(equipe)
+	return Hub.obter_cor_time(chave)
+
+
+func _aplicar_cores_times_na_partida() -> void:
+	if Hub.cores_customizadas_por_chave.is_empty():
+		Hub.sincronizar_lista_cores_sprites(sprites_times, cores_times)
+	if hub != null:
+		hub.definir_brasoes_por_chave(
+			Hub.time_esquerdo_selecionado,
+			Hub.time_direito_selecionado
+		)
+	cor_corinthians = _cor_equipe(Prego.Equipe.CORINTHIANS)
+	cor_flamengo = _cor_equipe(Prego.Equipe.FLAMENGO)
+	if campo == null:
+		return
+	var container_pregos: Node = campo.get_node_or_null("Pregos")
+	if container_pregos == null:
+		return
+	for filho: Node in container_pregos.get_children():
+		var prego: Prego = filho as Prego
+		if prego == null:
+			continue
+		var cor_lado: Color = (
+			cor_corinthians
+			if prego.time == Prego.Equipe.CORINTHIANS
+			else cor_flamengo
+		)
+		prego.definir_cor_time(cor_lado)
 
 
 func _nome_equipe(equipe: Prego.Equipe) -> String:
-	return "Corinthians" if equipe == Prego.Equipe.CORINTHIANS else "Flamengo"
+	return Hub.obter_nome_time(_obter_chave_brasao_equipe(equipe))
 
 
 func _relogio_regulamentar_esgotado() -> bool:
@@ -495,7 +557,13 @@ func _exibir_aviso_gol(equipe_marcadora: Prego.Equipe) -> void:
 	if rotulo_aviso != null:
 		rotulo_aviso.visible = false
 	if gol_ui != null:
-		gol_ui.exibir_gol(equipe_marcadora, placar, duracao_apresentacao_gol)
+		gol_ui.exibir_gol(
+			equipe_marcadora,
+			placar,
+			duracao_apresentacao_gol,
+			_obter_chave_brasao_equipe(Prego.Equipe.CORINTHIANS),
+			_obter_chave_brasao_equipe(Prego.Equipe.FLAMENGO)
+		)
 
 
 func _exibir_aviso_temporario(mensagem: String) -> void:
@@ -670,9 +738,19 @@ func _on_pause_reinicio_solicitado() -> void:
 func _on_pause_menu_solicitado() -> void:
 	cancelar_partida()
 	if is_inside_tree() and get_tree().current_scene == self:
-		if ResourceLoader.exists(CAMINHO_MENU_PRINCIPAL):
-			var erro: Error = get_tree().change_scene_to_file(CAMINHO_MENU_PRINCIPAL)
-			if erro != OK:
-				push_error("Falha ao transicionar para '%s' (erro %d)." % [CAMINHO_MENU_PRINCIPAL, erro])
-		else:
-			get_tree().quit()
+		_transicionar_saida_menu.call_deferred()
+
+
+func _transicionar_saida_menu() -> void:
+	if not is_inside_tree() or get_tree().current_scene != self:
+		return
+	if ResourceLoader.exists(CAMINHO_MENU_PRINCIPAL):
+		var erro_menu: Error = get_tree().change_scene_to_file(CAMINHO_MENU_PRINCIPAL)
+		if erro_menu != OK:
+			push_error("Falha ao transicionar para '%s' (erro %d)." % [CAMINHO_MENU_PRINCIPAL, erro_menu])
+	elif ResourceLoader.exists(CAMINHO_TELA_VERSUS):
+		var erro_versus: Error = get_tree().change_scene_to_file(CAMINHO_TELA_VERSUS)
+		if erro_versus != OK:
+			push_error("Falha ao transicionar para '%s' (erro %d)." % [CAMINHO_TELA_VERSUS, erro_versus])
+	else:
+		get_tree().quit()
