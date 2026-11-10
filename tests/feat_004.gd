@@ -4,6 +4,8 @@ extends SceneTree
 const CENA_PARTIDA: PackedScene = preload("res://scenes/levels/main_game.tscn")
 const CENA_TELA_FINAL: PackedScene = preload("res://scenes/ui/tela_final.tscn")
 const CENA_TELA_VERSUS: PackedScene = preload("res://scenes/ui/tela_versus.tscn")
+const CENA_MENU: PackedScene = preload("res://scenes/ui/menu_principal.tscn")
+const CENA_CREDITOS: PackedScene = preload("res://scenes/ui/creditos.tscn")
 
 # --- ESTADO ---
 var falhas: int = 0
@@ -49,6 +51,7 @@ func _executar() -> void:
 	await _testar_gol_de_ouro_e_sorteio_independente()
 	await _testar_pausa_abandono_e_reinicio()
 	await _testar_selecao_times_e_propagacao()
+	await _testar_menu_creditos_e_musica()
 	await _testar_isolamento_duas_partidas()
 
 	partida.queue_free()
@@ -498,6 +501,63 @@ func _testar_pausa_abandono_e_reinicio() -> void:
 		"Botao Sair do Pause tolera remocao sincrona da SceneTree sem acessar get_tree().root nulo"
 	)
 	container_temp.queue_free()
+	await process_frame
+
+
+func _testar_menu_creditos_e_musica() -> void:
+	var menu: MenuPrincipal = CENA_MENU.instantiate() as MenuPrincipal
+	root.add_child(menu)
+	await _quadros(2)
+	var gerenciador: AudioManager = AudioManager.instancia
+	_verificar(
+		gerenciador != null
+		and gerenciador.musica_menu != null
+		and (gerenciador.musica_menu as AudioStreamMP3).loop
+		and gerenciador.player_musica.stream == gerenciador.musica_menu,
+		"MenuPrincipal ativa a musica de menu (menu_sound.mp3) em loop pelo AudioManager"
+	)
+	_verificar(
+		menu.botao_jogar != null and menu.botao_creditos != null and menu.botao_sair != null
+		and menu.botao_jogar.text == "JOGAR"
+		and ResourceLoader.exists(MenuPrincipal.CAMINHO_TELA_VERSUS)
+		and ResourceLoader.exists(MenuPrincipal.CAMINHO_CREDITOS),
+		"MenuPrincipal tem Jogar/Creditos/Sair e destinos existentes"
+	)
+	var stream_antes: AudioStream = gerenciador.player_musica.stream
+	var tela_versus_musica: TelaVersus = CENA_TELA_VERSUS.instantiate() as TelaVersus
+	root.add_child(tela_versus_musica)
+	await _quadros(2)
+	_verificar(
+		gerenciador.player_musica.stream == stream_antes
+		and gerenciador.player_musica.stream == gerenciador.musica_menu,
+		"Selecao de times mantem a mesma musica de menu (sem trocar de stream)"
+	)
+	tela_versus_musica.queue_free()
+	menu.transicionando = true
+	menu._on_botao_creditos_pressed()
+	_verificar(
+		menu.transicionando and not menu.botao_jogar.disabled,
+		"Menu ignora nova navegacao enquanto uma transicao esta em andamento"
+	)
+	menu.queue_free()
+	await process_frame
+
+	var creditos: Creditos = CENA_CREDITOS.instantiate() as Creditos
+	root.add_child(creditos)
+	await _quadros(2)
+	var texto: String = creditos.texto_creditos.text
+	_verificar(
+		texto.contains("_EasilyImpressed")
+		and texto.contains("Kim Lightyear")
+		and texto.contains("Retro BGM Chan")
+		and texto.contains("DRAGON-STUDIO")
+		and texto.contains("Gianlucca Paiva")
+		and not texto.to_lower().contains("todo")
+		and not texto.to_lower().contains("placeholder")
+		and ResourceLoader.exists(Creditos.CAMINHO_MENU_PRINCIPAL),
+		"Creditos exibem README (_EasilyImpressed, Pixabay) e desenvolvedores sem placeholders"
+	)
+	creditos.queue_free()
 	await process_frame
 
 

@@ -4,6 +4,7 @@ extends Control
 # --- CONSTANTES ---
 const CAMINHO_PARTIDA: String = "res://scenes/levels/main_game.tscn"
 const CAMINHO_TELA_VERSUS: String = "res://scenes/ui/tela_versus.tscn"
+const CAMINHO_MENU_PRINCIPAL: String = "res://scenes/ui/menu_principal.tscn"
 const CORES_FOGOS: Array[Color] = [
 	Color(1.0, 0.9, 0.25, 1.0),
 	Color(1.0, 0.28, 0.34, 1.0),
@@ -39,6 +40,7 @@ const POSICOES_FOGOS_CENTRO: Array[Vector2] = [
 @onready var rotulo_equipe_placar: Label = $Conteudo/NomeEquipePlacar
 @onready var botao_jogar_novamente: Button = $Conteudo/BotaoJogarNovamente
 @onready var botao_trocar_times: Button = $Conteudo/BotaoTrocarTimes
+@onready var botao_menu: Button = $Conteudo/BotaoMenu
 @onready var fogos_esquerdo: CPUParticles2D = $CamadaFogos/FogosEsquerdo
 @onready var fogos_direito: CPUParticles2D = $CamadaFogos/FogosDireito
 @onready var fogos_central: CPUParticles2D = $CamadaFogos/FogosCentral
@@ -162,6 +164,8 @@ func _transicionar_para(caminho_cena: String) -> void:
 		botao_jogar_novamente.disabled = true
 	if botao_trocar_times != null:
 		botao_trocar_times.disabled = true
+	if botao_menu != null:
+		botao_menu.disabled = true
 	if is_inside_tree():
 		get_tree().paused = false
 		var erro: Error = get_tree().change_scene_to_file(caminho_cena)
@@ -173,6 +177,8 @@ func _transicionar_para(caminho_cena: String) -> void:
 				botao_jogar_novamente.grab_focus()
 			if botao_trocar_times != null:
 				botao_trocar_times.disabled = false
+			if botao_menu != null:
+				botao_menu.disabled = false
 
 
 # --- API PUBLICA ---
@@ -221,6 +227,13 @@ func _conectar_foco_mouse_botoes() -> void:
 		botao_jogar_novamente.mouse_entered.connect(_on_mouse_entered_jogar_novamente)
 	if botao_trocar_times != null and not botao_trocar_times.mouse_entered.is_connected(_on_mouse_entered_trocar_times):
 		botao_trocar_times.mouse_entered.connect(_on_mouse_entered_trocar_times)
+	if botao_menu != null and not botao_menu.mouse_entered.is_connected(_on_mouse_entered_menu):
+		botao_menu.mouse_entered.connect(_on_mouse_entered_menu)
+
+
+func _on_mouse_entered_menu() -> void:
+	if not transicionando and botao_menu != null and not botao_menu.disabled:
+		botao_menu.grab_focus()
 
 
 func _on_mouse_entered_jogar_novamente() -> void:
@@ -244,3 +257,7 @@ func _on_botao_jogar_novamente_pressed() -> void:
 
 func _on_botao_trocar_times_pressed() -> void:
 	_transicionar_para(CAMINHO_TELA_VERSUS)
+
+
+func _on_botao_menu_pressed() -> void:
+	_transicionar_para(CAMINHO_MENU_PRINCIPAL)

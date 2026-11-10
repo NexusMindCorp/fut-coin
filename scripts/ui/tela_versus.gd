@@ -56,6 +56,7 @@ var tween_brasao_direito: Tween
 
 # --- INICIALIZACAO E LOOP DE FISICA/PROCESSAMENTO ---
 func _ready() -> void:
+	AudioManager.tocar_musica_menu()
 	Hub.sincronizar_lista_cores_sprites(sprites_times, cores_times)
 	_conectar_foco_mouse_botoes()
 	carregar_selecao_atual()

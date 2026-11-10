@@ -22,7 +22,6 @@ signal partida_encerrada(vencedor: Prego.Equipe, placar: Vector2i, por_gol_de_ou
 # --- CONSTANTES ---
 const POSICAO_PADRAO_CENTRO: Vector2 = Vector2(576.0, 160.0)
 const CAMINHO_TELA_FINAL: String = "res://scenes/ui/tela_final.tscn"
-const CAMINHO_TELA_VERSUS: String = "res://scenes/ui/tela_versus.tscn"
 const CAMINHO_MENU_PRINCIPAL: String = "res://scenes/ui/menu_principal.tscn"
 
 # --- PARAMETROS CONFIGURAVEIS ---
@@ -748,9 +747,5 @@ func _transicionar_saida_menu() -> void:
 		var erro_menu: Error = get_tree().change_scene_to_file(CAMINHO_MENU_PRINCIPAL)
 		if erro_menu != OK:
 			push_error("Falha ao transicionar para '%s' (erro %d)." % [CAMINHO_MENU_PRINCIPAL, erro_menu])
-	elif ResourceLoader.exists(CAMINHO_TELA_VERSUS):
-		var erro_versus: Error = get_tree().change_scene_to_file(CAMINHO_TELA_VERSUS)
-		if erro_versus != OK:
-			push_error("Falha ao transicionar para '%s' (erro %d)." % [CAMINHO_TELA_VERSUS, erro_versus])
 	else:
 		get_tree().quit()

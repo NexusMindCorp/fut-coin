@@ -142,11 +142,12 @@ vertical_alignment = 1
 
 [node name="BotaoJogarNovamente" type="Button" parent="Conteudo" groups=["botoes_interface", "ui_buttons"]]
 layout_mode = 0
-offset_left = 152.0
+offset_left = 85.0
 offset_top = 302.0
-offset_right = 312.0
+offset_right = 235.0
 offset_bottom = 338.0
 focus_neighbor_right = NodePath("../BotaoTrocarTimes")
+focus_neighbor_left = NodePath("../BotaoMenu")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_focus_color = Color(1, 0.92, 0.28, 1)
 theme_override_colors/font_hover_color = Color(1, 0.92, 0.28, 1)
@@ -155,19 +156,35 @@ text = "Jogar Novamente"
 
 [node name="BotaoTrocarTimes" type="Button" parent="Conteudo" groups=["botoes_interface", "ui_buttons"]]
 layout_mode = 0
-offset_left = 328.0
+offset_left = 245.0
 offset_top = 302.0
-offset_right = 488.0
+offset_right = 395.0
 offset_bottom = 338.0
 focus_neighbor_left = NodePath("../BotaoJogarNovamente")
+focus_neighbor_right = NodePath("../BotaoMenu")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_focus_color = Color(1, 0.92, 0.28, 1)
 theme_override_colors/font_hover_color = Color(1, 0.92, 0.28, 1)
 theme_override_font_sizes/font_size = 14
 text = "Trocar Times"
 
+[node name="BotaoMenu" type="Button" parent="Conteudo" groups=["botoes_interface", "ui_buttons"]]
+layout_mode = 0
+offset_left = 405.0
+offset_top = 302.0
+offset_right = 555.0
+offset_bottom = 338.0
+focus_neighbor_left = NodePath("../BotaoTrocarTimes")
+focus_neighbor_right = NodePath("../BotaoJogarNovamente")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 0.92, 0.28, 1)
+theme_override_colors/font_hover_color = Color(1, 0.92, 0.28, 1)
+theme_override_font_sizes/font_size = 14
+text = "Menu"
+
 [node name="Sounds" parent="." unique_id=729384615 instance=ExtResource("4_sounds")]
 
 [connection signal="timeout" from="CicloFogos" to="." method="_on_ciclo_fogos_timeout"]
 [connection signal="pressed" from="Conteudo/BotaoJogarNovamente" to="." method="_on_botao_jogar_novamente_pressed"]
 [connection signal="pressed" from="Conteudo/BotaoTrocarTimes" to="." method="_on_botao_trocar_times_pressed"]
+[connection signal="pressed" from="Conteudo/BotaoMenu" to="." method="_on_botao_menu_pressed"]
