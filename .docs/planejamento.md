@@ -1,11 +1,11 @@
 # FutCoin: Planejamento Técnico
 
-> Status em **10/11/2026**: **M0, M1, M2 e M3 concluídos; M4 em fase final**. FEAT-002/003/004/005 implementadas e validadas (`tests/feat_003.gd`: 8.288 verificações; `tests/feat_004.gd`: 116 verificações, zero falhas): campo, pregos, moeda (prata e dourada), mira (`scenes/ui/mira.tscn`), câmera (`Y=136`), juiz (`main_game.tscn`), sensores (`scenes/entities/gol.tscn`), animação de gol (`scenes/ui/gol.tscn`), HUD (`scenes/ui/hub/hub.tscn`), modal de pausa (`scenes/ui/pause.tscn`), tela de seleção de times/versus (`scenes/ui/tela_versus.tscn` com os 9 clubes e cores dinâmicas em shader), tela final de vitória (`scenes/ui/tela_final.tscn` com troféu 16 bits e fogos de artifício), menu principal (`scenes/ui/menu_principal.tscn` com arte 16 bits, música em loop contínuo e easter egg estocástico do tigre), créditos (`scenes/ui/creditos.tscn`) e arquitetura de áudio (`default_bus_layout.tres`, `AudioManager`, `Sounds` e `AudioMoeda` com 10 assets `.mp3`). Próximo: polimento de mixagem/balanço (M4) e export Linux em `build/` (M5).
+> Status em **11/11/2026**: **M0 a M3 concluídos**, partida e fluxo implementados; M4 permanece em polimento de áudio e M5 em export/teste Linux. FEAT-006 centralizou catálogo/seleção em DadosTimes; FEAT-007 entregou seta por força; FEAT-008 entregou brasões Lanczos no Hub e pause acima do HUD. Duração aprovada de 300 segundos. Últimas evidências: 127 verificações na suíte 004 e 8.288 na 003, zero falhas; execuções datadas nas specs/relatórios, não repetidas nesta atualização documental.
 
 Entrega de regras e UI de partida: [FEAT-004 — juiz, turnos, gols e cronômetro](../.agent/features/feat-004-juiz-turnos-gols-cronometro.md) concluída em 10/11, incluindo diagnóstico e resolução de bugs em [TS-004](../.agent/troubleshooting/ts-004-regras-moeda-gol-e-pause.md).
 
 [FEAT-005 — interface, fluxo e áudio](../.agent/features/feat-005-interface-fluxo-audio.md) concluída: `hub.tscn`, `gol.tscn`, `pause.tscn`, `tela_versus.tscn`, `tela_final.tscn`, `menu_principal.tscn`, `creditos.tscn` e toda a infraestrutura de áudio (`AudioManager`, `Sounds`, `AudioMoeda` e 5 barramentos) 100% integrados e validados no fluxo F5.
-> Base: requisitos, enunciado e implementação FEAT-002. Scripts/cenas de campo e prévia presentes; HUD ainda provisório. Sem cena principal configurada ou export Linux.
+> Base atual: requisitos, ADR-001 e FEAT-000 a 008. Cena inicial `menu_principal.tscn` configurada; HUD integrado. Export/teste Linux ainda não demonstrado. Notas de diagnóstico e rascunhos datados abaixo são históricos e não substituem as decisões atuais.
 > Prazo de entrega: **20/11/2026**. Godot 4.7, GDScript, 2D top-down. Datas do roadmap são metas, não evidência de execução.
 > Notas técnicas da seção 3 foram registradas em 06/11; APIs devem ser conferidas durante a implementação. FEAT-002 validada no editor e renderizada no Godot 4.7.2; evidências na spec e no relatório da sessão.
 
@@ -27,11 +27,11 @@ Entrega de regras e UI de partida: [FEAT-004 — juiz, turnos, gols e cronômetr
 | Governança | `AGENTS.md`, `.agent/` e `relatorios/` rastreados no Git local | Versionamento autorizado em 09/11; publicação remota não verificada nesta revisão |
 | `image.png` (prova de autorização) na raiz | O Godot a importa como recurso. Está linkada no README | Mover para `.docs/creditos/` + `.gdignore`, ajustando o link do README (só com seu aval) |
 | `README.md` | Conteúdo correto. A URL do Reddit carrega parâmetros de anti-bot (`js_challenge`, `jsc_token`) | Limpar a URL para o link base do post (só com seu aval) |
-| `default_bus_layout.tres` ausente | Será criado no editor na fase de áudio | Sem ação agora |
-| Dados dos times | DTO estático e times fixos aprovados; sem `resources/times/` | Implementar conforme ADR-001 |
+| `default_bus_layout.tres` | Implementado com AudioManager, Sounds e AudioMoeda | Ajustar mixagem no M4; não recriar infraestrutura |
+| Dados dos times | Catálogo e seleção estática centralizados em DadosTimes, com nove clubes | Manter autoridade única; sem Resource/novo Autoload |
 | `project.godot` (Forward Plus + `d3d12`) | Renderer mantido por decisão do usuário | Reavaliar no M5 com o ambiente Linux alvo |
-| Assets | Campo, tiles, pregos e moeda integrados pelas FEAT-002/003; impacto dos pregos acionado por colisão | Integrar telas e variante dourada nas features consumidoras |
-| Gameplay e HUD | Núcleo físico jogável em `previa_moeda.tscn`; HUD provisório em coordenadas antigas | Implementar juiz na FEAT-004 e adaptar HUD no M3 |
+| Assets | Campo, moeda, pregos, menus, áudio e brasões integrados; HUD usa derivados Lanczos 18×18 | Preservar originais e atribuições; fechar pendências de áudio no M4 |
+| Gameplay e HUD | Partida completa, HUD e pause integrados; cinco minutos e seleção dos clubes | Polimento de áudio e teste/export Linux permanecem |
 
 ### Estrutura-alvo
 ```text
@@ -44,7 +44,7 @@ fut-coin/
 │   └── ui/{hud,menus,times}/
 ├── build/                            (executável Linux)
 ├── scenes/{entities,levels,ui}/
-├── scripts/{autoload,entities,levels,ui}/
+├── scripts/{autoload,data,entities,levels,ui}/
 ├── default_bus_layout.tres
 └── project.godot
 ```
@@ -53,7 +53,7 @@ fut-coin/
 
 ## 2. Análise dos assets originais (histórico de 06/11)
 
-Esta seção descreve os originais anteriores ao pipeline. As necessidades de recorte, extensão e geração de imagens abaixo foram atendidas pela FEAT-001; resultados finais na seção 2.1. Campo, tiles e pregos foram integrados pela FEAT-002 e moeda pela FEAT-003; demais telas continuam pendentes.
+Esta seção descreve os originais anteriores ao pipeline. As necessidades de recorte, extensão e geração de imagens abaixo foram atendidas pela FEAT-001; resultados finais na seção 2.1. Campo, tiles e pregos foram integrados pela FEAT-002 e moeda pela FEAT-003; regras e telas foram integradas pelas FEAT-004/005, com refinamentos FEAT-006 a 008.
 
 | Asset | Dimensão | Observação |
 |:---|:---|:---|
@@ -94,7 +94,7 @@ Valores iniciais em 640×360: HUD ~48 px no topo, campo útil ~312 px de altura,
 A moeda e o prego estão em escalas diferentes (70 contra 10 pixels de arte). Cada asset é reamostrado para seu tamanho final.
 
 **Composição vigente do campo e integração futura do HUD (640×360):**
-Imagem do campo 1152×320 em escala 1, com área interna local entre y=32 e y=288 (256 px de altura). Composição aprovada em 10/11 para FEAT-005: preservar banner de 44 px, campo começando visualmente em Y=44 e recorte de 4 px da decoração inferior. Área jogável permanece integral. Ajustar câmera/limites conforme spec, sem mover posições físicas ou somar deslocamento de campo e câmera duas vezes. Composição ainda não implementada/renderizada; estudo anterior de faixa de 40 px não foi adotado.
+Imagem do campo 1152×320 em escala 1, com área interna local entre y=32 e y=288 (256 px de altura). Composição aprovada em 10/11 para FEAT-005: preservar banner de 44 px, campo começando visualmente em Y=44 e recorte de 4 px da decoração inferior. Área jogável permanece integral. Ajustar câmera/limites conforme spec, sem mover posições físicas ou somar deslocamento de campo e câmera duas vezes. Composição implementada/renderizada conforme FEAT-005; estudo anterior de faixa de 40 px não foi adotado.
 
 | Elemento | Tamanho proposto |
 |:---|:---|
@@ -119,7 +119,7 @@ Imagem do campo 1152×320 em escala 1, com área interna local entre y=32 e y=28
 - **Mouse compartilhado:** os dois jogadores usam o mesmo mouse (coop local) e se revezam. Não há dono fixo de dispositivo.
 - **Contraste prego × moeda (decisão do usuário):** o prego prata será **escurecido e ganhará leve tom azulado (aço/grafite)** no pipeline, para se distinguir do cinza claro da moeda, mantendo contorno preto e brilho. Verificação visual no M1 continua valendo; se ainda parecer próximo, escurecer mais.
 - **Indicador de posse/vez (decisão do usuário):** borda pulsante **rente à moeda**, com a cor do time autorizado a jogar: aço azulado dos pregos do Corinthians ou vermelho dos pregos do Flamengo. FEAT-003 implementou arco de raio 14/traço 2, pulso por Tween e parâmetro `cor_posse`; a prévia ainda usa cor fixa esbranquiçada. FEAT-004 atualizará a cor a cada turno; FEAT-005/M4 conferirá paleta/contraste. Fica ativa em `AGUARDANDO_JOGADA`/`MIRANDO` e some em movimento. O HUD pode reforçar a indicação de vez.
-- **Seta (alinhamento de 10/11):** amarelo mantido por enquanto. Experimentar cor por equipe e luminosidade/saturação pela força no polimento é viável; comprimento e direção permanecem a indicação principal. Degradê não foi aprovado como arte final nem solicitado para implementação agora.
+- **Seta (aprovada em 11/11):** amarela até 1/3, laranja até 2/3 e vermelha acima, preservando contorno e comprimento/direção; bloqueio cinza com X. Não usar o antigo rascunho de amarelo fixo como requisito atual.
 
 **Backup e reprodutibilidade:** os 14 originais (13 iniciais mais a tela de matchup do Gianlucca, `tela_versus.png`) estão em `assets/_fonte/` (com `.gdignore`, o Godot não os importa). O processamento foi automatizado pelo script versionado `assets/_fonte/processar_assets.py` (**FEAT-001 concluída**, commit `18bbc6b`), incluindo spritesheets de brilho, giro 2D top-down (`moeda_giro_sheet.png` e `moeda_dourada_giro_sheet.png`), flip, pregos de 12×12 px (`prego_prata.png` em tom aço e `prego_vermelho.png`) + colisão, campo estendido `1152×320`, `campo_tileset.png` (`128×128` com 4 linhas de tiles animados), banner `320×44`, 9 brasões em `48×48` e `tela_versus.png` em `640×360`.
 
@@ -174,7 +174,9 @@ flowchart TD
 ### Alternativa descartada no alinhamento inicial
 Cena `partida` com **um único script grande** (moeda, turnos, HUD e pause inline) e sem `TelaBase` (cada menu com seu `change_scene_to_file`). **Prós:** menos arquivos, começa mais rápido. **Contras:** código duplicado, `partida.gd` com 400+ linhas, mais difícil de explicar na arguição individual e de dividir entre 4 pessoas. Não recomendada, dado o critério de "qualidade do código".
 
-### 4.1 Alinhamento com o catálogo da skill (decisão do usuário, 06/11)
+### 4.1 Alinhamento histórico com o catálogo da skill (06/11)
+
+As escolhas de não usar TelaBase/Resource continuam vigentes. Times fixos e seleção adiada eram o escopo inicial; a entrega atual possui nove clubes e DadosTimes conforme FEAT-005/006.
 A arquitetura segue o `catalogo-padroes-godot.md` da skill `godot-game-dev`. O rascunho acima é corrigido assim:
 | Rascunho | Segundo a skill |
 |:---|:---|
@@ -197,8 +199,8 @@ Mantidos: `AudioManager` (autoload, 5 barramentos, mudo no pause), componente de
 |:---|:---|:---|:---|
 | **M0 Fundação (CONCLUÍDO)** | 06/11 | Respostas da Seção 6; `ADR-001`; `FEAT-000` (Project Settings 640×360 + Input Map `mira_clique`/`pausar`); `FEAT-001` (pipeline de assets + `.import`) | Projeto abre em 640×360 pixel perfect; 24 assets finais importados (commits `5ccfcd8`, `18bbc6b`, `d0ea75a`) |
 | **M1 Núcleo físico (concluído)** | 08 a 11/11 | FEAT-002/003 concluídas: campo, 22 pregos, tiles, moeda (`28×28`), mira, bloqueio contra parede em contato, parada e câmera | Prévia F6 jogável; revisão de borda/seleção com 8.288 verificações sem falhas, editor e renderização conferidos. Física aceita; ambiente Linux sujeito a avaliação |
-| **M2 Regras** | 11 a 14/11 | Gols (`Area2D`), animação de gol, placar, turnos, cronômetro, gol de ouro, tempo esgotado em movimento, estados | Partida completa jogável do início ao fim |
-| **M3 Fluxo e UI** | 12 a 16/11 | Menu, tela versus, tela final, créditos, pause, HUD (`hub.tscn` em 640×360) com banner e brasões, `AudioManager` + barramentos | Fluxo menu → partida → final → menu, sem travar |
+| **M2 Regras (concluído)** | Implementado em 10/11; revalidado em 11/11 | Juiz, gols, turnos, cronômetro de 300 s e gol de ouro | Suíte 004 com 127 verificações sem falhas na última execução registrada |
+| **M3 Fluxo e UI (concluído)** | Implementado em 10/11; refinado em 11/11 | Menus, nove clubes, final/créditos, pause/HUD e infraestrutura de áudio | Fluxo integrado; refinamentos FEAT-006/007/008 aprovados |
 | **M4 Arte e polimento** | 15 a 18/11 | Animação de sprite, de tile e Tweens, SFX/música, balanceamento, tremor de câmera (opcional) | Checklist do enunciado 100% |
 | **M5 Entrega e Export Linux** | 18 a 20/11 | Preset e export final Linux em `build/`, `.gitattributes` (`build/** binary`), `chmod +x` versionado, créditos finais, `roteiro_apresentacao.md` | Submissão no Classroom, buffer de 1 dia |
 
@@ -207,7 +209,7 @@ Mantidos: `AudioManager` (autoload, 5 barramentos, mudo no pause), componente de
 |:---|:---|:---|
 | A (Física) | Moeda, mira, pregos, câmera | B |
 | B (Regras) | Juiz da partida, estados, gols, cronômetro | A |
-| C (UI/Fluxo) | Menus, versus com times fixos, final, créditos, pause, HUD e componente Sounds | D |
+| C (UI/Fluxo) | Menus, versus com seleção dos nove clubes, final, créditos, pause, HUD e componente Sounds | D |
 | D (Arte/Áudio/Export) | Pipeline de assets, animações, áudio, créditos, build Linux | C |
 
 Regra: **todo PR é revisado por quem não escreveu**. Antes da apresentação, cada um explica o módulo de outro.
@@ -221,14 +223,14 @@ Regra: **todo PR é revisado por quem não escreveu**. Antes da apresentação, 
 | P1 | **Resolução base:** 480×270 ou 640×360? | **Concluído:** `640×360` aplicada no `project.godot` (`5ccfcd8`) |
 | P2 | **Campo:** estender a arte atual (corta/insere grama/espelha)? | **Concluído:** Campo estendido para `1152×320` com gol de `~72 px` (`18bbc6b`) |
 | P3 | **Pipeline de assets:** reamostrar/redesenhar cada asset para o tamanho final? | **Concluído:** Gerado por `assets/_fonte/processar_assets.py` (moeda `28×28`, pregos `12×12`, brasões `48×48`, banner `320×44`, versus `640×360`) |
-| P4 | **Requisito "animação de tiles" e spritesheets:** | **Integrado no núcleo:** TileMapLayer animado, impacto de pregos por colisão e giro/brilho da moeda; animações de telas e variante dourada nas próximas features |
+| P4 | **Animação de tiles e spritesheets** | Integradas: TileMapLayer animado, impactos/giro/brilho, variante dourada e Tweens/partículas nas telas. Qualidade audiovisual final segue no polimento |
 | P5 | **Moeda sem rotação física** (`lock_rotation`) com animação por quadros (`moeda_giro_sheet.png` / `moeda_brilho_sheet.png`) | **Decidido:** Usar giro 2D top-down / brilho no deslize; manter `moeda_flip_sheet.png` guardado |
 | P6 | **Pasta `resources/times/`** vs. DTO estático da skill | **Decidido:** Seguir a skill (DTO estático `static var`, sem `resources/`) |
 | P7 | **Versionamento da governança** | **Atualizado em 09/11:** `AGENTS.md`, `.agent/` e `relatorios/` versionados no Git local por autorização do usuário; publicação remota não verificada nesta revisão. `assets/_fonte/` também versionada |
-| P8 | **Times:** Jogador 1 (esquerda, padrão Corinthians) e Jogador 2 (direita, padrão Flamengo); cor dos pregos e da aura da moeda varia conforme o time escolhido | **Implementado em 10/11:** Seleção entre os 9 clubes integrada em `scenes/ui/tela_versus.tscn` com lista `@export` atrelando cada sprite (`Texture2D`) à `Color` que colore os pregos e a aura da moeda |
+| P8 | **Times e cores por jogador/lado** | Nove clubes selecionáveis; catálogo/seleção centralizados em DadosTimes (FEAT-006). Hub usa derivados Lanczos 18×18 (FEAT-008); sem listas exportadas concorrentes |
 | P9 | **Project Settings** e **Export Linux** | **Concluído:** `640×360` + `Nearest` + `snap` + gravidade zero + Input Map aplicados; tudo referente a Linux fica para o M5 |
 | P10 | **Gol de ouro** | **Decidido em 10/11:** novo sorteio independente, inclusive no 0×0; obrigatório em empate após fim do tempo/última jogada, sem desativação. Primeiro gol decide; pausa/menu/saída disponíveis |
-| P11 | **Áudio:** origem da música e SFX (ex.: Kenney, OpenGameArt, freesound, CC0) | **Em aberto para M3/M4:** Preferir CC0 para simplificar os créditos |
+| P11 | **Áudio e atribuições** | Assets locais integrados; mixagem e mapeamento arquivo→autor permanecem em M4 conforme inventário de créditos |
 | P12 | **Pause:** menu com Continuar, Reiniciar e Menu (`WHEN_PAUSED`) | **Aprovado** (`ADR-001`) |
 | P13 | **Testes:** só F6 + scaffolding (Nível 1), sem GUT | **Decidido:** Validar no editor com scaffolding F6 |
 | P14 | **Distribuição de papéis** da Seção 5 e integrantes nos créditos | **A definir pelo grupo** |

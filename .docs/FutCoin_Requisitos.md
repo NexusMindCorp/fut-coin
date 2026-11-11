@@ -1,6 +1,6 @@
 # FutCoin: Documento de Requisitos e Contexto
 
-> Contexto atualizado em 10/11/2026 conforme ADR-001 e decisões do planejamento. Descreve o comportamento esperado. Estado real: M0/M1 e FEAT-002/003 concluídos; núcleo físico jogável na prévia F6, partida com regras ainda pendente. Itens **[A DEFINIR]** continuam abertos. O enunciado original está em `Trabalho 2 - 2026.3.md`.
+> Contexto atualizado em 11/11/2026 conforme ADR-001 e decisões posteriores das FEAT-004 a 008. Partida, seleção dos nove clubes, fluxo de menus e áudio implementados; permanecem polimento/balanceamento de áudio (M4), confirmações de atribuição e export/teste Linux (M5). A suíte 004 foi revalidada com 127 verificações sem falhas; não foi reexecutada nesta revisão documental. Itens **[A DEFINIR]** continuam abertos. O enunciado original permanece em `Trabalho 2 - 2026.3.md`.
 
 ---
 
@@ -51,7 +51,7 @@
 - Valores de força mínima, máxima e escala do arrasto devem ser **configuráveis** (`@export`).
 
 ### 3.3 Duração e fim de partida
-- Duração padrão: **3 minutos**, definida por variável exportada (`@export`) para permitir aumentar (ex.: 5 min).
+- Duração efetiva aprovada: **5 minutos (300 segundos)** na cena `main_game.tscn`. A propriedade continua exportada; 180 segundos no script é somente o fallback técnico, não a configuração entregue.
 - O cronômetro deve pausar durante a animação de gol e durante o pause.
 - **Empate:** não existe empate final. Se o tempo acabar com o placar igual, entra o **gol de ouro**:
   - A moeda troca para um **sprite dourado especial**.
@@ -112,7 +112,7 @@
 
 ## 6. HUD
 
-Planejamento detalhado de interface/fluxo/áudio na [FEAT-005](../.agent/features/feat-005-interface-fluxo-audio.md), sujeito a revisão dos contratos reais após implementar a FEAT-004. Aprovado em 10/11: preservar banner de 44 px e recortar apenas 4 px decorativos do campo, mantendo toda a área jogável; versus manual com Começar partida e Voltar. Composição ainda não implementada.
+Planejamento detalhado de interface/fluxo/áudio na [FEAT-005](../.agent/features/feat-005-interface-fluxo-audio.md), integrado à partida, com refinamentos FEAT-006 a 008. Aprovado em 10/11: preservar banner de 44 px e recortar apenas 4 px decorativos do campo, mantendo toda a área jogável; versus manual com Começar partida e Voltar. Composição implementada e registrada nas evidências da FEAT-005.
 
 - Reservar faixa **superior** para placar/cronômetro, reutilizando `scenes/ui/hub/hub.tscn` adaptado a 640×360. HUD fixo na tela, sem cobrir o campo jogável ou consumir cliques destinados à moeda. Ajustar composição e câmera em conjunto: os 20 px atuais de margem não comportam automaticamente o banner de 44 px.
 
@@ -122,14 +122,14 @@ Planejamento detalhado de interface/fluxo/áudio na [FEAT-005](../.agent/feature
   - **Cronômetro** da partida.
 - Sugestão: **indicador de vez**, destacando o time que joga no turno.
 - A **seta de mira** (direção e força) faz parte da interface de jogo.
-- Borda pulsante rente à moeda indica a vez: aço azulado dos pregos para Corinthians, vermelho dos pregos para Flamengo. Atualizar a cada turno; na prévia FEAT-003 a cor é fixa e provisória. Cor por equipe/degradê da seta permanece sugestão de polimento, sem definição final; amarelo atual mantido.
+- Borda pulsante rente à moeda indica a vez com a cor do clube selecionado, consultada em `DadosTimes`; a prévia isolada pode usar cores de demonstração. Seta aprovada em três faixas de força: amarela até 1/3, laranja até 2/3, vermelha acima; bloqueio cinza com X. Comprimento e direção continuam indicando força e lançamento.
 
 ---
 
 ## 7. Telas e fluxo
 
 1. **Menu principal:** Jogar, **Créditos** e Sair.
-2. **Tela versus:** apresenta os times fixos do MVP: Corinthians (P1, prata, esquerda) e Flamengo (P2, vermelho, direita). Botões **Começar partida** e **Voltar** ao menu; sem avanço automático. Seleção de times fica fora do MVP.
+2. **Tela versus:** permite selecionar entre nove clubes, sem repetir o mesmo nos dois lados; Corinthians e Flamengo são os padrões iniciais. Botões **Começar partida** e **Voltar** ao menu; sem avanço automático. Seleção e catálogo centralizados em DadosTimes.
 3. **Partida (Main Game):** todo o gameplay descrito acima, com **sistema de pause**.
 4. **Tela final:** resultado da partida (incluindo vitória por gol de ouro) com as opções:
    - **Reiniciar** a partida
@@ -182,7 +182,7 @@ Planejamento detalhado de interface/fluxo/áudio na [FEAT-005](../.agent/feature
 ## 10. Escopo e prioridades (prazo: 20/11/2026)
 
 **Essencial (MVP):**
-1. Menu principal, versus com times fixos, partida, tela final e créditos
+1. Menu principal, versus com seleção dos nove clubes, partida, tela final e créditos
 2. Moeda com lançamento por arrasto e física (paredes e pregos)
 3. Turnos entre 2 jogadores locais, com liberação só com a moeda parada
 4. Gols com sensor, animação de gol e placar
@@ -208,3 +208,7 @@ Estes pontos serão definidos depois e **não precisam estar fechados** para ini
 2. Conferir condições de uso/atribuição dos brasões de `_EasilyImpressed` e fechar nomes/funções dos integrantes nos créditos.
 3. Validar nas cenas os tamanhos já definidos, o contraste da aura e o espaçamento entre pregos (M1/M3).
 4. Música e SFX: origem dos arquivos e créditos.
+
+## Atualizações de apresentação confirmadas em 11/11/2026
+
+O Hub usa reduções Lanczos de 18×18 dos PNGs originais, com escala 1:1 e posições anteriores. Demais telas preservam os brasões de 48×48; créditos originais mantidos. O escudo do clube sem a vez continua escurecido por decisão do usuário. O pause é desenhado acima de todo o HUD (`z_index = 2`), inclusive os emblemas. DadosTimes centraliza catálogo, cores e seleção estática; a UI não redefine a paleta. Dados de demonstração da TelaFinal foram mantidos por aprovação explícita para a apresentação.
