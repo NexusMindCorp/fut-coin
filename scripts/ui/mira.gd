@@ -74,7 +74,13 @@ func _draw() -> void:
 	var inicio: Vector2 = direcao * 21.0
 	var ponta: Vector2 = direcao * (21.0 + comprimento_maximo * forca)
 	var lateral: Vector2 = direcao.orthogonal() * 5.0
-	var cor: Color = Color(1.0, 0.9, 0.35) if not bloqueada else Color(0.65, 0.65, 0.65, 0.65)
+	var cor: Color = Color(1.0, 0.9, 0.35)
+	if forca > 2.0 / 3.0:
+		cor = Color(1.0, 0.3, 0.25)
+	elif forca > 1.0 / 3.0:
+		cor = Color(1.0, 0.6, 0.2)
+	if bloqueada:
+		cor = Color(0.65, 0.65, 0.65, 0.65)
 	draw_line(inicio, ponta, Color(0.04, 0.04, 0.06), 6.0)
 	draw_line(inicio, ponta, cor, 3.0)
 	draw_colored_polygon(PackedVector2Array([ponta + direcao * 6.0, ponta - direcao * 5.0 + lateral, ponta - direcao * 5.0 - lateral]), cor)
