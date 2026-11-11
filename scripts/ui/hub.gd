@@ -123,7 +123,7 @@ static func formatar_tempo(segundos: float) -> String:
 	if not is_finite(segundos):
 		return "00:00"
 	var total_segundos: int = maxi(ceili(segundos), 0)
-	var minutos: int = total_segundos / 60
+	var minutos: int = floori(total_segundos / 60.0)
 	var resto_segundos: int = total_segundos % 60
 	return "%02d:%02d" % [minutos, resto_segundos]
 
