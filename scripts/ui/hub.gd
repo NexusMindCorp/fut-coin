@@ -47,9 +47,9 @@ func definir_brasoes_por_chave(chave_esquerda: StringName, chave_direita: String
 	if DadosTimes.possui_time(chave_direita):
 		chave_time_direito = chave_direita
 	if brazao_esquerdo != null:
-		brazao_esquerdo.texture = DadosTimes.obter_textura_time(chave_time_esquerdo)
+		brazao_esquerdo.texture = DadosTimes.obter_textura_time_hud(chave_time_esquerdo)
 	if brazao_direito != null:
-		brazao_direito.texture = DadosTimes.obter_textura_time(chave_time_direito)
+		brazao_direito.texture = DadosTimes.obter_textura_time_hud(chave_time_direito)
 	atualizar_turno(turno_atual)
 
 

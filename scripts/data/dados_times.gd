@@ -18,54 +18,63 @@ const CATALOGO: Dictionary[StringName, Dictionary] = {
 		&"nome": "CORINTHIANS",
 		&"sigla": "COR",
 		&"brasao": preload("res://assets/ui/times/corinthians.png"),
+		&"brasao_hud": preload("res://assets/ui/times/hud/corinthians.png"),
 		&"cor": Color(0.55, 0.72, 0.92, 1.0),
 	},
 	&"flamengo": {
 		&"nome": "FLAMENGO",
 		&"sigla": "FLA",
 		&"brasao": preload("res://assets/ui/times/flamengo.png"),
+		&"brasao_hud": preload("res://assets/ui/times/hud/flamengo.png"),
 		&"cor": Color(0.92533237, 0.049644113, 0.000000962615, 1.0),
 	},
 	&"atletico_mineiro": {
 		&"nome": "ATLÉTICO-MG",
 		&"sigla": "CAM",
 		&"brasao": preload("res://assets/ui/times/atletico_mineiro.png"),
+		&"brasao_hud": preload("res://assets/ui/times/hud/atletico_mineiro.png"),
 		&"cor": Color(0.95, 0.78, 0.22, 1.0),
 	},
 	&"botafogo": {
 		&"nome": "BOTAFOGO",
 		&"sigla": "BOT",
 		&"brasao": preload("res://assets/ui/times/botafogo.png"),
+		&"brasao_hud": preload("res://assets/ui/times/hud/botafogo.png"),
 		&"cor": Color(0.78, 0.82, 0.88, 1.0),
 	},
 	&"cruzeiro": {
 		&"nome": "CRUZEIRO",
 		&"sigla": "CRU",
 		&"brasao": preload("res://assets/ui/times/cruzeiro.png"),
+		&"brasao_hud": preload("res://assets/ui/times/hud/cruzeiro.png"),
 		&"cor": Color(0.18, 0.52, 0.98, 1.0),
 	},
 	&"fluminense": {
 		&"nome": "FLUMINENSE",
 		&"sigla": "FLU",
 		&"brasao": preload("res://assets/ui/times/fluminense.png"),
+		&"brasao_hud": preload("res://assets/ui/times/hud/fluminense.png"),
 		&"cor": Color(0.7254902, 0.07058824, 0.3254902, 1.0),
 	},
 	&"palmeiras": {
 		&"nome": "PALMEIRAS",
 		&"sigla": "PAL",
 		&"brasao": preload("res://assets/ui/times/palmeiras.png"),
+		&"brasao_hud": preload("res://assets/ui/times/hud/palmeiras.png"),
 		&"cor": Color(0.18, 0.80, 0.36, 1.0),
 	},
 	&"sao_paulo": {
 		&"nome": "SÃO PAULO",
 		&"sigla": "SAO",
 		&"brasao": preload("res://assets/ui/times/sao_paulo.png"),
+		&"brasao_hud": preload("res://assets/ui/times/hud/sao_paulo.png"),
 		&"cor": Color(0.98, 0.38, 0.20, 1.0),
 	},
 	&"vasco": {
 		&"nome": "VASCO",
 		&"sigla": "VAS",
 		&"brasao": preload("res://assets/ui/times/vasco.png"),
+		&"brasao_hud": preload("res://assets/ui/times/hud/vasco.png"),
 		&"cor": Color(0.22, 0.82, 0.78, 1.0),
 	},
 }
@@ -83,6 +92,10 @@ static func possui_time(chave_time: StringName) -> bool:
 
 static func obter_textura_time(chave_time: StringName) -> Texture2D:
 	return _obter_dados_clube(chave_time)[&"brasao"] as Texture2D
+
+
+static func obter_textura_time_hud(chave_time: StringName) -> Texture2D:
+	return _obter_dados_clube(chave_time)[&"brasao_hud"] as Texture2D
 
 
 static func obter_nome_time(chave_time: StringName) -> String:

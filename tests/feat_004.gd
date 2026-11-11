@@ -730,8 +730,8 @@ func _testar_selecao_times_e_propagacao() -> void:
 	_verificar(
 		partida.hub.chave_time_esquerdo == &"palmeiras"
 		and partida.hub.chave_time_direito == &"vasco"
-		and partida.hub.brazao_esquerdo.texture == DadosTimes.obter_textura_time(&"palmeiras")
-		and partida.hub.brazao_direito.texture == DadosTimes.obter_textura_time(&"vasco"),
+		and partida.hub.brazao_esquerdo.texture == DadosTimes.obter_textura_time_hud(&"palmeiras")
+		and partida.hub.brazao_direito.texture == DadosTimes.obter_textura_time_hud(&"vasco"),
 		"MainGame aplica brasoes selecionados (Palmeiras x Vasco) no Hub ao iniciar partida"
 	)
 	_verificar(
