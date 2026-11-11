@@ -28,32 +28,6 @@ const CAMINHO_MENU_PRINCIPAL: String = "res://scenes/ui/menu_principal.tscn"
 @export_group("Regras")
 @export_range(1.0, 600.0) var duracao_partida: float = 180.0
 @export_range(0.05, 5.0) var duracao_apresentacao_gol: float = 1.2
-@export_group("Cores dos Times (Sprite -> Cor)")
-@export var sprites_times: Array[Texture2D] = [
-	preload("res://assets/ui/times/corinthians.png"),
-	preload("res://assets/ui/times/flamengo.png"),
-	preload("res://assets/ui/times/atletico_mineiro.png"),
-	preload("res://assets/ui/times/botafogo.png"),
-	preload("res://assets/ui/times/cruzeiro.png"),
-	preload("res://assets/ui/times/fluminense.png"),
-	preload("res://assets/ui/times/palmeiras.png"),
-	preload("res://assets/ui/times/sao_paulo.png"),
-	preload("res://assets/ui/times/vasco.png"),
-]
-@export var cores_times: Array[Color] = [
-	Color(0.55, 0.72, 0.92, 1.0),
-	Color(0.92, 0.24, 0.24, 1.0),
-	Color(0.95, 0.78, 0.22, 1.0),
-	Color(0.78, 0.82, 0.88, 1.0),
-	Color(0.18, 0.52, 0.98, 1.0),
-	Color(0.72, 0.18, 0.32, 1.0),
-	Color(0.18, 0.80, 0.36, 1.0),
-	Color(0.98, 0.38, 0.20, 1.0),
-	Color(0.22, 0.82, 0.78, 1.0),
-]
-@export_group("Apresentacao")
-@export var cor_corinthians: Color = Color(0.55, 0.72, 0.92)
-@export var cor_flamengo: Color = Color(0.92, 0.24, 0.24)
 
 # --- REFERENCIAS A NODES ---
 @onready var campo: Node2D = $Campo
@@ -69,6 +43,8 @@ const CAMINHO_MENU_PRINCIPAL: String = "res://scenes/ui/menu_principal.tscn"
 @onready var menu_pause: Pause = $FeedbackRegras/Pause
 
 # --- ESTADO ---
+var cor_corinthians: Color = Color.WHITE
+var cor_flamengo: Color = Color.WHITE
 var estado: Estado = Estado.AGUARDANDO_JOGADA
 var placar: Vector2i = Vector2i.ZERO
 var time_atual: Prego.Equipe = Prego.Equipe.CORINTHIANS
@@ -282,9 +258,9 @@ func _obter_chave_brasao_equipe(equipe: Prego.Equipe) -> StringName:
 	if hub != null:
 		return hub.chave_time_esquerdo if equipe == Prego.Equipe.CORINTHIANS else hub.chave_time_direito
 	return (
-		Hub.time_esquerdo_selecionado
+		DadosTimes.time_esquerdo_selecionado
 		if equipe == Prego.Equipe.CORINTHIANS
-		else Hub.time_direito_selecionado
+		else DadosTimes.time_direito_selecionado
 	)
 
 
@@ -369,8 +345,8 @@ func cancelar_partida() -> void:
 		menu_pause.ocultar()
 	if hub != null:
 		hub.definir_brasoes_por_chave(
-			Hub.time_esquerdo_selecionado,
-			Hub.time_direito_selecionado
+			DadosTimes.time_esquerdo_selecionado,
+			DadosTimes.time_direito_selecionado
 		)
 	_cancelar_tween_aviso()
 	_ocultar_aviso_central()
@@ -496,16 +472,14 @@ func _obter_vencedor_atual() -> Prego.Equipe:
 
 func _cor_equipe(equipe: Prego.Equipe) -> Color:
 	var chave: StringName = _obter_chave_brasao_equipe(equipe)
-	return Hub.obter_cor_time(chave)
+	return DadosTimes.obter_cor_time(chave)
 
 
 func _aplicar_cores_times_na_partida() -> void:
-	if Hub.cores_customizadas_por_chave.is_empty():
-		Hub.sincronizar_lista_cores_sprites(sprites_times, cores_times)
 	if hub != null:
 		hub.definir_brasoes_por_chave(
-			Hub.time_esquerdo_selecionado,
-			Hub.time_direito_selecionado
+			DadosTimes.time_esquerdo_selecionado,
+			DadosTimes.time_direito_selecionado
 		)
 	cor_corinthians = _cor_equipe(Prego.Equipe.CORINTHIANS)
 	cor_flamengo = _cor_equipe(Prego.Equipe.FLAMENGO)
@@ -527,7 +501,7 @@ func _aplicar_cores_times_na_partida() -> void:
 
 
 func _nome_equipe(equipe: Prego.Equipe) -> String:
-	return Hub.obter_nome_time(_obter_chave_brasao_equipe(equipe))
+	return DadosTimes.obter_nome_time(_obter_chave_brasao_equipe(equipe))
 
 
 func _relogio_regulamentar_esgotado() -> bool:

@@ -7,31 +7,6 @@ const CAMINHO_MENU_PRINCIPAL: String = "res://scenes/ui/menu_principal.tscn"
 const ESCALA_BRASAO_PADRAO: Vector2 = Vector2(2.0, 2.0)
 const ESCALA_BRASAO_PULSO: Vector2 = Vector2(2.22, 2.22)
 
-# --- PARAMETROS CONFIGURAVEIS ---
-@export_group("Cores dos Times (Sprite -> Cor)")
-@export var sprites_times: Array[Texture2D] = [
-	preload("res://assets/ui/times/corinthians.png"),
-	preload("res://assets/ui/times/flamengo.png"),
-	preload("res://assets/ui/times/atletico_mineiro.png"),
-	preload("res://assets/ui/times/botafogo.png"),
-	preload("res://assets/ui/times/cruzeiro.png"),
-	preload("res://assets/ui/times/fluminense.png"),
-	preload("res://assets/ui/times/palmeiras.png"),
-	preload("res://assets/ui/times/sao_paulo.png"),
-	preload("res://assets/ui/times/vasco.png"),
-]
-@export var cores_times: Array[Color] = [
-	Color(0.55, 0.72, 0.92, 1.0),
-	Color(0.92, 0.24, 0.24, 1.0),
-	Color(0.95, 0.78, 0.22, 1.0),
-	Color(0.78, 0.82, 0.88, 1.0),
-	Color(0.18, 0.52, 0.98, 1.0),
-	Color(0.72, 0.18, 0.32, 1.0),
-	Color(0.18, 0.80, 0.36, 1.0),
-	Color(0.98, 0.38, 0.20, 1.0),
-	Color(0.22, 0.82, 0.78, 1.0),
-]
-
 # --- REFERENCIAS A NODES ---
 @onready var rotulo_jogador_esquerdo: Label = $Conteudo/MolduraEsquerda/RotuloJogadorEsquerdo
 @onready var brasao_esquerdo: Sprite2D = $Conteudo/MolduraEsquerda/BrasaoEsquerdo
@@ -57,7 +32,6 @@ var tween_brasao_direito: Tween
 # --- INICIALIZACAO E LOOP DE FISICA/PROCESSAMENTO ---
 func _ready() -> void:
 	AudioManager.tocar_musica_menu()
-	Hub.sincronizar_lista_cores_sprites(sprites_times, cores_times)
 	_conectar_foco_mouse_botoes()
 	carregar_selecao_atual()
 	if botao_comecar != null:
@@ -74,19 +48,19 @@ func _unhandled_input(event: InputEvent) -> void:
 
 # --- DOMINIO PRINCIPAL / PROCESSADORES DE ESTADO ---
 func _atualizar_exibicao_times() -> void:
-	var cor_esquerda: Color = Hub.obter_cor_time(chave_esquerda_atual).lightened(0.22)
-	var cor_direita: Color = Hub.obter_cor_time(chave_direita_atual).lightened(0.22)
+	var cor_esquerda: Color = DadosTimes.obter_cor_time(chave_esquerda_atual).lightened(0.22)
+	var cor_direita: Color = DadosTimes.obter_cor_time(chave_direita_atual).lightened(0.22)
 	if brasao_esquerdo != null:
-		brasao_esquerdo.texture = Hub.obter_textura_time(chave_esquerda_atual)
+		brasao_esquerdo.texture = DadosTimes.obter_textura_time(chave_esquerda_atual)
 	if nome_time_esquerdo != null:
-		nome_time_esquerdo.text = Hub.obter_nome_time(chave_esquerda_atual)
+		nome_time_esquerdo.text = DadosTimes.obter_nome_time(chave_esquerda_atual)
 		nome_time_esquerdo.add_theme_color_override(&"font_color", cor_esquerda)
 	if rotulo_jogador_esquerdo != null:
 		rotulo_jogador_esquerdo.add_theme_color_override(&"font_color", cor_esquerda)
 	if brasao_direito != null:
-		brasao_direito.texture = Hub.obter_textura_time(chave_direita_atual)
+		brasao_direito.texture = DadosTimes.obter_textura_time(chave_direita_atual)
 	if nome_time_direito != null:
-		nome_time_direito.text = Hub.obter_nome_time(chave_direita_atual)
+		nome_time_direito.text = DadosTimes.obter_nome_time(chave_direita_atual)
 		nome_time_direito.add_theme_color_override(&"font_color", cor_direita)
 	if rotulo_jogador_direito != null:
 		rotulo_jogador_direito.add_theme_color_override(&"font_color", cor_direita)
@@ -137,38 +111,38 @@ func _transicionar_para(caminho_cena: String) -> void:
 
 # --- API PUBLICA ---
 func carregar_selecao_atual() -> void:
-	Hub.definir_times_selecionados(Hub.time_esquerdo_selecionado, Hub.time_direito_selecionado)
-	chave_esquerda_atual = Hub.time_esquerdo_selecionado
-	chave_direita_atual = Hub.time_direito_selecionado
+	DadosTimes.definir_times_selecionados(DadosTimes.time_esquerdo_selecionado, DadosTimes.time_direito_selecionado)
+	chave_esquerda_atual = DadosTimes.time_esquerdo_selecionado
+	chave_direita_atual = DadosTimes.time_direito_selecionado
 	_atualizar_exibicao_times()
 
 
 func selecionar_time_esquerdo(chave_time: StringName) -> void:
-	if not Hub.BRASOES_TIMES.has(chave_time):
+	if not DadosTimes.possui_time(chave_time):
 		return
 	chave_esquerda_atual = chave_time
 	if chave_direita_atual == chave_esquerda_atual:
-		chave_direita_atual = Hub.obter_proximo_time_disponivel(
+		chave_direita_atual = DadosTimes.obter_proximo_time_disponivel(
 			chave_direita_atual,
 			1,
 			chave_esquerda_atual
 		)
-	Hub.definir_times_selecionados(chave_esquerda_atual, chave_direita_atual)
+	DadosTimes.definir_times_selecionados(chave_esquerda_atual, chave_direita_atual)
 	_atualizar_exibicao_times()
 	_animar_troca_brasao(brasao_esquerdo, true)
 
 
 func selecionar_time_direito(chave_time: StringName) -> void:
-	if not Hub.BRASOES_TIMES.has(chave_time):
+	if not DadosTimes.possui_time(chave_time):
 		return
 	chave_direita_atual = chave_time
 	if chave_esquerda_atual == chave_direita_atual:
-		chave_esquerda_atual = Hub.obter_proximo_time_disponivel(
+		chave_esquerda_atual = DadosTimes.obter_proximo_time_disponivel(
 			chave_esquerda_atual,
 			1,
 			chave_direita_atual
 		)
-	Hub.definir_times_selecionados(chave_esquerda_atual, chave_direita_atual)
+	DadosTimes.definir_times_selecionados(chave_esquerda_atual, chave_direita_atual)
 	_atualizar_exibicao_times()
 	_animar_troca_brasao(brasao_direito, false)
 
@@ -176,7 +150,7 @@ func selecionar_time_direito(chave_time: StringName) -> void:
 func alternar_time_esquerdo(passo: int) -> void:
 	if transicionando:
 		return
-	var proximo: StringName = Hub.obter_proximo_time_disponivel(
+	var proximo: StringName = DadosTimes.obter_proximo_time_disponivel(
 		chave_esquerda_atual,
 		passo,
 		chave_direita_atual
@@ -187,7 +161,7 @@ func alternar_time_esquerdo(passo: int) -> void:
 func alternar_time_direito(passo: int) -> void:
 	if transicionando:
 		return
-	var proximo: StringName = Hub.obter_proximo_time_disponivel(
+	var proximo: StringName = DadosTimes.obter_proximo_time_disponivel(
 		chave_direita_atual,
 		passo,
 		chave_esquerda_atual
@@ -198,7 +172,7 @@ func alternar_time_direito(passo: int) -> void:
 func confirmar_e_iniciar_partida() -> void:
 	if transicionando:
 		return
-	Hub.definir_times_selecionados(chave_esquerda_atual, chave_direita_atual)
+	DadosTimes.definir_times_selecionados(chave_esquerda_atual, chave_direita_atual)
 	if is_inside_tree() and get_tree().current_scene == self:
 		_transicionar_para(CAMINHO_PARTIDA)
 

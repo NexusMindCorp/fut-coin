@@ -79,13 +79,13 @@ func _ready() -> void:
 
 # --- DOMINIO PRINCIPAL / PROCESSADORES DE ESTADO ---
 func _atualizar_interface_vencedor() -> void:
-	var nome_equipe: String = Hub.obter_nome_time(chave_vencedor_atual)
+	var nome_equipe: String = DadosTimes.obter_nome_time(chave_vencedor_atual)
 	var sufixo_ouro: String = " — GOL DE OURO!" if por_gol_de_ouro_atual else ""
 
 	if rotulo_vencedor != null:
 		rotulo_vencedor.text = "VENCEDOR"
 	if sprite_brasao != null:
-		sprite_brasao.texture = Hub.obter_textura_time(chave_vencedor_atual)
+		sprite_brasao.texture = DadosTimes.obter_textura_time(chave_vencedor_atual)
 	if rotulo_equipe_placar != null:
 		rotulo_equipe_placar.text = "%s  (%d x %d)%s" % [
 			nome_equipe,
@@ -93,7 +93,7 @@ func _atualizar_interface_vencedor() -> void:
 			placar_atual.y,
 			sufixo_ouro,
 		]
-		rotulo_equipe_placar.modulate = Hub.obter_cor_time(chave_vencedor_atual).lightened(0.22)
+		rotulo_equipe_placar.modulate = DadosTimes.obter_cor_time(chave_vencedor_atual).lightened(0.22)
 
 
 func _animar_entrada_trofeu_e_fogos() -> void:
@@ -195,9 +195,9 @@ static func definir_resultado(
 		chave_vencedor_registrada = chave_time
 	else:
 		chave_vencedor_registrada = (
-			Hub.time_esquerdo_selecionado
+			DadosTimes.time_esquerdo_selecionado
 			if vencedor == Prego.Equipe.CORINTHIANS
-			else Hub.time_direito_selecionado
+			else DadosTimes.time_direito_selecionado
 		)
 	resultado_pendente = true
 

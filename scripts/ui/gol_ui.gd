@@ -1,10 +1,6 @@
 class_name GolUI
 extends Control
 
-# --- CONSTANTES ---
-const TEXTURA_CORINTHIANS: Texture2D = preload("res://assets/ui/times/corinthians.png")
-const TEXTURA_FLAMENGO: Texture2D = preload("res://assets/ui/times/flamengo.png")
-
 # --- REFERENCIAS A NODES ---
 @onready var painel_central: Control = $PainelCentral
 @onready var brasao_equipe: Sprite2D = $PainelCentral/BrasaoEquipe
@@ -41,21 +37,21 @@ func exibir_gol(
 	var chave_esq: StringName = (
 		chave_esquerda
 		if chave_esquerda != &""
-		else Hub.time_esquerdo_selecionado
+		else DadosTimes.time_esquerdo_selecionado
 	)
 	var chave_dir: StringName = (
 		chave_direita
 		if chave_direita != &""
-		else Hub.time_direito_selecionado
+		else DadosTimes.time_direito_selecionado
 	)
 	var chave_marcadora: StringName = chave_esq if eh_esquerda else chave_dir
-	var nome_time: String = Hub.obter_nome_time(chave_marcadora)
-	var sigla_esq: String = Hub.obter_sigla_time(chave_esq)
-	var sigla_dir: String = Hub.obter_sigla_time(chave_dir)
-	var cor_destaque: Color = Hub.obter_cor_time(chave_marcadora).lightened(0.22)
+	var nome_time: String = DadosTimes.obter_nome_time(chave_marcadora)
+	var sigla_esq: String = DadosTimes.obter_sigla_time(chave_esq)
+	var sigla_dir: String = DadosTimes.obter_sigla_time(chave_dir)
+	var cor_destaque: Color = DadosTimes.obter_cor_time(chave_marcadora).lightened(0.22)
 
 	if brasao_equipe != null:
-		brasao_equipe.texture = Hub.obter_textura_time(chave_marcadora)
+		brasao_equipe.texture = DadosTimes.obter_textura_time(chave_marcadora)
 	if rotulo_titulo != null:
 		rotulo_titulo.text = "GOOOL!"
 		rotulo_titulo.modulate = Color(1.0, 0.94, 0.32, 1.0)

@@ -50,6 +50,7 @@ func _executar() -> void:
 	await _testar_permutacoes_mesmo_tick()
 	await _testar_gol_de_ouro_e_sorteio_independente()
 	await _testar_pausa_abandono_e_reinicio()
+	await _testar_catalogo_e_preservacao_paleta()
 	await _testar_selecao_times_e_propagacao()
 	await _testar_menu_creditos_e_musica()
 	await _testar_isolamento_duas_partidas()
@@ -82,7 +83,7 @@ func _testar_inicializacao_padrao() -> void:
 		else partida.cor_flamengo
 	)
 	_verificar(moeda.cor_posse.is_equal_approx(cor_esperada), "Cor de posse inicial corresponde a equipe sorteada")
-	_verificar(partida.hub != null and Hub.BRASOES_TIMES.size() == 9, "Hub integrado com os 9 brasoes de assets/ui/times")
+	_verificar(partida.hub != null and DadosTimes.ORDEM_TIMES.size() == 9, "Hub integrado com os 9 brasoes de assets/ui/times")
 	_verificar(Hub.formatar_tempo(180.0) == "03:00" and Hub.formatar_tempo(59.2) == "01:00" and Hub.formatar_tempo(0.0) == "00:00", "Formatacao estatica de tempo do Hub")
 	_verificar(partida.gol_ui != null and not partida.gol_ui.visible and not partida.gol_ui.animando, "Cena GolUI oculta e sem animar fora de um gol")
 
@@ -604,8 +605,86 @@ func _testar_isolamento_duas_partidas() -> void:
 	await process_frame
 
 
+func _testar_catalogo_e_preservacao_paleta() -> void:
+	DadosTimes.restaurar_times_padrao()
+	_verificar(
+		DadosTimes.obter_cor_time(&"flamengo").is_equal_approx(Color(0.92533237, 0.049644113, 0.000000962615, 1.0))
+		and DadosTimes.obter_cor_time(&"fluminense").is_equal_approx(Color(0.7254902, 0.07058824, 0.3254902, 1.0)),
+		"Catalogo preserva as paletas personalizadas originalmente configuradas no versus"
+	)
+	DadosTimes.definir_times_selecionados(&"invalido", &"invalido")
+	_verificar(
+		DadosTimes.time_esquerdo_selecionado == &"corinthians"
+		and DadosTimes.time_direito_selecionado == &"flamengo"
+		and DadosTimes.obter_textura_time(&"invalido") == DadosTimes.obter_textura_time(&"corinthians"),
+		"Chaves invalidas recebem selecao e consulta seguras"
+	)
+	DadosTimes.definir_times_selecionados(&"flamengo", &"flamengo")
+	_verificar(
+		DadosTimes.time_esquerdo_selecionado != DadosTimes.time_direito_selecionado,
+		"Selecao central impede o mesmo clube nos dois lados"
+	)
+	var cor_personalizada: Color = Color(0.25, 0.35, 0.75, 1.0)
+	DadosTimes.definir_cor_time(&"flamengo", cor_personalizada)
+	DadosTimes.definir_cor_time(&"flamengo", Color(NAN, 0.0, 0.0, 1.0))
+	_verificar(
+		DadosTimes.obter_cor_time(&"flamengo").is_equal_approx(cor_personalizada),
+		"Cor nao finita e rejeitada sem corromper a paleta"
+	)
+	DadosTimes.definir_times_selecionados(&"flamengo", &"fluminense")
+	var nova_partida: MainGame = CENA_PARTIDA.instantiate() as MainGame
+	root.add_child(nova_partida)
+	await _quadros(2)
+	var prego_novo: Prego = nova_partida.get_node("Campo/Pregos/GoleiroCorinthians") as Prego
+	_verificar(
+		DadosTimes.obter_cor_time(&"flamengo").is_equal_approx(cor_personalizada)
+		and prego_novo.cor_time.is_equal_approx(cor_personalizada),
+		"Inicializacao real de nova partida e Hub preserva paleta personalizada"
+	)
+	nova_partida._habilitar_turno(Prego.Equipe.CORINTHIANS, false)
+	_verificar(
+		nova_partida.moeda.cor_posse.is_equal_approx(cor_personalizada),
+		"Posse usa a mesma paleta preservada dos pregos"
+	)
+	var novo_versus: TelaVersus = CENA_TELA_VERSUS.instantiate() as TelaVersus
+	root.add_child(novo_versus)
+	await _quadros(2)
+	_verificar(
+		novo_versus.chave_esquerda_atual == &"flamengo"
+		and novo_versus.chave_direita_atual == &"fluminense"
+		and DadosTimes.obter_cor_time(&"flamengo").is_equal_approx(cor_personalizada),
+		"Reabrir versus preserva selecao e paleta sem republicar defaults"
+	)
+	nova_partida.hub.definir_brasoes_por_chave(&"palmeiras", &"vasco")
+	_verificar(
+		DadosTimes.time_esquerdo_selecionado == &"flamengo"
+		and DadosTimes.time_direito_selecionado == &"fluminense",
+		"Apresentacao do Hub nao escreve selecao global"
+	)
+	nova_partida.reiniciar_partida()
+	_verificar(
+		prego_novo.cor_time.is_equal_approx(cor_personalizada)
+		and nova_partida.hub.chave_time_esquerdo == &"flamengo",
+		"Reinicio reaplica selecao central e mantem cor personalizada"
+	)
+	_verificar(nova_partida.duracao_partida == 300.0, "Cena entregue preserva duracao aprovada de cinco minutos")
+	_verificar(
+		Hub.formatar_tempo(300.0) == "05:00"
+		and Hub.formatar_tempo(60.0) == "01:00"
+		and Hub.formatar_tempo(59.2) == "01:00"
+		and Hub.formatar_tempo(-1.0) == "00:00"
+		and Hub.formatar_tempo(NAN) == "00:00",
+		"Formatacao explicita dos minutos preserva limites e entradas invalidas"
+	)
+	novo_versus.queue_free()
+	nova_partida.cancelar_partida()
+	nova_partida.queue_free()
+	await process_frame
+	DadosTimes.restaurar_times_padrao()
+
+
 func _testar_selecao_times_e_propagacao() -> void:
-	Hub.restaurar_times_padrao()
+	DadosTimes.restaurar_times_padrao()
 	var tela_versus: TelaVersus = CENA_TELA_VERSUS.instantiate() as TelaVersus
 	root.add_child(tela_versus)
 	await _quadros(2)
@@ -633,9 +712,9 @@ func _testar_selecao_times_e_propagacao() -> void:
 	tela_versus.selecionar_time_direito(&"vasco")
 	tela_versus.confirmar_e_iniciar_partida()
 	_verificar(
-		Hub.time_esquerdo_selecionado == &"palmeiras"
-		and Hub.time_direito_selecionado == &"vasco",
-		"Confirmacao na TelaVersus grava DTO estatico de Palmeiras x Vasco no Hub"
+		DadosTimes.time_esquerdo_selecionado == &"palmeiras"
+		and DadosTimes.time_direito_selecionado == &"vasco",
+		"Confirmacao na TelaVersus grava selecao estatica de Palmeiras x Vasco em DadosTimes"
 	)
 
 	tela_versus.queue_free()
@@ -644,25 +723,23 @@ func _testar_selecao_times_e_propagacao() -> void:
 	partida.duracao_apresentacao_gol = 0.08
 	partida.reiniciar_partida()
 	await _quadros(2)
-	var cor_palmeiras: Color = Hub.obter_cor_time(&"palmeiras")
-	var cor_vasco: Color = Hub.obter_cor_time(&"vasco")
+	var cor_palmeiras: Color = DadosTimes.obter_cor_time(&"palmeiras")
+	var cor_vasco: Color = DadosTimes.obter_cor_time(&"vasco")
 	var prego_esq: Prego = partida.get_node("Campo/Pregos/GoleiroCorinthians") as Prego
 	var prego_dir: Prego = partida.get_node("Campo/Pregos/GoleiroFlamengo") as Prego
 	_verificar(
 		partida.hub.chave_time_esquerdo == &"palmeiras"
 		and partida.hub.chave_time_direito == &"vasco"
-		and partida.hub.brazao_esquerdo.texture == Hub.obter_textura_time(&"palmeiras")
-		and partida.hub.brazao_direito.texture == Hub.obter_textura_time(&"vasco"),
+		and partida.hub.brazao_esquerdo.texture == DadosTimes.obter_textura_time(&"palmeiras")
+		and partida.hub.brazao_direito.texture == DadosTimes.obter_textura_time(&"vasco"),
 		"MainGame aplica brasoes selecionados (Palmeiras x Vasco) no Hub ao iniciar partida"
 	)
 	_verificar(
-		partida.sprites_times.size() == 9
-		and partida.cores_times.size() == 9
-		and prego_esq != null
+		prego_esq != null
 		and prego_dir != null
 		and prego_esq.cor_time.is_equal_approx(cor_palmeiras)
 		and prego_dir.cor_time.is_equal_approx(cor_vasco),
-		"Lista @export (sprites_times/cores_times) colore pregos esquerdos (Palmeiras) e direitos (Vasco)"
+		"Catalogo unico colore pregos esquerdos (Palmeiras) e direitos (Vasco)"
 	)
 	partida._habilitar_turno(Prego.Equipe.CORINTHIANS, false)
 	var aura_esq_ok: bool = moeda.cor_posse.is_equal_approx(cor_palmeiras)
@@ -674,17 +751,17 @@ func _testar_selecao_times_e_propagacao() -> void:
 	)
 
 	# Inverte lados (Flamengo na esquerda e Corinthians na direita) para provar que os lados nao estao travados.
-	Hub.definir_times_selecionados(&"flamengo", &"corinthians")
+	DadosTimes.definir_times_selecionados(&"flamengo", &"corinthians")
 	partida.reiniciar_partida()
 	await _quadros(2)
 	_verificar(
-		prego_esq.cor_time.is_equal_approx(Hub.obter_cor_time(&"flamengo"))
-		and prego_dir.cor_time.is_equal_approx(Hub.obter_cor_time(&"corinthians")),
+		prego_esq.cor_time.is_equal_approx(DadosTimes.obter_cor_time(&"flamengo"))
+		and prego_dir.cor_time.is_equal_approx(DadosTimes.obter_cor_time(&"corinthians")),
 		"Lados nao ficam travados: Flamengo na esquerda deixa pregos esquerdos vermelhos e direitos prata/azul"
 	)
 
 	# Restaura Palmeiras x Vasco para validar GolUI e TelaFinal.
-	Hub.definir_times_selecionados(&"palmeiras", &"vasco")
+	DadosTimes.definir_times_selecionados(&"palmeiras", &"vasco")
 	partida.reiniciar_partida()
 	await _quadros(2)
 
@@ -695,7 +772,7 @@ func _testar_selecao_times_e_propagacao() -> void:
 	await _aguardar_estado(MainGame.Estado.GOL_ANIMANDO, 60)
 	_verificar(
 		partida.gol_ui.rotulo_detalhe.text == "PALMEIRAS  |  PAL 1 x 0 VAS"
-		and partida.gol_ui.brasao_equipe.texture == Hub.obter_textura_time(&"palmeiras"),
+		and partida.gol_ui.brasao_equipe.texture == DadosTimes.obter_textura_time(&"palmeiras"),
 		"GolUI exibe nome, siglas e brasao dos clubes escolhidos (PALMEIRAS | PAL 1 x 0 VAS)"
 	)
 	await _aguardar_estado(MainGame.Estado.AGUARDANDO_JOGADA, 40)
@@ -713,13 +790,13 @@ func _testar_selecao_times_e_propagacao() -> void:
 	await _quadros(2)
 	_verificar(
 		tela_final_sel.rotulo_equipe_placar.text == "PALMEIRAS  (1 x 0)"
-		and tela_final_sel.sprite_brasao.texture == Hub.obter_textura_time(&"palmeiras"),
+		and tela_final_sel.sprite_brasao.texture == DadosTimes.obter_textura_time(&"palmeiras"),
 		"TelaFinal exibe nome e brasao do clube vencedor selecionado (PALMEIRAS)"
 	)
 	tela_final_sel.queue_free()
 	await process_frame
 
-	Hub.restaurar_times_padrao()
+	DadosTimes.restaurar_times_padrao()
 	partida.reiniciar_partida()
 	await _quadros(2)
 

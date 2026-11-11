@@ -7,17 +7,15 @@ enum Equipe { CORINTHIANS, FLAMENGO }
 
 # --- CONSTANTES ---
 const SHADER_COR_TIME: Shader = preload("res://assets/shaders/prego_cor_time.gdshader")
-const COR_PADRAO_ESQUERDA: Color = Color(0.55, 0.72, 0.92, 1.0)
-const COR_PADRAO_DIREITA: Color = Color(0.92, 0.24, 0.24, 1.0)
 
 # --- PARAMETROS CONFIGURAVEIS ---
 @export var time: Equipe = Equipe.CORINTHIANS:
 	set(valor):
 		time = valor
 		if not cor_customizada:
-			cor_time = COR_PADRAO_ESQUERDA if time == Equipe.CORINTHIANS else COR_PADRAO_DIREITA
+			cor_time = DadosTimes.obter_cor_time(&"corinthians") if time == Equipe.CORINTHIANS else DadosTimes.obter_cor_time(&"flamengo")
 		_atualizar_visual()
-@export var cor_time: Color = COR_PADRAO_ESQUERDA:
+@export var cor_time: Color = DadosTimes.obter_cor_time(&"corinthians"):
 	set(valor):
 		cor_time = valor
 		_aplicar_cor_material()
@@ -33,7 +31,7 @@ var material_cor: ShaderMaterial
 # --- INICIALIZACAO E LOOP DE FISICA/PROCESSAMENTO ---
 func _ready() -> void:
 	if not cor_customizada:
-		cor_time = COR_PADRAO_ESQUERDA if time == Equipe.CORINTHIANS else COR_PADRAO_DIREITA
+		cor_time = DadosTimes.obter_cor_time(&"corinthians") if time == Equipe.CORINTHIANS else DadosTimes.obter_cor_time(&"flamengo")
 	_garantir_material_cor()
 	_atualizar_visual()
 

@@ -15,7 +15,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
-cores_times = Array[Color]([Color(0.55, 0.72, 0.92, 1), Color(0.92533237, 0.049644113, 9.62615e-07, 1), Color(0.95, 0.78, 0.22, 1), Color(0.78, 0.82, 0.88, 1), Color(0.18, 0.52, 0.98, 1), Color(0.7254902, 0.07058824, 0.3254902, 1), Color(0.18, 0.8, 0.36, 1), Color(0.98, 0.38, 0.2, 1), Color(0.22, 0.82, 0.78, 1)])
 
 [node name="FundoEstadio" type="TextureRect" parent="." unique_id=719283611]
 layout_mode = 1

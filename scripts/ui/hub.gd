@@ -4,88 +4,6 @@ extends Node2D
 # --- SINAIS ---
 signal pausa_solicitada
 
-# --- CONSTANTES ---
-const ORDEM_TIMES: Array[StringName] = [
-	&"corinthians",
-	&"flamengo",
-	&"atletico_mineiro",
-	&"botafogo",
-	&"cruzeiro",
-	&"fluminense",
-	&"palmeiras",
-	&"sao_paulo",
-	&"vasco",
-]
-const BRASOES_TIMES: Dictionary = {
-	&"atletico_mineiro": preload("res://assets/ui/times/atletico_mineiro.png"),
-	&"botafogo": preload("res://assets/ui/times/botafogo.png"),
-	&"corinthians": preload("res://assets/ui/times/corinthians.png"),
-	&"cruzeiro": preload("res://assets/ui/times/cruzeiro.png"),
-	&"flamengo": preload("res://assets/ui/times/flamengo.png"),
-	&"fluminense": preload("res://assets/ui/times/fluminense.png"),
-	&"palmeiras": preload("res://assets/ui/times/palmeiras.png"),
-	&"sao_paulo": preload("res://assets/ui/times/sao_paulo.png"),
-	&"vasco": preload("res://assets/ui/times/vasco.png"),
-}
-const NOMES_TIMES: Dictionary = {
-	&"atletico_mineiro": "ATLÉTICO-MG",
-	&"botafogo": "BOTAFOGO",
-	&"corinthians": "CORINTHIANS",
-	&"cruzeiro": "CRUZEIRO",
-	&"flamengo": "FLAMENGO",
-	&"fluminense": "FLUMINENSE",
-	&"palmeiras": "PALMEIRAS",
-	&"sao_paulo": "SÃO PAULO",
-	&"vasco": "VASCO",
-}
-const SIGLAS_TIMES: Dictionary = {
-	&"atletico_mineiro": "CAM",
-	&"botafogo": "BOT",
-	&"corinthians": "COR",
-	&"cruzeiro": "CRU",
-	&"flamengo": "FLA",
-	&"fluminense": "FLU",
-	&"palmeiras": "PAL",
-	&"sao_paulo": "SAO",
-	&"vasco": "VAS",
-}
-const CORES_PADRAO_TIMES: Dictionary = {
-	&"corinthians": Color(0.55, 0.72, 0.92, 1.0),
-	&"flamengo": Color(0.92, 0.24, 0.24, 1.0),
-	&"atletico_mineiro": Color(0.95, 0.78, 0.22, 1.0),
-	&"botafogo": Color(0.78, 0.82, 0.88, 1.0),
-	&"cruzeiro": Color(0.18, 0.52, 0.98, 1.0),
-	&"fluminense": Color(0.72, 0.18, 0.32, 1.0),
-	&"palmeiras": Color(0.18, 0.80, 0.36, 1.0),
-	&"sao_paulo": Color(0.98, 0.38, 0.20, 1.0),
-	&"vasco": Color(0.22, 0.82, 0.78, 1.0),
-}
-
-# --- PARAMETROS CONFIGURAVEIS ---
-@export_group("Cores dos Times (Sprite -> Cor)")
-@export var sprites_times: Array[Texture2D] = [
-	preload("res://assets/ui/times/corinthians.png"),
-	preload("res://assets/ui/times/flamengo.png"),
-	preload("res://assets/ui/times/atletico_mineiro.png"),
-	preload("res://assets/ui/times/botafogo.png"),
-	preload("res://assets/ui/times/cruzeiro.png"),
-	preload("res://assets/ui/times/fluminense.png"),
-	preload("res://assets/ui/times/palmeiras.png"),
-	preload("res://assets/ui/times/sao_paulo.png"),
-	preload("res://assets/ui/times/vasco.png"),
-]
-@export var cores_times: Array[Color] = [
-	Color(0.55, 0.72, 0.92, 1.0),
-	Color(0.92, 0.24, 0.24, 1.0),
-	Color(0.95, 0.78, 0.22, 1.0),
-	Color(0.78, 0.82, 0.88, 1.0),
-	Color(0.18, 0.52, 0.98, 1.0),
-	Color(0.72, 0.18, 0.32, 1.0),
-	Color(0.18, 0.80, 0.36, 1.0),
-	Color(0.98, 0.38, 0.20, 1.0),
-	Color(0.22, 0.82, 0.78, 1.0),
-]
-
 # --- REFERENCIAS A NODES ---
 @onready var brazao_esquerdo: Sprite2D = $Brazoes/Brazao1
 @onready var brazao_direito: Sprite2D = $Brazoes/Brazao2
@@ -95,10 +13,6 @@ const CORES_PADRAO_TIMES: Dictionary = {
 @onready var botao_pausar: Button = $Control/BotaoPausar
 
 # --- ESTADO ---
-static var time_esquerdo_selecionado: StringName = &"corinthians"
-static var time_direito_selecionado: StringName = &"flamengo"
-static var cores_customizadas_por_chave: Dictionary = {}
-
 var placar_atual: Vector2i = Vector2i.ZERO
 var tempo_atual: float = 180.0
 var turno_atual: Prego.Equipe = Prego.Equipe.CORINTHIANS
@@ -110,8 +24,7 @@ var tween_placar: Tween
 
 # --- INICIALIZACAO E LOOP DE FISICA/PROCESSAMENTO ---
 func _ready() -> void:
-	sincronizar_lista_cores_sprites(sprites_times, cores_times)
-	definir_brasoes_por_chave(time_esquerdo_selecionado, time_direito_selecionado)
+	definir_brasoes_por_chave(DadosTimes.time_esquerdo_selecionado, DadosTimes.time_direito_selecionado)
 	if get_parent() == get_tree().root:
 		_carregar_dados_padrao_teste()
 	else:
@@ -128,118 +41,15 @@ static func formatar_tempo(segundos: float) -> String:
 	return "%02d:%02d" % [minutos, resto_segundos]
 
 
-static func obter_textura_time(chave_time: StringName) -> Texture2D:
-	if BRASOES_TIMES.has(chave_time):
-		return BRASOES_TIMES[chave_time] as Texture2D
-	return BRASOES_TIMES[&"corinthians"] as Texture2D
-
-
-static func obter_chave_por_sprite(sprite: Texture2D) -> StringName:
-	if sprite == null:
-		return &""
-	for chave: StringName in BRASOES_TIMES.keys():
-		var tex: Texture2D = BRASOES_TIMES[chave] as Texture2D
-		if tex == sprite or (tex != null and tex.resource_path == sprite.resource_path):
-			return chave
-	return &""
-
-
-static func obter_cor_time(chave_time: StringName) -> Color:
-	if cores_customizadas_por_chave.has(chave_time):
-		return cores_customizadas_por_chave[chave_time] as Color
-	if CORES_PADRAO_TIMES.has(chave_time):
-		return CORES_PADRAO_TIMES[chave_time] as Color
-	return CORES_PADRAO_TIMES[&"corinthians"] as Color
-
-
-static func obter_cor_por_sprite(sprite: Texture2D) -> Color:
-	var chave: StringName = obter_chave_por_sprite(sprite)
-	return obter_cor_time(chave)
-
-
-static func definir_cor_time(chave_time: StringName, nova_cor: Color) -> void:
-	if BRASOES_TIMES.has(chave_time):
-		cores_customizadas_por_chave[chave_time] = nova_cor
-
-
-static func sincronizar_lista_cores_sprites(
-	lista_sprites: Array[Texture2D],
-	lista_cores: Array[Color]
-) -> void:
-	var limite: int = mini(lista_sprites.size(), lista_cores.size())
-	for indice: int in range(limite):
-		var chave: StringName = obter_chave_por_sprite(lista_sprites[indice])
-		if chave != &"":
-			cores_customizadas_por_chave[chave] = lista_cores[indice]
-
-
-static func obter_nome_time(chave_time: StringName) -> String:
-	if NOMES_TIMES.has(chave_time):
-		return str(NOMES_TIMES[chave_time])
-	return "CORINTHIANS"
-
-
-static func obter_sigla_time(chave_time: StringName) -> String:
-	if SIGLAS_TIMES.has(chave_time):
-		return str(SIGLAS_TIMES[chave_time])
-	return "COR"
-
-
-static func definir_times_selecionados(chave_esquerda: StringName, chave_direita: StringName) -> void:
-	var esq_valida: StringName = (
-		chave_esquerda
-		if BRASOES_TIMES.has(chave_esquerda)
-		else &"corinthians"
-	)
-	var dir_valida: StringName = (
-		chave_direita
-		if BRASOES_TIMES.has(chave_direita)
-		else &"flamengo"
-	)
-	if dir_valida == esq_valida:
-		dir_valida = obter_proximo_time_disponivel(dir_valida, 1, esq_valida)
-	time_esquerdo_selecionado = esq_valida
-	time_direito_selecionado = dir_valida
-
-
-static func restaurar_times_padrao() -> void:
-	time_esquerdo_selecionado = &"corinthians"
-	time_direito_selecionado = &"flamengo"
-	cores_customizadas_por_chave.clear()
-
-
-static func obter_proximo_time_disponivel(
-	chave_atual: StringName,
-	passo: int,
-	chave_bloqueada: StringName = &""
-) -> StringName:
-	var total: int = ORDEM_TIMES.size()
-	if total == 0:
-		return &"corinthians"
-	var indice_atual: int = ORDEM_TIMES.find(chave_atual)
-	if indice_atual < 0:
-		indice_atual = 0
-	var direcao: int = 1 if passo >= 0 else -1
-	for tentativa: int in range(1, total + 1):
-		var candidato_idx: int = posmod(indice_atual + direcao * tentativa, total)
-		var candidato: StringName = ORDEM_TIMES[candidato_idx]
-		if candidato != chave_bloqueada or total <= 1:
-			return candidato
-	return ORDEM_TIMES[indice_atual]
-
-
 func definir_brasoes_por_chave(chave_esquerda: StringName, chave_direita: StringName) -> void:
-	if BRASOES_TIMES.has(chave_esquerda):
+	if DadosTimes.possui_time(chave_esquerda):
 		chave_time_esquerdo = chave_esquerda
-	if BRASOES_TIMES.has(chave_direita):
+	if DadosTimes.possui_time(chave_direita):
 		chave_time_direito = chave_direita
-	definir_times_selecionados(chave_time_esquerdo, chave_time_direito)
-	chave_time_esquerdo = time_esquerdo_selecionado
-	chave_time_direito = time_direito_selecionado
 	if brazao_esquerdo != null:
-		brazao_esquerdo.texture = obter_textura_time(chave_time_esquerdo)
+		brazao_esquerdo.texture = DadosTimes.obter_textura_time(chave_time_esquerdo)
 	if brazao_direito != null:
-		brazao_direito.texture = obter_textura_time(chave_time_direito)
+		brazao_direito.texture = DadosTimes.obter_textura_time(chave_time_direito)
 	atualizar_turno(turno_atual)
 
 
@@ -277,8 +87,8 @@ func atualizar_tempo(segundos: float) -> void:
 func atualizar_turno(equipe: Prego.Equipe) -> void:
 	turno_atual = equipe
 	var vez_esquerda: bool = turno_atual == Prego.Equipe.CORINTHIANS
-	var cor_esquerda: Color = obter_cor_time(chave_time_esquerdo).lightened(0.22)
-	var cor_direita: Color = obter_cor_time(chave_time_direito).lightened(0.22)
+	var cor_esquerda: Color = DadosTimes.obter_cor_time(chave_time_esquerdo).lightened(0.22)
+	var cor_direita: Color = DadosTimes.obter_cor_time(chave_time_direito).lightened(0.22)
 	if brazao_esquerdo != null:
 		brazao_esquerdo.modulate = (
 			Color(1.0, 1.0, 1.0, 1.0)
