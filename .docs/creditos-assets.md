@@ -11,6 +11,8 @@ Somente entradas verificadas nos registros do projeto (`README.md`, `.docs/plane
 
 ## Pendências de confirmação
 
+Miniaturas Lanczos do Hub (FEAT-008): `assets/ui/times/hud/*.png` são reduções de 18×18 dos PNGs de _EasilyImpressed já creditados acima, sem redesenho. Geradas pela API nativa de imagem da Godot; fonte e atribuição originais preservadas. Não são novos emblemas autorais.
+
 - Funções de cada desenvolvedor e demais integrantes (a tela lista hoje os dois autores presentes no Git: Gianlucca Paiva e Gabriel Lineker).
 - Mapeamento de cada `.mp3` (incluindo `menu_sound.mp3`) ao autor do Pixabay.
 - Origem/ferramenta da arte restante (campo, moeda, pregos, banner, troféu e arte do menu, esta última gerada por IA e reamostrada pelo pipeline `assets/_fonte/processar_assets.py`).
