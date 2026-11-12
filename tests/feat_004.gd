@@ -54,6 +54,7 @@ func _executar() -> void:
 	await _testar_selecao_times_e_propagacao()
 	await _testar_menu_creditos_e_musica()
 	await _testar_isolamento_duas_partidas()
+	await _testar_ciclo_encerramento()
 
 	partida.queue_free()
 	await process_frame
@@ -803,6 +804,39 @@ func _testar_selecao_times_e_propagacao() -> void:
 
 
 # --- AUXILIARES / SETTERS ---
+func _testar_ciclo_encerramento() -> void:
+	partida.reiniciar_partida()
+	await _quadros(2)
+	var audio: AudioManager = AudioManager.instancia
+	var stream_original: AudioStream = audio.sfx_apito_final
+	audio.sfx_apito_final = null
+	var contagem_antes: int = encerramentos
+	partida.placar = Vector2i(1, 0)
+	partida._encerrar_partida(Prego.Equipe.CORINTHIANS, false)
+	var geracao_anterior: int = partida.id_partida
+	_verificar(partida.etapa_fim == MainGame.EtapaFim.PAUSA and not partida.pausa_fim.is_stopped(), "Encerramento aguarda pausa antes de audio/resultado")
+	_verificar(not mira.habilitada and not moeda.autorizada and moeda.esta_parada(), "Cerimonia bloqueia novas jogadas")
+	partida._encerrar_partida(Prego.Equipe.FLAMENGO, false)
+	_verificar(encerramentos == contagem_antes + 1 and partida.ultimo_vencedor == int(Prego.Equipe.CORINTHIANS), "Encerramento repetido nao duplica evento nem altera vencedor")
+	partida.reiniciar_partida()
+	partida._concluir_apito_final(geracao_anterior)
+	partida._on_limite_apito_final_timeout()
+	_verificar(partida.etapa_fim == MainGame.EtapaFim.INATIVA and partida.pausa_fim.is_stopped() and partida.limite_apito_final.is_stopped(), "Reinicio cancela espera e ignora conclusao antiga")
+	_verificar(partida.obter_estado() == MainGame.Estado.AGUARDANDO_JOGADA and mira.habilitada, "Callback antigo preserva nova partida")
+	partida.placar = Vector2i(2, 0)
+	partida._encerrar_partida(Prego.Equipe.CORINTHIANS, false)
+	partida._on_pausa_fim_timeout()
+	_verificar(partida.etapa_fim == MainGame.EtapaFim.CONCLUIDA and partida.limite_apito_final.is_stopped(), "Sem audio conclui cerimonia sem esperar sinal inexistente")
+	var geracao_cancelada: int = partida.id_partida
+	partida.cancelar_partida()
+	partida._concluir_apito_final(geracao_cancelada)
+	await _quadros(2)
+	_verificar(not partida.partida_ativa and partida.etapa_fim == MainGame.EtapaFim.INATIVA, "Abandono invalida conclusao pendente")
+	audio.sfx_apito_final = stream_original
+	partida.reiniciar_partida()
+	await _quadros(2)
+
+
 func _verificar(condicao: bool, descricao: String) -> void:
 	verificacoes += 1
 	if not condicao:

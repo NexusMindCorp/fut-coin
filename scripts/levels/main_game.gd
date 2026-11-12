@@ -9,6 +9,7 @@ enum Estado {
 	GOL_ANIMANDO,
 	FIM_DE_PARTIDA,
 }
+enum EtapaFim { INATIVA, PAUSA, APITO, CONCLUIDA }
 
 # --- SINAIS ---
 signal placar_alterado(placar: Vector2i)
@@ -26,8 +27,9 @@ const CAMINHO_MENU_PRINCIPAL: String = "res://scenes/ui/menu_principal.tscn"
 
 # --- PARAMETROS CONFIGURAVEIS ---
 @export_group("Regras")
-@export_range(1.0, 600.0) var duracao_partida: float = 180.0
+@export_range(1.0, 600.0) var duracao_partida: float = 300.0
 @export_range(0.05, 5.0) var duracao_apresentacao_gol: float = GolUI.DURACAO_PADRAO
+@export_range(0.05, 1.0) var pausa_antes_apito_final: float = 0.25
 
 # --- REFERENCIAS A NODES ---
 @onready var campo: Node2D = $Campo
@@ -37,6 +39,8 @@ const CAMINHO_MENU_PRINCIPAL: String = "res://scenes/ui/menu_principal.tscn"
 @onready var camera: CameraPartida = $CameraPartida
 @onready var cronometro: Timer = $Cronometro
 @onready var pausa_gol: Timer = $PausaGol
+@onready var pausa_fim: Timer = $PausaFim
+@onready var limite_apito_final: Timer = $LimiteApitoFinal
 @onready var hub: Hub = $FeedbackRegras/Hub
 @onready var gol_ui: GolUI = $FeedbackRegras/GolUI
 @onready var rotulo_aviso: Label = $FeedbackRegras/AvisoCentral
@@ -68,6 +72,10 @@ var expiracao_pendente: bool = false
 var ultimo_segundo_exibido: int = -1
 var ultimo_vencedor: int = -1
 var tween_aviso: Tween
+var etapa_fim: EtapaFim = EtapaFim.INATIVA
+var geracao_fim: int = -1
+var player_apito_final: AudioStreamPlayer
+var callback_apito_final: Callable
 
 
 # --- INICIALIZACAO E LOOP DE FISICA/PROCESSAMENTO ---
@@ -76,6 +84,10 @@ func _ready() -> void:
 		rng.randomize()
 	_conectar_grupo_sensores(&"sensores_gol", _on_sensor_gol_marcado)
 	iniciar_partida()
+
+
+func _exit_tree() -> void:
+	_cancelar_encerramento()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -244,14 +256,14 @@ func _encerrar_partida(vencedor: Prego.Equipe, por_gol_de_ouro: bool) -> void:
 	mira.definir_habilitada(false)
 	moeda.interromper_movimento()
 	_definir_estado(Estado.FIM_DE_PARTIDA)
-	AudioManager.tocar_fim_partida()
 	_exibir_aviso_fim(vencedor, por_gol_de_ouro)
 	_atualizar_feedback_status()
 	var chave_vencedor: StringName = _obter_chave_brasao_equipe(vencedor)
 	TelaFinal.definir_resultado(vencedor, placar, por_gol_de_ouro, chave_vencedor)
+	geracao_fim = id_partida
+	etapa_fim = EtapaFim.PAUSA
+	pausa_fim.start(pausa_antes_apito_final + AudioManager.obter_tempo_comemoracao_restante())
 	partida_encerrada.emit(vencedor, placar, por_gol_de_ouro)
-	if is_inside_tree() and get_tree().current_scene == self:
-		_ir_para_tela_final.call_deferred(id_partida)
 
 
 func _obter_chave_brasao_equipe(equipe: Prego.Equipe) -> StringName:
@@ -267,7 +279,65 @@ func _obter_chave_brasao_equipe(equipe: Prego.Equipe) -> StringName:
 func _ir_para_tela_final(geracao_esperada: int) -> void:
 	if geracao_esperada != id_partida or estado != Estado.FIM_DE_PARTIDA or not is_inside_tree():
 		return
-	get_tree().change_scene_to_file(CAMINHO_TELA_FINAL)
+	if not partida_ativa or etapa_fim != EtapaFim.CONCLUIDA or get_tree().current_scene != self:
+		return
+	var erro: Error = get_tree().change_scene_to_file(CAMINHO_TELA_FINAL)
+	if erro != OK:
+		push_error("Falha ao abrir tela de resultado (erro %d)." % erro)
+
+
+func _on_pausa_fim_timeout() -> void:
+	if geracao_fim != id_partida or estado != Estado.FIM_DE_PARTIDA or etapa_fim != EtapaFim.PAUSA:
+		return
+	pausa_fim.stop()
+	etapa_fim = EtapaFim.APITO
+	player_apito_final = AudioManager.tocar_fim_partida()
+	if not is_instance_valid(player_apito_final):
+		_concluir_apito_final(geracao_fim)
+		return
+	callback_apito_final = _concluir_apito_final.bind(geracao_fim)
+	player_apito_final.finished.connect(callback_apito_final, CONNECT_ONE_SHOT)
+	var duracao: float = player_apito_final.stream.get_length()
+	limite_apito_final.start(clampf(duracao + 1.0, 1.0, 11.0))
+
+
+func _on_limite_apito_final_timeout() -> void:
+	if etapa_fim != EtapaFim.APITO or geracao_fim != id_partida:
+		return
+	if is_instance_valid(player_apito_final):
+		player_apito_final.stop()
+	_concluir_apito_final(geracao_fim)
+
+
+func _concluir_apito_final(geracao_esperada: int) -> void:
+	if geracao_esperada != id_partida or geracao_esperada != geracao_fim:
+		return
+	if estado != Estado.FIM_DE_PARTIDA or etapa_fim != EtapaFim.APITO:
+		return
+	limite_apito_final.stop()
+	_desconectar_apito_final()
+	etapa_fim = EtapaFim.CONCLUIDA
+	_ir_para_tela_final.call_deferred(geracao_esperada)
+
+
+func _cancelar_encerramento() -> void:
+	if pausa_fim != null:
+		pausa_fim.stop()
+	if limite_apito_final != null:
+		limite_apito_final.stop()
+	if is_instance_valid(player_apito_final):
+		player_apito_final.stop()
+	_desconectar_apito_final()
+	geracao_fim = -1
+	etapa_fim = EtapaFim.INATIVA
+
+
+func _desconectar_apito_final() -> void:
+	if is_instance_valid(player_apito_final) and callback_apito_final.is_valid():
+		if player_apito_final.finished.is_connected(callback_apito_final):
+			player_apito_final.finished.disconnect(callback_apito_final)
+	player_apito_final = null
+	callback_apito_final = Callable()
 
 
 func _habilitar_turno(equipe: Prego.Equipe, emitir_turno: bool) -> void:
@@ -283,6 +353,7 @@ func _habilitar_turno(equipe: Prego.Equipe, emitir_turno: bool) -> void:
 
 # --- API PUBLICA ---
 func iniciar_partida() -> void:
+	_cancelar_encerramento()
 	id_partida += 1
 	id_jogada_atual = 0
 	id_jogada_armada = 0
@@ -332,6 +403,7 @@ func reiniciar_partida() -> void:
 
 
 func cancelar_partida() -> void:
+	_cancelar_encerramento()
 	id_partida += 1
 	partida_ativa = false
 	resolucao_agendada = false

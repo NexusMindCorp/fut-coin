@@ -16,6 +16,7 @@ const CAMINHO_MUSICA_PARTIDA_NORMAL: String = "res://assets/sounds/music/jogo_no
 const CAMINHO_MUSICA_GOL_DE_OURO: String = "res://assets/sounds/music/bola_ouro_sound.mp3"
 const CAMINHO_MUSICA_MENU: String = "res://assets/sounds/music/menu_sound.mp3"
 const CAMINHO_SFX_INICIO_PARTIDA: String = "res://assets/sounds/sfx/start_sound.mp3"
+const CAMINHO_SFX_APITO_FINAL: String = "res://assets/sounds/sfx/apito_final.mp3"
 const CAMINHO_SFX_GOL: String = "res://assets/sounds/sfx/gol_sound.mp3"
 const CAMINHO_TORCIDA_GOL: String = "res://assets/sounds/sfx/torcida_gol.mp3"
 const CAMINHO_SFX_VITORIA: String = "res://assets/sounds/sfx/vitoria_sound.mp3"
@@ -33,9 +34,9 @@ const CAMINHO_SFX_FOGOS: String = "res://assets/sounds/sfx/fogos_artificios.mp3"
 @export var sfx_vitoria_trofeu: AudioStream = null
 @export var sfx_fogos_artificio: AudioStream = null
 @export var musica_menu: AudioStream = null
+@export var sfx_apito_final: AudioStream = null
 @export_group("Streams Opcionais Pendentes")
 @export var som_ambiente_torcida: AudioStream = null
-@export var sfx_apito_final: AudioStream = null
 
 # --- ESTADO ---
 static var instancia: AudioManager = null
@@ -161,13 +162,29 @@ static func tocar_gol() -> void:
 	instancia.aplicar_ducking_temporario(VOLUME_MUSICA_DUCKING_DB, duracao)
 
 
-static func tocar_fim_partida() -> void:
+static func obter_tempo_comemoracao_restante() -> float:
 	if instancia == null:
-		return
+		return 0.0
+	var restante: float = 0.0
+	for player: AudioStreamPlayer in [instancia.player_torcida_gol, instancia.player_sfx_evento]:
+		if player == null or not player.playing or player.stream == null:
+			continue
+		if player.stream != instancia.som_torcida_gol and player.stream != instancia.sfx_gol:
+			continue
+		restante = maxf(restante, player.stream.get_length() - player.get_playback_position())
+	return clampf(restante, 0.0, 10.0)
+
+
+static func tocar_fim_partida() -> AudioStreamPlayer:
+	if instancia == null:
+		return null
 	instancia.parar_torcida_gol()
 	instancia.parar_ambiente()
-	if instancia.sfx_apito_final != null:
-		instancia.executar_sfx_evento(instancia.sfx_apito_final)
+	instancia._animar_volume_musica(VOLUME_MUSICA_DUCKING_DB, 0.1)
+	if instancia.sfx_apito_final == null or DisplayServer.get_name() == "headless":
+		return null
+	instancia.executar_sfx_evento(instancia.sfx_apito_final)
+	return instancia.player_sfx_evento if instancia.player_sfx_evento.playing else null
 
 
 static func tocar_tela_vitoria() -> void:
@@ -318,6 +335,8 @@ func _carregar_streams_padrao() -> void:
 		musica_gol_de_ouro = load(CAMINHO_MUSICA_GOL_DE_OURO) as AudioStream
 	if sfx_inicio_partida == null:
 		sfx_inicio_partida = load(CAMINHO_SFX_INICIO_PARTIDA) as AudioStream
+	if sfx_apito_final == null:
+		sfx_apito_final = load(CAMINHO_SFX_APITO_FINAL) as AudioStream
 	if sfx_gol == null:
 		sfx_gol = load(CAMINHO_SFX_GOL) as AudioStream
 	if som_torcida_gol == null:

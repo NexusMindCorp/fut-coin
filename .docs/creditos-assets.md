@@ -12,6 +12,8 @@ Somente entradas verificadas nos registros do projeto (`README.md`, `.docs/plane
 
 ## Pendências de confirmação
 
+Apito final (FEAT-009/etapa 5): `assets/sounds/sfx/apito_final.mp3` deriva exclusivamente do `start_sound.mp3` já incluído no grupo Pixabay acima; três sopros recortados, sem alteração de pitch. Receita em `assets/_fonte/audio/apito_final.md`. Não é nova fonte externa; mapeamento individual do som original permanece pendente.
+
 Miniaturas Lanczos do Hub (FEAT-008): `assets/ui/times/hud/*.png` são reduções de 18×18 dos PNGs de _EasilyImpressed já creditados acima, sem redesenho. Geradas pela API nativa de imagem da Godot; fonte e atribuição originais preservadas. Não são novos emblemas autorais.
 
 - Funções de cada desenvolvedor e demais integrantes (a tela lista hoje os dois autores presentes no Git: Gianlucca Paiva e Gabriel Lineker).

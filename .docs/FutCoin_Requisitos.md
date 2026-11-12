@@ -51,7 +51,7 @@
 - Valores de força mínima, máxima e escala do arrasto devem ser **configuráveis** (`@export`).
 
 ### 3.3 Duração e fim de partida
-- Duração efetiva aprovada: **5 minutos (300 segundos)** na cena `main_game.tscn`. A propriedade continua exportada; 180 segundos no script é somente o fallback técnico, não a configuração entregue.
+- Duração aprovada: **5 minutos (300 segundos)** na cena `main_game.tscn`, no padrão exportado do script e no Timer do cronômetro. A propriedade continua exportada para testes e ajustes explícitos.
 - O cronômetro deve pausar durante a animação de gol e durante o pause.
 - **Empate:** não existe empate final. Se o tempo acabar com o placar igual, entra o **gol de ouro**:
   - A moeda troca para um **sprite dourado especial**.

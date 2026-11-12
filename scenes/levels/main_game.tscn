@@ -48,12 +48,18 @@ referencia_campo = NodePath("../../Campo")
 
 [node name="Cronometro" type="Timer" parent="." unique_id=46603877]
 process_callback = 0
-wait_time = 180.0
+wait_time = 300.0
 one_shot = true
 
 [node name="PausaGol" type="Timer" parent="." unique_id=1996600708]
 process_callback = 0
 wait_time = 2.2
+one_shot = true
+
+[node name="PausaFim" type="Timer" parent="." unique_id=441260603]
+one_shot = true
+
+[node name="LimiteApitoFinal" type="Timer" parent="." unique_id=599922214]
 one_shot = true
 
 [node name="FeedbackRegras" type="CanvasLayer" parent="." unique_id=312995456]
@@ -85,6 +91,8 @@ vertical_alignment = 1
 [connection signal="mira_iniciada" from="Mira" to="." method="_on_mira_iniciada"]
 [connection signal="timeout" from="Cronometro" to="." method="_on_cronometro_timeout"]
 [connection signal="timeout" from="PausaGol" to="." method="_on_pausa_gol_timeout"]
+[connection signal="timeout" from="PausaFim" to="." method="_on_pausa_fim_timeout"]
+[connection signal="timeout" from="LimiteApitoFinal" to="." method="_on_limite_apito_final_timeout"]
 [connection signal="pausa_solicitada" from="FeedbackRegras/Hub" to="." method="_on_hub_pausa_solicitada"]
 [connection signal="continuar_solicitado" from="FeedbackRegras/Pause" to="." method="_on_pause_continuar_solicitado"]
 [connection signal="menu_solicitado" from="FeedbackRegras/Pause" to="." method="_on_pause_menu_solicitado"]
