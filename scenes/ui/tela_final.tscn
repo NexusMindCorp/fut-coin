@@ -5,7 +5,10 @@
 [ext_resource type="Texture2D" uid="uid://dq1scfafo5hh7" path="res://assets/ui/times/corinthians.png" id="3"]
 [ext_resource type="PackedScene" uid="uid://c6n2v8kp5x4re" path="res://scenes/ui/sounds.tscn" id="4_sounds"]
 
+[ext_resource type="Theme" path="res://assets/ui/tema_futcoin.tres" id="tema_ui"]
+
 [node name="TelaFinal" type="Control"]
+theme = ExtResource("tema_ui")
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -141,6 +144,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="BotaoJogarNovamente" type="Button" parent="Conteudo" groups=["botoes_interface", "ui_buttons"]]
+theme_type_variation = &"BotaoPrincipal"
 layout_mode = 0
 offset_left = 85.0
 offset_top = 302.0
@@ -148,9 +152,6 @@ offset_right = 235.0
 offset_bottom = 338.0
 focus_neighbor_right = NodePath("../BotaoTrocarTimes")
 focus_neighbor_left = NodePath("../BotaoMenu")
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_focus_color = Color(1, 0.92, 0.28, 1)
-theme_override_colors/font_hover_color = Color(1, 0.92, 0.28, 1)
 theme_override_font_sizes/font_size = 14
 text = "Jogar Novamente"
 
@@ -162,9 +163,6 @@ offset_right = 395.0
 offset_bottom = 338.0
 focus_neighbor_left = NodePath("../BotaoJogarNovamente")
 focus_neighbor_right = NodePath("../BotaoMenu")
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_focus_color = Color(1, 0.92, 0.28, 1)
-theme_override_colors/font_hover_color = Color(1, 0.92, 0.28, 1)
 theme_override_font_sizes/font_size = 14
 text = "Trocar Times"
 
@@ -176,9 +174,6 @@ offset_right = 555.0
 offset_bottom = 338.0
 focus_neighbor_left = NodePath("../BotaoTrocarTimes")
 focus_neighbor_right = NodePath("../BotaoJogarNovamente")
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_focus_color = Color(1, 0.92, 0.28, 1)
-theme_override_colors/font_hover_color = Color(1, 0.92, 0.28, 1)
 theme_override_font_sizes/font_size = 14
 text = "Menu"
 

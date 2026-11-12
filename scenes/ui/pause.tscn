@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://c7m8x4qp9w2ne" path="res://scripts/ui/pause.gd" id="1_pause"]
 [ext_resource type="PackedScene" uid="uid://c6n2v8kp5x4re" path="res://scenes/ui/sounds.tscn" id="2_sounds"]
+[ext_resource type="Theme" path="res://assets/ui/tema_futcoin.tres" id="tema_ui"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_painel"]
 bg_color = Color(0.06, 0.09, 0.14, 0.96)
@@ -15,55 +16,8 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_botao_normal"]
-content_margin_left = 14.0
-content_margin_top = 6.0
-content_margin_right = 14.0
-content_margin_bottom = 6.0
-bg_color = Color(0.12, 0.2, 0.3, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.88, 0.72, 0.2, 1)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_botao_foco"]
-content_margin_left = 14.0
-content_margin_top = 6.0
-content_margin_right = 14.0
-content_margin_bottom = 6.0
-bg_color = Color(0.2, 0.34, 0.48, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(1, 0.92, 0.42, 1)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_botao_press"]
-content_margin_left = 14.0
-content_margin_top = 6.0
-content_margin_right = 14.0
-content_margin_bottom = 6.0
-bg_color = Color(0.08, 0.14, 0.22, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.95, 0.78, 0.22, 1)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-
 [node name="Pause" type="Control" unique_id=841029384]
+theme = ExtResource("tema_ui")
 process_mode = 2
 visible = false
 z_index = 2
@@ -130,42 +84,22 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="BotaoContinuar" type="Button" parent="PainelPause/MargemInterna/Conteudo" unique_id=293847561]
+theme_type_variation = &"BotaoPrincipal"
 custom_minimum_size = Vector2(180, 30)
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.96, 0.82, 1)
-theme_override_colors/font_focus_color = Color(1, 0.95, 0.45, 1)
-theme_override_colors/font_hover_color = Color(1, 0.95, 0.45, 1)
 theme_override_font_sizes/font_size = 12
-theme_override_styles/normal = SubResource("StyleBoxFlat_botao_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_botao_press")
-theme_override_styles/hover = SubResource("StyleBoxFlat_botao_foco")
-theme_override_styles/focus = SubResource("StyleBoxFlat_botao_foco")
 text = "CONTINUAR"
 
 [node name="BotaoReiniciar" type="Button" parent="PainelPause/MargemInterna/Conteudo" unique_id=384756192]
 custom_minimum_size = Vector2(180, 30)
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.96, 0.82, 1)
-theme_override_colors/font_focus_color = Color(1, 0.95, 0.45, 1)
-theme_override_colors/font_hover_color = Color(1, 0.95, 0.45, 1)
 theme_override_font_sizes/font_size = 12
-theme_override_styles/normal = SubResource("StyleBoxFlat_botao_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_botao_press")
-theme_override_styles/hover = SubResource("StyleBoxFlat_botao_foco")
-theme_override_styles/focus = SubResource("StyleBoxFlat_botao_foco")
 text = "REINICIAR"
 
 [node name="BotaoMenu" type="Button" parent="PainelPause/MargemInterna/Conteudo" unique_id=475619283]
 custom_minimum_size = Vector2(180, 30)
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.96, 0.82, 1)
-theme_override_colors/font_focus_color = Color(1, 0.95, 0.45, 1)
-theme_override_colors/font_hover_color = Color(1, 0.95, 0.45, 1)
 theme_override_font_sizes/font_size = 12
-theme_override_styles/normal = SubResource("StyleBoxFlat_botao_normal")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_botao_press")
-theme_override_styles/hover = SubResource("StyleBoxFlat_botao_foco")
-theme_override_styles/focus = SubResource("StyleBoxFlat_botao_foco")
 text = "SAIR"
 
 [node name="Sounds" parent="." unique_id=619283745 instance=ExtResource("2_sounds")]

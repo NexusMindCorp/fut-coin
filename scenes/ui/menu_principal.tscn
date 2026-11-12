@@ -80,6 +80,7 @@ offset_bottom = 250.0
 theme_override_constants/separation = 10
 
 [node name="BotaoJogar" type="Button" parent="Conteudo/Botoes" unique_id=812000007]
+theme_type_variation = &"BotaoPrincipal"
 layout_mode = 2
 focus_neighbor_top = NodePath("../BotaoSair")
 focus_neighbor_bottom = NodePath("../BotaoCreditos")

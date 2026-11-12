@@ -6,7 +6,10 @@
 [ext_resource type="Texture2D" uid="uid://d3hanob0osu3p" path="res://assets/ui/times/flamengo.png" id="4_flamengo"]
 [ext_resource type="PackedScene" uid="uid://c6n2v8kp5x4re" path="res://scenes/ui/sounds.tscn" id="5_sounds"]
 
+[ext_resource type="Theme" path="res://assets/ui/tema_futcoin.tres" id="tema_ui"]
+
 [node name="TelaVersus" type="Control" unique_id=719283610]
+theme = ExtResource("tema_ui")
 texture_filter = 1
 layout_mode = 3
 anchors_preset = 15
@@ -101,6 +104,7 @@ scale = Vector2(2, 2)
 texture = ExtResource("3_corinthians")
 
 [node name="BotaoAnteriorEsquerdo" type="Button" parent="Conteudo/MolduraEsquerda" unique_id=719283619]
+theme_type_variation = &"BotaoCompacto"
 layout_mode = 0
 offset_left = 6.0
 offset_top = 38.0
@@ -108,13 +112,11 @@ offset_right = 38.0
 offset_bottom = 74.0
 focus_neighbor_right = NodePath("../BotaoProximoEsquerdo")
 focus_neighbor_bottom = NodePath("../../BotoesAcao/BotaoComecar")
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_focus_color = Color(1, 0.92, 0.28, 1)
-theme_override_colors/font_hover_color = Color(1, 0.92, 0.28, 1)
 theme_override_font_sizes/font_size = 16
 text = "<"
 
 [node name="BotaoProximoEsquerdo" type="Button" parent="Conteudo/MolduraEsquerda" unique_id=719283620]
+theme_type_variation = &"BotaoCompacto"
 layout_mode = 0
 offset_left = 163.0
 offset_top = 38.0
@@ -123,9 +125,6 @@ offset_bottom = 74.0
 focus_neighbor_left = NodePath("../BotaoAnteriorEsquerdo")
 focus_neighbor_right = NodePath("../../MolduraDireita/BotaoAnteriorDireito")
 focus_neighbor_bottom = NodePath("../../BotoesAcao/BotaoComecar")
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_focus_color = Color(1, 0.92, 0.28, 1)
-theme_override_colors/font_hover_color = Color(1, 0.92, 0.28, 1)
 theme_override_font_sizes/font_size = 16
 text = ">"
 
@@ -190,6 +189,7 @@ scale = Vector2(2, 2)
 texture = ExtResource("4_flamengo")
 
 [node name="BotaoAnteriorDireito" type="Button" parent="Conteudo/MolduraDireita" unique_id=719283627]
+theme_type_variation = &"BotaoCompacto"
 layout_mode = 0
 offset_left = 6.0
 offset_top = 38.0
@@ -198,13 +198,11 @@ offset_bottom = 74.0
 focus_neighbor_left = NodePath("../../MolduraEsquerda/BotaoProximoEsquerdo")
 focus_neighbor_right = NodePath("../BotaoProximoDireito")
 focus_neighbor_bottom = NodePath("../../BotoesAcao/BotaoVoltar")
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_focus_color = Color(1, 0.92, 0.28, 1)
-theme_override_colors/font_hover_color = Color(1, 0.92, 0.28, 1)
 theme_override_font_sizes/font_size = 16
 text = "<"
 
 [node name="BotaoProximoDireito" type="Button" parent="Conteudo/MolduraDireita" unique_id=719283628]
+theme_type_variation = &"BotaoCompacto"
 layout_mode = 0
 offset_left = 163.0
 offset_top = 38.0
@@ -212,9 +210,6 @@ offset_right = 195.0
 offset_bottom = 74.0
 focus_neighbor_left = NodePath("../BotaoAnteriorDireito")
 focus_neighbor_bottom = NodePath("../../BotoesAcao/BotaoVoltar")
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_focus_color = Color(1, 0.92, 0.28, 1)
-theme_override_colors/font_hover_color = Color(1, 0.92, 0.28, 1)
 theme_override_font_sizes/font_size = 16
 text = ">"
 
@@ -264,14 +259,12 @@ offset_bottom = 344.0
 mouse_filter = 2
 
 [node name="BotaoComecar" type="Button" parent="Conteudo/BotoesAcao" unique_id=719283633]
+theme_type_variation = &"BotaoPrincipal"
 layout_mode = 0
 offset_right = 224.0
 offset_bottom = 40.0
 focus_neighbor_top = NodePath("../../MolduraEsquerda/BotaoAnteriorEsquerdo")
 focus_neighbor_right = NodePath("../BotaoVoltar")
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_focus_color = Color(1, 0.92, 0.28, 1)
-theme_override_colors/font_hover_color = Color(1, 0.92, 0.28, 1)
 theme_override_font_sizes/font_size = 15
 text = "COMEÇAR PARTIDA"
 
@@ -282,9 +275,6 @@ offset_right = 376.0
 offset_bottom = 40.0
 focus_neighbor_left = NodePath("../BotaoComecar")
 focus_neighbor_top = NodePath("../../MolduraDireita/BotaoAnteriorDireito")
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_focus_color = Color(1, 0.92, 0.28, 1)
-theme_override_colors/font_hover_color = Color(1, 0.92, 0.28, 1)
 theme_override_font_sizes/font_size = 15
 text = "VOLTAR"
 
