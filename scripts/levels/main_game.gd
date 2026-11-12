@@ -618,7 +618,7 @@ func _exibir_aviso_temporario(mensagem: String) -> void:
 		return
 	_cancelar_tween_aviso()
 	rotulo_aviso.text = mensagem
-	rotulo_aviso.modulate = Color(1.0, 0.88, 0.3, 1.0)
+	rotulo_aviso.modulate = Color.WHITE
 	rotulo_aviso.visible = true
 	tween_aviso = create_tween()
 	tween_aviso.tween_interval(0.6)

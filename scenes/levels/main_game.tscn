@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://bw7hecjq0l62t"]
 
+[ext_resource type="Theme" path="res://assets/ui/tema_textos.tres" id="tema_textos"]
 [ext_resource type="Script" uid="uid://bum8dboywuy25" path="res://scripts/levels/main_game.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://c4dnbpkrgl3hq" path="res://scenes/levels/campo.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/entities/moeda.tscn" id="3"]
@@ -69,14 +70,13 @@ one_shot = true
 [node name="GolUI" parent="FeedbackRegras" unique_id=941168849 instance=ExtResource("8")]
 
 [node name="AvisoCentral" type="Label" parent="FeedbackRegras" unique_id=704347150]
+theme = ExtResource("tema_textos")
+theme_type_variation = &"AvisoPartida"
 visible = false
 offset_left = 120.0
 offset_top = 152.0
 offset_right = 520.0
 offset_bottom = 240.0
-theme_override_colors/font_color = Color(1, 0.95, 0.4, 1)
-theme_override_colors/font_outline_color = Color(0.05, 0.05, 0.08, 1)
-theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 18
 text = "FIM DE PARTIDA"
 horizontal_alignment = 1

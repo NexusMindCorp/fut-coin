@@ -3,8 +3,8 @@ extends Control
 
 # --- CONSTANTES ---
 const CAMINHO_MENU_PRINCIPAL: String = "res://scenes/ui/menu_principal.tscn"
-const COR_TITULO: String = "#ffeb47"
-const COR_SECAO: String = "#8cc8ff"
+const COR_TITULO: String = "#ffe073"
+const COR_SECAO: String = "#b7c9df"
 const DESENVOLVEDORES: Array[String] = [
 	"Gianlucca Paiva",
 	"Gabriel Lineker",

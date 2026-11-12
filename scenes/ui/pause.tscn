@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://b4oav6kp2x8re"]
 
+[ext_resource type="Theme" path="res://assets/ui/tema_textos.tres" id="tema_textos"]
 [ext_resource type="Script" uid="uid://c7m8x4qp9w2ne" path="res://scripts/ui/pause.gd" id="1_pause"]
 [ext_resource type="PackedScene" uid="uid://c6n2v8kp5x4re" path="res://scenes/ui/sounds.tscn" id="2_sounds"]
 [ext_resource type="Theme" path="res://assets/ui/tema_futcoin.tres" id="tema_ui"]
@@ -66,18 +67,18 @@ theme_override_constants/separation = 10
 alignment = 1
 
 [node name="TituloPause" type="Label" parent="PainelPause/MargemInterna/Conteudo" unique_id=182930495]
+theme = ExtResource("tema_textos")
+theme_type_variation = &"TituloInterface"
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.9, 0.3, 1)
-theme_override_colors/font_outline_color = Color(0.05, 0.05, 0.08, 1)
-theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 20
 text = "JOGO PAUSADO"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="SubtituloPause" type="Label" parent="PainelPause/MargemInterna/Conteudo" unique_id=918273645]
+theme = ExtResource("tema_textos")
+theme_type_variation = &"TextoSecundario"
 layout_mode = 2
-theme_override_colors/font_color = Color(0.78, 0.84, 0.92, 1)
 theme_override_font_sizes/font_size = 10
 text = "Pressione ESC para continuar"
 horizontal_alignment = 1

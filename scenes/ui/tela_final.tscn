@@ -1,5 +1,6 @@
 [gd_scene load_steps=5 format=3]
 
+[ext_resource type="Theme" path="res://assets/ui/tema_textos.tres" id="tema_textos"]
 [ext_resource type="Script" path="res://scripts/ui/tela_final.gd" id="1"]
 [ext_resource type="Texture2D" path="res://assets/ui/menus/trofeu_vencedor.png" id="2"]
 [ext_resource type="Texture2D" uid="uid://dq1scfafo5hh7" path="res://assets/ui/times/corinthians.png" id="3"]
@@ -97,15 +98,14 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="TituloVencedor" type="Label" parent="Conteudo"]
+theme = ExtResource("tema_textos")
+theme_type_variation = &"TituloInterface"
 layout_mode = 0
 offset_left = 120.0
 offset_top = 12.0
 offset_right = 520.0
 offset_bottom = 52.0
 mouse_filter = 2
-theme_override_colors/font_color = Color(1, 0.92, 0.28, 1)
-theme_override_colors/font_outline_color = Color(0.04, 0.03, 0.08, 1)
-theme_override_constants/outline_size = 5
 theme_override_font_sizes/font_size = 28
 text = "VENCEDOR"
 horizontal_alignment = 1
@@ -129,15 +129,13 @@ position = Vector2(0, -32)
 texture = ExtResource("3")
 
 [node name="NomeEquipePlacar" type="Label" parent="Conteudo"]
+theme = ExtResource("tema_textos")
 layout_mode = 0
 offset_left = 100.0
 offset_top = 258.0
 offset_right = 540.0
 offset_bottom = 290.0
 mouse_filter = 2
-theme_override_colors/font_color = Color(0.92, 0.96, 1, 1)
-theme_override_colors/font_outline_color = Color(0.04, 0.04, 0.08, 1)
-theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 16
 text = "CORINTHIANS  (2 x 1)"
 horizontal_alignment = 1

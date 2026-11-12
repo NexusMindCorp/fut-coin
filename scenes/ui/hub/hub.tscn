@@ -1,16 +1,11 @@
 [gd_scene format=3 uid="uid://dmye2xr72lgiw"]
 
+[ext_resource type="Theme" path="res://assets/ui/tema_textos.tres" id="tema_textos"]
 [ext_resource type="Texture2D" path="res://assets/ui/times/hud/corinthians.png" id="1_1ldeg"]
 [ext_resource type="Texture2D" uid="uid://cjn6mvcqmwhfc" path="res://assets/ui/hud/placar_banner.png" id="2_hmy7e"]
 [ext_resource type="Texture2D" path="res://assets/ui/times/hud/flamengo.png" id="3_flamengo"]
 [ext_resource type="Script" uid="uid://d4m8v1dar2w6k" path="res://scripts/ui/hub.gd" id="4_hub"]
 [ext_resource type="PackedScene" uid="uid://c6n2v8kp5x4re" path="res://scenes/ui/sounds.tscn" id="5_sounds"]
-
-[sub_resource type="LabelSettings" id="LabelSettings_yf5fn"]
-font_size = 13
-
-[sub_resource type="LabelSettings" id="LabelSettings_g4v7s"]
-font_size = 13
 
 [node name="Hub" type="Node2D" unique_id=60231731]
 script = ExtResource("4_hub")
@@ -42,28 +37,34 @@ offset_bottom = 55.0
 mouse_filter = 2
 
 [node name="p1" type="Label" parent="Control" unique_id=1982044214]
+theme = ExtResource("tema_textos")
+theme_type_variation = &"TextoHUD"
+theme_override_font_sizes/font_size = 13
 layout_mode = 0
 offset_left = 240.0
 offset_top = 9.0
 offset_right = 296.0
 offset_bottom = 28.0
 text = "0"
-label_settings = SubResource("LabelSettings_yf5fn")
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="p2" type="Label" parent="Control" unique_id=272623640]
+theme = ExtResource("tema_textos")
+theme_type_variation = &"TextoHUD"
+theme_override_font_sizes/font_size = 13
 layout_mode = 0
 offset_left = 345.0
 offset_top = 8.0
 offset_right = 401.0
 offset_bottom = 27.0
 text = "0"
-label_settings = SubResource("LabelSettings_g4v7s")
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="timer" type="Label" parent="Control" unique_id=1477439671]
+theme = ExtResource("tema_textos")
+theme_type_variation = &"TextoHUD"
 layout_mode = 0
 offset_left = 282.0
 offset_top = 40.0

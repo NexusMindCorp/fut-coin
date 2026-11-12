@@ -1,0 +1,26 @@
+[gd_resource type="Theme" format=3]
+
+[resource]
+Label/colors/font_color = Color(0.94, 0.96, 1, 1)
+Label/colors/font_outline_color = Color(0.025, 0.045, 0.08, 1)
+Label/colors/font_shadow_color = Color(0.025, 0.045, 0.08, 0.85)
+Label/constants/outline_size = 1
+Label/constants/shadow_offset_x = 1
+Label/constants/shadow_offset_y = 1
+Label/constants/shadow_outline_size = 0
+TituloInterface/base_type = &"Label"
+TituloInterface/colors/font_color = Color(1, 0.88, 0.45, 1)
+TituloInterface/constants/outline_size = 2
+TituloPrincipal/base_type = &"TituloInterface"
+TituloPrincipal/constants/outline_size = 3
+AvisoPartida/base_type = &"TituloInterface"
+TextoSecundario/base_type = &"Label"
+TextoSecundario/colors/font_color = Color(0.78, 0.84, 0.92, 1)
+TextoSecundario/constants/outline_size = 0
+TextoHUD/base_type = &"Label"
+TextoHUD/colors/font_color = Color(1, 1, 1, 1)
+RichTextLabel/colors/default_color = Color(0.94, 0.96, 1, 1)
+RichTextLabel/colors/font_shadow_color = Color(0.025, 0.045, 0.08, 0.65)
+RichTextLabel/constants/shadow_offset_x = 1
+RichTextLabel/constants/shadow_offset_y = 1
+RichTextLabel/constants/shadow_outline_size = 0

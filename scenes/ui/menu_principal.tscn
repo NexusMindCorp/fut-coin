@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://ec8c3nhmq5vm"]
 
+[ext_resource type="Theme" path="res://assets/ui/tema_textos.tres" id="tema_textos"]
 [ext_resource type="Script" uid="uid://c3m9x2kp7w4ne" path="res://scripts/ui/menu_principal.gd" id="1_script"]
 [ext_resource type="Texture2D" path="res://assets/ui/menus/menu_principal.png" id="2_arte"]
 [ext_resource type="Theme" uid="uid://b7k3m9qp2x5ve" path="res://assets/ui/tema_futcoin.tres" id="3_tema"]
@@ -49,15 +50,14 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="Titulo" type="Label" parent="Conteudo" unique_id=812000004]
+theme = ExtResource("tema_textos")
+theme_type_variation = &"TituloPrincipal"
 layout_mode = 0
 offset_left = 120.0
 offset_top = 24.0
 offset_right = 520.0
 offset_bottom = 84.0
 mouse_filter = 2
-theme_override_colors/font_color = Color(1, 0.92, 0.28, 1)
-theme_override_colors/font_outline_color = Color(0.04, 0.03, 0.12, 1)
-theme_override_constants/outline_size = 8
 theme_override_font_sizes/font_size = 44
 text = "FUTCOIN"
 horizontal_alignment = 1

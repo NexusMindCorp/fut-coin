@@ -1,6 +1,6 @@
 # FutCoin: Planejamento Técnico
 
-> Status em **11/11/2026**: **M0 a M3 concluídos**, partida e fluxo implementados; M4 permanece em polimento de áudio e M5 em export/teste Linux. FEAT-006 centralizou catálogo/seleção em DadosTimes; FEAT-007 entregou seta por força; FEAT-008 entregou brasões Lanczos no Hub e pause acima do HUD. Duração aprovada de 300 segundos. Últimas evidências: 127 verificações na suíte 004 e 8.288 na 003, zero falhas; execuções datadas nas specs/relatórios, não repetidas nesta atualização documental.
+> Status em **12/11/2026**: **M0 a M3 concluídos**. Polimento de alcance, botões, textos e eventos de áudio aprovado nas FEAT-003/009/010. Gol apresentado por 2,2 s, torcida, apitos de saída e resultado após apito final integrados. Partida de 300 segundos no script/cena/Timer. Últimas evidências da sessão: 134 verificações na suíte 004 e 8.288 na 003, zero falhas; cenas renderizadas em 640×360. M4 ainda exige fechamento de atribuições/conferência final; M5 permanece em export/teste Linux. Validações não repetidas nesta atualização documental.
 
 Entrega de regras e UI de partida: [FEAT-004 — juiz, turnos, gols e cronômetro](../.agent/features/feat-004-juiz-turnos-gols-cronometro.md) concluída em 10/11, incluindo diagnóstico e resolução de bugs em [TS-004](../.agent/troubleshooting/ts-004-regras-moeda-gol-e-pause.md).
 
@@ -31,7 +31,7 @@ Entrega de regras e UI de partida: [FEAT-004 — juiz, turnos, gols e cronômetr
 | Dados dos times | Catálogo e seleção estática centralizados em DadosTimes, com nove clubes | Manter autoridade única; sem Resource/novo Autoload |
 | `project.godot` (Forward Plus + `d3d12`) | Renderer mantido por decisão do usuário | Reavaliar no M5 com o ambiente Linux alvo |
 | Assets | Campo, moeda, pregos, menus, áudio e brasões integrados; HUD usa derivados Lanczos 18×18 | Preservar originais e atribuições; fechar pendências de áudio no M4 |
-| Gameplay e HUD | Partida completa, HUD e pause integrados; cinco minutos e seleção dos clubes | Polimento de áudio e teste/export Linux permanecem |
+| Gameplay e HUD | Partida completa, cinco minutos, alcance ajustado, botões/textos e eventos sonoros aprovados | Preservar aprovações; fechar atribuições e teste/export Linux |
 
 ### Estrutura-alvo
 ```text
@@ -199,9 +199,9 @@ Mantidos: `AudioManager` (autoload, 5 barramentos, mudo no pause), componente de
 |:---|:---|:---|:---|
 | **M0 Fundação (CONCLUÍDO)** | 06/11 | Respostas da Seção 6; `ADR-001`; `FEAT-000` (Project Settings 640×360 + Input Map `mira_clique`/`pausar`); `FEAT-001` (pipeline de assets + `.import`) | Projeto abre em 640×360 pixel perfect; 24 assets finais importados (commits `5ccfcd8`, `18bbc6b`, `d0ea75a`) |
 | **M1 Núcleo físico (concluído)** | 08 a 11/11 | FEAT-002/003 concluídas: campo, 22 pregos, tiles, moeda (`28×28`), mira, bloqueio contra parede em contato, parada e câmera | Prévia F6 jogável; revisão de borda/seleção com 8.288 verificações sem falhas, editor e renderização conferidos. Física aceita; ambiente Linux sujeito a avaliação |
-| **M2 Regras (concluído)** | Implementado em 10/11; revalidado em 11/11 | Juiz, gols, turnos, cronômetro de 300 s e gol de ouro | Suíte 004 com 127 verificações sem falhas na última execução registrada |
+| **M2 Regras (concluído)** | Implementado em 10/11; revalidado em 12/11 | Juiz, gols, turnos, cronômetro de 300 s e gol de ouro | Suíte 004 com 134 verificações sem falhas na última execução registrada |
 | **M3 Fluxo e UI (concluído)** | Implementado em 10/11; refinado em 11/11 | Menus, nove clubes, final/créditos, pause/HUD e infraestrutura de áudio | Fluxo integrado; refinamentos FEAT-006/007/008 aprovados |
-| **M4 Arte e polimento** | 15 a 18/11 | Animação de sprite, de tile e Tweens, SFX/música, balanceamento, tremor de câmera (opcional) | Checklist do enunciado 100% |
+| **M4 Arte e polimento (em fechamento)** | Refinamentos aprovados em 12/11; fechamento previsto 15 a 18/11 | Alcance 1,2, botões/textos, torcida, gol 2,2 s e apitos aprovados; atribuições/conferência final pendentes | Fechar créditos e checklist do enunciado sem presumir conclusão de Linux |
 | **M5 Entrega e Export Linux** | 18 a 20/11 | Preset e export final Linux em `build/`, `.gitattributes` (`build/** binary`), `chmod +x` versionado, créditos finais, `roteiro_apresentacao.md` | Submissão no Classroom, buffer de 1 dia |
 
 ### Divisão sugerida (4 pessoas, com rodízio, pois todos serão arguidos sobre tudo)

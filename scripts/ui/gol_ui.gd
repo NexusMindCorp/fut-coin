@@ -59,7 +59,7 @@ func exibir_gol(
 		brasao_equipe.texture = DadosTimes.obter_textura_time(chave_marcadora)
 	if rotulo_titulo != null:
 		rotulo_titulo.text = "GOOOL!"
-		rotulo_titulo.modulate = Color(1.0, 0.94, 0.32, 1.0)
+		rotulo_titulo.modulate = Color.WHITE
 	if rotulo_detalhe != null:
 		rotulo_detalhe.text = "%s %d x %d %s" % [
 			sigla_esq,

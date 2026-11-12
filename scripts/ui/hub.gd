@@ -103,13 +103,13 @@ func atualizar_turno(equipe: Prego.Equipe) -> void:
 		)
 	if rotulo_p1 != null:
 		rotulo_p1.modulate = (
-			cor_esquerda
+			cor_esquerda.lightened(0.35)
 			if vez_esquerda
 			else Color(1.0, 1.0, 1.0, 0.85)
 		)
 	if rotulo_p2 != null:
 		rotulo_p2.modulate = (
-			cor_direita
+			cor_direita.lightened(0.35)
 			if not vez_esquerda
 			else Color(1.0, 1.0, 1.0, 0.85)
 		)

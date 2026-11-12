@@ -53,6 +53,7 @@
 ### 3.3 Duração e fim de partida
 - Duração aprovada: **5 minutos (300 segundos)** na cena `main_game.tscn`, no padrão exportado do script e no Timer do cronômetro. A propriedade continua exportada para testes e ajustes explícitos.
 - O cronômetro deve pausar durante a animação de gol e durante o pause.
+- Encerramento aprovado em 12/11: bloquear novas jogadas, concluir comemoração quando houver, aguardar pausa de 0,25 s e tocar o apito final completo antes da tela de resultado. Ausência/interrupção de áudio não pode impedir a transição.
 - **Empate:** não existe empate final. Se o tempo acabar com o placar igual, entra o **gol de ouro**:
   - A moeda troca para um **sprite dourado especial**.
   - O **próximo gol encerra a partida**, e quem marcar vence.
@@ -64,6 +65,7 @@
 - Cada gol tem um **sensor** (`Area2D`) para detectar a moeda.
 - Para evitar gols falsos pela borda, o gol só conta quando a moeda estiver **inteiramente dentro** (ou depois de passar totalmente da linha).
 - Ao marcar: a moeda é **escondida**, toca a **animação de gol** (com SFX), o placar é atualizado e a jogada é reiniciada.
+- Apresentação aprovada: **2,2 segundos**, com brasão, nome e placar em linhas próprias, torcida curta e redução temporária da música. Saídas de início, pós-gol e Gol de Ouro usam o apito anterior aprovado; trocas comuns de turno não tocam apito.
 - Alinhamento em 10/11: ocultar também indicador ativo/mira e bloquear novos tiros durante `GOL_ANIMANDO`; restaurar no reinício. Detecção/coordenação na FEAT-004 e apresentação/áudio integrados na FEAT-005/M4.
 
 ### 3.5 Início de partida e reinício após gol
@@ -112,7 +114,7 @@
 
 ## 6. HUD
 
-Planejamento detalhado de interface/fluxo/áudio na [FEAT-005](../.agent/features/feat-005-interface-fluxo-audio.md), integrado à partida, com refinamentos FEAT-006 a 008. Aprovado em 10/11: preservar banner de 44 px e recortar apenas 4 px decorativos do campo, mantendo toda a área jogável; versus manual com Começar partida e Voltar. Composição implementada e registrada nas evidências da FEAT-005.
+Planejamento detalhado de interface/fluxo/áudio na [FEAT-005](../.agent/features/feat-005-interface-fluxo-audio.md), integrado à partida, com refinamentos FEAT-006 a 010. Aprovado em 10/11: preservar banner de 44 px e recortar apenas 4 px decorativos do campo, mantendo toda a área jogável; versus manual com Começar partida e Voltar. Em 12/11 foram aprovados botões e textos uniformizados, preservando estrutura, fonte e layout. Composição implementada e registrada nas specs correspondentes.
 
 - Reservar faixa **superior** para placar/cronômetro, reutilizando `scenes/ui/hub/hub.tscn` adaptado a 640×360. HUD fixo na tela, sem cobrir o campo jogável ou consumir cliques destinados à moeda. Ajustar composição e câmera em conjunto: os 20 px atuais de margem não comportam automaticamente o banner de 44 px.
 
@@ -192,22 +194,18 @@ Planejamento detalhado de interface/fluxo/áudio na [FEAT-005](../.agent/feature
 
 **Desejável (se sobrar tempo):**
 - Efeitos extras (tremor de câmera, brilho nos pregos, partículas)
-- Mais times além dos 2 iniciais
-- Seleção de times (após os testes do MVP)
+- Mais clubes além dos nove disponíveis (seleção já implementada)
 - Ajustes de balanceamento (força, atrito, duração)
 
-**Fora do escopo do protótipo:** jogador contra CPU, multiplayer online, mais de 2 times jogáveis.
+**Fora do escopo do protótipo:** jogador contra CPU, multiplayer online, mais de 2 jogadores simultâneos.
 
 ---
 
-## 11. Pendências (não bloqueiam o planejamento)
+## 11. Pendências de entrega em 12/11/2026
 
-Estes pontos serão definidos depois e **não precisam estar fechados** para iniciar o planejamento:
-
-1. Implementar o pause já aprovado na ADR-001 (M3).
-2. Conferir condições de uso/atribuição dos brasões de `_EasilyImpressed` e fechar nomes/funções dos integrantes nos créditos.
-3. Validar nas cenas os tamanhos já definidos, o contraste da aura e o espaçamento entre pregos (M1/M3).
-4. Música e SFX: origem dos arquivos e créditos.
+1. Exportar e testar no Linux alvo; preset, renderer e executável sujeitos à conferência nesse ambiente.
+2. Fechar mapeamento individual dos áudios antigos, demais origens pendentes de assets e funções dos integrantes, conforme inventário de créditos. Autorização e atribuição dos brasões já registradas.
+3. Conferir checklist acadêmico e documentação final de entrega. Pause, seleção de nove clubes e refinamentos FEAT-009/010 já implementados e aprovados.
 
 ## Atualizações de apresentação confirmadas em 11/11/2026
 

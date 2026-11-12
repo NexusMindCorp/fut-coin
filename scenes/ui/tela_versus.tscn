@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://d2p8v4kp1x7re"]
 
+[ext_resource type="Theme" path="res://assets/ui/tema_textos.tres" id="tema_textos"]
 [ext_resource type="Script" uid="uid://c8w4v2kqax6re" path="res://scripts/ui/tela_versus.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://omhea2h1vb6j" path="res://assets/ui/menus/tela_versus.png" id="2_fundo"]
 [ext_resource type="Texture2D" uid="uid://dq1scfafo5hh7" path="res://assets/ui/times/corinthians.png" id="3_corinthians"]
@@ -53,14 +54,13 @@ mouse_filter = 2
 color = Color(0.05, 0.08, 0.16, 0.86)
 
 [node name="TituloSelecao" type="Label" parent="Conteudo" unique_id=719283614]
+theme = ExtResource("tema_textos")
+theme_type_variation = &"TituloInterface"
 layout_mode = 0
 offset_left = 170.0
 offset_top = 14.0
 offset_right = 470.0
 offset_bottom = 42.0
-theme_override_colors/font_color = Color(1, 0.92, 0.28, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 18
 text = "SELEÇÃO DE TIMES"
 horizontal_alignment = 1
@@ -84,14 +84,13 @@ mouse_filter = 2
 color = Color(0.06, 0.1, 0.18, 0.9)
 
 [node name="RotuloJogadorEsquerdo" type="Label" parent="Conteudo/MolduraEsquerda" unique_id=719283617]
+theme = ExtResource("tema_textos")
 layout_mode = 0
 offset_left = 13.0
 offset_top = -36.0
 offset_right = 206.0
 offset_bottom = -14.0
 theme_override_colors/font_color = Color(0.7, 0.88, 1, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
 theme_override_font_sizes/font_size = 12
 text = "JOGADOR 1"
 horizontal_alignment = 1
@@ -138,14 +137,13 @@ mouse_filter = 2
 color = Color(0.06, 0.1, 0.18, 0.94)
 
 [node name="NomeTimeEsquerdo" type="Label" parent="Conteudo/MolduraEsquerda" unique_id=719283622]
+theme = ExtResource("tema_textos")
 layout_mode = 0
 offset_left = 8.0
 offset_top = 114.0
 offset_right = 193.0
 offset_bottom = 142.0
 theme_override_colors/font_color = Color(0.75, 0.9, 1, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
 theme_override_font_sizes/font_size = 13
 text = "CORINTHIANS"
 horizontal_alignment = 1
@@ -169,14 +167,13 @@ mouse_filter = 2
 color = Color(0.18, 0.06, 0.08, 0.9)
 
 [node name="RotuloJogadorDireito" type="Label" parent="Conteudo/MolduraDireita" unique_id=719283625]
+theme = ExtResource("tema_textos")
 layout_mode = 0
 offset_left = 4.0
 offset_top = -36.0
 offset_right = 197.0
 offset_bottom = -14.0
 theme_override_colors/font_color = Color(1, 0.45, 0.45, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
 theme_override_font_sizes/font_size = 12
 text = "JOGADOR 2"
 horizontal_alignment = 1
@@ -223,28 +220,26 @@ mouse_filter = 2
 color = Color(0.18, 0.06, 0.08, 0.94)
 
 [node name="NomeTimeDireito" type="Label" parent="Conteudo/MolduraDireita" unique_id=719283630]
+theme = ExtResource("tema_textos")
 layout_mode = 0
 offset_left = 8.0
 offset_top = 114.0
 offset_right = 193.0
 offset_bottom = 142.0
 theme_override_colors/font_color = Color(1, 0.55, 0.55, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
 theme_override_font_sizes/font_size = 13
 text = "FLAMENGO"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="InfoMouseCompartilhado" type="Label" parent="Conteudo" unique_id=719283631]
+theme = ExtResource("tema_textos")
+theme_type_variation = &"TextoSecundario"
 layout_mode = 0
 offset_left = 100.0
 offset_top = 274.0
 offset_right = 540.0
 offset_bottom = 294.0
-theme_override_colors/font_color = Color(0.95, 0.98, 1, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
 theme_override_font_sizes/font_size = 11
 text = "COOP LOCAL: MOUSE COMPARTILHADO (TURNOS ALTERNADOS)"
 horizontal_alignment = 1

@@ -1,5 +1,6 @@
 [gd_scene load_steps=3 format=3]
 
+[ext_resource type="Theme" path="res://assets/ui/tema_textos.tres" id="tema_textos"]
 [ext_resource type="Script" path="res://scripts/ui/gol_ui.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://dq1scfafo5hh7" path="res://assets/ui/times/corinthians.png" id="2"]
 
@@ -52,45 +53,40 @@ scale = Vector2(1, 1)
 texture = ExtResource("2")
 
 [node name="TituloGol" type="Label" parent="PainelCentral"]
+theme = ExtResource("tema_textos")
+theme_type_variation = &"TituloInterface"
 layout_mode = 0
 offset_left = 100.0
 offset_top = 12.0
 offset_right = 344.0
 offset_bottom = 52.0
 mouse_filter = 2
-theme_override_colors/font_color = Color(1, 0.95, 0.35, 1)
-theme_override_colors/font_outline_color = Color(0.04, 0.04, 0.08, 1)
-theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 26
 text = "GOOOL!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="DetalheGol" type="Label" parent="PainelCentral"]
+theme = ExtResource("tema_textos")
 layout_mode = 0
 offset_left = 100.0
 offset_top = 86.0
 offset_right = 344.0
 offset_bottom = 120.0
 mouse_filter = 2
-theme_override_colors/font_color = Color(0.92, 0.95, 1, 1)
-theme_override_colors/font_outline_color = Color(0.04, 0.04, 0.08, 1)
-theme_override_constants/outline_size = 3
 theme_override_font_sizes/font_size = 21
 text = "COR 1 x 0 FLA"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="NomeTime" type="Label" parent="PainelCentral"]
+theme = ExtResource("tema_textos")
 layout_mode = 0
 offset_left = 100.0
 offset_top = 54.0
 offset_right = 344.0
 offset_bottom = 82.0
 mouse_filter = 2
-theme_override_colors/font_color = Color(0.92, 0.95, 1, 1)
-theme_override_colors/font_outline_color = Color(0.04, 0.04, 0.08, 1)
-theme_override_constants/outline_size = 2
 theme_override_font_sizes/font_size = 16
 text = "CORINTHIANS"
 horizontal_alignment = 1

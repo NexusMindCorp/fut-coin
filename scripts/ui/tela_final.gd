@@ -93,7 +93,7 @@ func _atualizar_interface_vencedor() -> void:
 			placar_atual.y,
 			sufixo_ouro,
 		]
-		rotulo_equipe_placar.modulate = DadosTimes.obter_cor_time(chave_vencedor_atual).lightened(0.22)
+		rotulo_equipe_placar.modulate = DadosTimes.obter_cor_time(chave_vencedor_atual).lightened(0.5)
 
 
 func _animar_entrada_trofeu_e_fogos() -> void:
