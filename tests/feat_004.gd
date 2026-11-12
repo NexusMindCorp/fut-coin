@@ -827,7 +827,9 @@ func _quadros(quantidade: int) -> void:
 
 
 func _aguardar_parada_e_resolucao() -> void:
-	for _passo: int in range(180):
+	# Cobre desaceleracao de 700 ate 3 px/s com damping 1,2 e Timer de parada.
+	var limite_passos: int = ceili(6.0 * float(Engine.physics_ticks_per_second))
+	for _passo: int in range(limite_passos):
 		await physics_frame
 		await process_frame
 		if partida.obter_estado() != MainGame.Estado.MOEDA_EM_MOVIMENTO and not partida.resolucao_agendada:
