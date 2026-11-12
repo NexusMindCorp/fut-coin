@@ -771,7 +771,8 @@ func _testar_selecao_times_e_propagacao() -> void:
 	partida._on_lancamento_solicitado(Vector2(550.0, 0.0))
 	await _aguardar_estado(MainGame.Estado.GOL_ANIMANDO, 60)
 	_verificar(
-		partida.gol_ui.rotulo_detalhe.text == "PALMEIRAS  |  PAL 1 x 0 VAS"
+		partida.gol_ui.rotulo_detalhe.text == "PAL 1 x 0 VAS"
+		and partida.gol_ui.rotulo_time.text == "PALMEIRAS"
 		and partida.gol_ui.brasao_equipe.texture == DadosTimes.obter_textura_time(&"palmeiras"),
 		"GolUI exibe nome, siglas e brasao dos clubes escolhidos (PALMEIRAS | PAL 1 x 0 VAS)"
 	)

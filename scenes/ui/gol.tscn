@@ -21,35 +21,42 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -160.0
-offset_top = -52.0
-offset_right = 160.0
-offset_bottom = 52.0
+offset_left = -180.0
+offset_top = -68.0
+offset_right = 180.0
+offset_bottom = 68.0
 grow_horizontal = 2
 grow_vertical = 2
-pivot_offset = Vector2(160, 52)
+pivot_offset = Vector2(180, 68)
 mouse_filter = 2
 
 [node name="FundoDestaque" type="ColorRect" parent="PainelCentral"]
 layout_mode = 0
-offset_left = 20.0
-offset_top = 8.0
-offset_right = 300.0
-offset_bottom = 96.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 360.0
+offset_bottom = 136.0
 mouse_filter = 2
-color = Color(0.06, 0.07, 0.12, 0.86)
+color = Color(0.04, 0.07, 0.12, 0.96)
+
+[node name="FaixaDestaque" type="ColorRect" parent="PainelCentral"]
+layout_mode = 0
+offset_right = 360.0
+offset_bottom = 3.0
+mouse_filter = 2
+color = Color(1, 0.9, 0.4, 1)
 
 [node name="BrasaoEquipe" type="Sprite2D" parent="PainelCentral"]
-position = Vector2(58, 52)
-scale = Vector2(0.75, 0.75)
+position = Vector2(54, 68)
+scale = Vector2(1, 1)
 texture = ExtResource("2")
 
 [node name="TituloGol" type="Label" parent="PainelCentral"]
 layout_mode = 0
-offset_left = 86.0
-offset_top = 14.0
-offset_right = 290.0
-offset_bottom = 56.0
+offset_left = 100.0
+offset_top = 12.0
+offset_right = 344.0
+offset_bottom = 52.0
 mouse_filter = 2
 theme_override_colors/font_color = Color(1, 0.95, 0.35, 1)
 theme_override_colors/font_outline_color = Color(0.04, 0.04, 0.08, 1)
@@ -61,15 +68,30 @@ vertical_alignment = 1
 
 [node name="DetalheGol" type="Label" parent="PainelCentral"]
 layout_mode = 0
-offset_left = 86.0
-offset_top = 56.0
-offset_right = 290.0
-offset_bottom = 86.0
+offset_left = 100.0
+offset_top = 86.0
+offset_right = 344.0
+offset_bottom = 120.0
 mouse_filter = 2
 theme_override_colors/font_color = Color(0.92, 0.95, 1, 1)
 theme_override_colors/font_outline_color = Color(0.04, 0.04, 0.08, 1)
 theme_override_constants/outline_size = 3
-theme_override_font_sizes/font_size = 13
-text = "CORINTHIANS  |  COR 1 x 0 FLA"
+theme_override_font_sizes/font_size = 21
+text = "COR 1 x 0 FLA"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NomeTime" type="Label" parent="PainelCentral"]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 54.0
+offset_right = 344.0
+offset_bottom = 82.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.92, 0.95, 1, 1)
+theme_override_colors/font_outline_color = Color(0.04, 0.04, 0.08, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 16
+text = "CORINTHIANS"
 horizontal_alignment = 1
 vertical_alignment = 1

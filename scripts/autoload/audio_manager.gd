@@ -17,6 +17,7 @@ const CAMINHO_MUSICA_GOL_DE_OURO: String = "res://assets/sounds/music/bola_ouro_
 const CAMINHO_MUSICA_MENU: String = "res://assets/sounds/music/menu_sound.mp3"
 const CAMINHO_SFX_INICIO_PARTIDA: String = "res://assets/sounds/sfx/start_sound.mp3"
 const CAMINHO_SFX_GOL: String = "res://assets/sounds/sfx/gol_sound.mp3"
+const CAMINHO_TORCIDA_GOL: String = "res://assets/sounds/sfx/torcida_gol.mp3"
 const CAMINHO_SFX_VITORIA: String = "res://assets/sounds/sfx/vitoria_sound.mp3"
 const CAMINHO_SFX_FOGOS: String = "res://assets/sounds/sfx/fogos_artificios.mp3"
 
@@ -26,6 +27,8 @@ const CAMINHO_SFX_FOGOS: String = "res://assets/sounds/sfx/fogos_artificios.mp3"
 @export var musica_gol_de_ouro: AudioStream = null
 @export var sfx_inicio_partida: AudioStream = null
 @export var sfx_gol: AudioStream = null
+@export var som_torcida_gol: AudioStream = null
+@export_range(-30.0, 0.0) var volume_torcida_gol_db: float = -2.0
 @export var sfx_vitoria_trofeu: AudioStream = null
 @export var sfx_fogos_artificio: AudioStream = null
 @export var musica_menu: AudioStream = null
@@ -40,6 +43,7 @@ var player_musica: AudioStreamPlayer
 var player_ambiente: AudioStreamPlayer
 var player_sfx_evento: AudioStreamPlayer
 var player_fogos: AudioStreamPlayer
+var player_torcida_gol: AudioStreamPlayer
 var tween_ducking: Tween
 var arvore_estava_pausada: bool = false
 var sfx_mutado_antes_pause: bool = false
@@ -58,7 +62,7 @@ func _ready() -> void:
 func _exit_tree() -> void:
 	if tween_ducking != null and tween_ducking.is_valid():
 		tween_ducking.kill()
-	for player: AudioStreamPlayer in [player_musica, player_ambiente, player_sfx_evento, player_fogos]:
+	for player: AudioStreamPlayer in [player_musica, player_ambiente, player_sfx_evento, player_fogos, player_torcida_gol]:
 		if player != null:
 			player.stop()
 			player.stream = null
@@ -66,6 +70,7 @@ func _exit_tree() -> void:
 	musica_gol_de_ouro = null
 	sfx_inicio_partida = null
 	sfx_gol = null
+	som_torcida_gol = null
 	sfx_vitoria_trofeu = null
 	sfx_fogos_artificio = null
 	musica_menu = null
@@ -112,6 +117,7 @@ func _aplicar_estado_pausa_audio(pausado: bool) -> void:
 static func tocar_inicio_partida() -> void:
 	if instancia == null:
 		return
+	instancia.parar_torcida_gol()
 	instancia._sincronizar_estado_pausa_imediato()
 	instancia._cancelar_tween_ducking()
 	instancia.parar_fogos()
@@ -124,6 +130,7 @@ static func tocar_inicio_partida() -> void:
 static func tocar_gol_de_ouro() -> void:
 	if instancia == null:
 		return
+	instancia.parar_torcida_gol()
 	instancia._sincronizar_estado_pausa_imediato()
 	instancia._cancelar_tween_ducking()
 	instancia.parar_fogos()
@@ -135,13 +142,21 @@ static func tocar_gol() -> void:
 	if instancia == null:
 		return
 	instancia._sincronizar_estado_pausa_imediato()
-	instancia.executar_sfx_evento(instancia.sfx_gol)
-	instancia.aplicar_ducking_temporario(VOLUME_MUSICA_DUCKING_DB, 1.1)
+	var volume_efeito_db: float = -5.0 if instancia.som_torcida_gol != null else 0.0
+	instancia.executar_sfx_evento(instancia.sfx_gol, 1.0, volume_efeito_db)
+	instancia.executar_torcida_gol()
+	var duracao: float = 1.1
+	if instancia.sfx_gol != null:
+		duracao = maxf(duracao, instancia.sfx_gol.get_length())
+	if instancia.som_torcida_gol != null:
+		duracao = maxf(duracao, instancia.som_torcida_gol.get_length())
+	instancia.aplicar_ducking_temporario(VOLUME_MUSICA_DUCKING_DB, duracao)
 
 
 static func tocar_fim_partida() -> void:
 	if instancia == null:
 		return
+	instancia.parar_torcida_gol()
 	instancia.parar_ambiente()
 	if instancia.sfx_apito_final != null:
 		instancia.executar_sfx_evento(instancia.sfx_apito_final)
@@ -150,6 +165,7 @@ static func tocar_fim_partida() -> void:
 static func tocar_tela_vitoria() -> void:
 	if instancia == null:
 		return
+	instancia.parar_torcida_gol()
 	instancia._sincronizar_estado_pausa_imediato()
 	instancia._cancelar_tween_ducking()
 	instancia.parar_ambiente()
@@ -163,6 +179,7 @@ static func tocar_tela_vitoria() -> void:
 static func tocar_musica_menu() -> void:
 	if instancia == null:
 		return
+	instancia.parar_torcida_gol()
 	instancia._sincronizar_estado_pausa_imediato()
 	instancia._cancelar_tween_ducking()
 	instancia.parar_fogos()
@@ -175,6 +192,7 @@ static func tocar_musica_menu() -> void:
 static func parar_audio_partida() -> void:
 	if instancia == null:
 		return
+	instancia.parar_torcida_gol()
 	if instancia.player_sfx_evento != null:
 		instancia.player_sfx_evento.stop()
 	instancia.parar_fogos()
@@ -217,6 +235,21 @@ func executar_ambiente(stream: AudioStream, reiniciar_se_igual: bool = false) ->
 func parar_ambiente() -> void:
 	if player_ambiente != null:
 		player_ambiente.stop()
+
+
+func executar_torcida_gol() -> void:
+	if player_torcida_gol == null or som_torcida_gol == null:
+		return
+	player_torcida_gol.stop()
+	player_torcida_gol.stream = som_torcida_gol
+	player_torcida_gol.volume_db = volume_torcida_gol_db
+	if DisplayServer.get_name() != "headless":
+		player_torcida_gol.play()
+
+
+func parar_torcida_gol() -> void:
+	if player_torcida_gol != null:
+		player_torcida_gol.stop()
 
 
 func executar_sfx_evento(stream: AudioStream, pitch: float = 1.0, volume_db: float = 0.0) -> void:
@@ -279,6 +312,8 @@ func _carregar_streams_padrao() -> void:
 		sfx_inicio_partida = load(CAMINHO_SFX_INICIO_PARTIDA) as AudioStream
 	if sfx_gol == null:
 		sfx_gol = load(CAMINHO_SFX_GOL) as AudioStream
+	if som_torcida_gol == null:
+		som_torcida_gol = load(CAMINHO_TORCIDA_GOL) as AudioStream
 	if sfx_vitoria_trofeu == null:
 		sfx_vitoria_trofeu = load(CAMINHO_SFX_VITORIA) as AudioStream
 	if sfx_fogos_artificio == null:
@@ -323,6 +358,12 @@ func _criar_players() -> void:
 	player_fogos.bus = BUS_SFX
 	player_fogos.process_mode = Node.PROCESS_MODE_PAUSABLE
 	add_child(player_fogos)
+
+	player_torcida_gol = AudioStreamPlayer.new()
+	player_torcida_gol.name = "PlayerTorcidaGol"
+	player_torcida_gol.bus = BUS_AMBIENTE
+	player_torcida_gol.process_mode = Node.PROCESS_MODE_PAUSABLE
+	add_child(player_torcida_gol)
 
 
 func _animar_volume_musica(volume_alvo_db: float, duracao: float) -> void:

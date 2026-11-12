@@ -27,7 +27,7 @@ const CAMINHO_MENU_PRINCIPAL: String = "res://scenes/ui/menu_principal.tscn"
 # --- PARAMETROS CONFIGURAVEIS ---
 @export_group("Regras")
 @export_range(1.0, 600.0) var duracao_partida: float = 180.0
-@export_range(0.05, 5.0) var duracao_apresentacao_gol: float = 1.2
+@export_range(0.05, 5.0) var duracao_apresentacao_gol: float = GolUI.DURACAO_PADRAO
 
 # --- REFERENCIAS A NODES ---
 @onready var campo: Node2D = $Campo

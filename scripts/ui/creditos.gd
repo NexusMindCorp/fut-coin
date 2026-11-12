@@ -21,6 +21,7 @@ const SECOES_ATRIBUICAO: Array[Dictionary] = [
 		"titulo": "MÚSICA E EFEITOS SONOROS",
 		"linhas": [
 			"Pixabay: Kim Lightyear, Retro BGM Chan e DRAGON-STUDIO.",
+			"Torcida: misjoc / Freesound — Small crowd cheering (CC0).",
 		],
 	},
 	{
