@@ -26,6 +26,7 @@ const CAMINHO_SFX_FOGOS: String = "res://assets/sounds/sfx/fogos_artificios.mp3"
 @export var musica_partida_normal: AudioStream = null
 @export var musica_gol_de_ouro: AudioStream = null
 @export var sfx_inicio_partida: AudioStream = null
+@export_range(-30.0, 0.0) var volume_apito_inicio_db: float = 0.0
 @export var sfx_gol: AudioStream = null
 @export var som_torcida_gol: AudioStream = null
 @export_range(-30.0, 0.0) var volume_torcida_gol_db: float = -2.0
@@ -121,7 +122,7 @@ static func tocar_inicio_partida() -> void:
 	instancia._sincronizar_estado_pausa_imediato()
 	instancia._cancelar_tween_ducking()
 	instancia.parar_fogos()
-	instancia.executar_sfx_evento(instancia.sfx_inicio_partida)
+	tocar_apito_reinicio()
 	instancia.executar_musica(instancia.musica_partida_normal, true)
 	if instancia.som_ambiente_torcida != null:
 		instancia.executar_ambiente(instancia.som_ambiente_torcida, true)
@@ -134,8 +135,15 @@ static func tocar_gol_de_ouro() -> void:
 	instancia._sincronizar_estado_pausa_imediato()
 	instancia._cancelar_tween_ducking()
 	instancia.parar_fogos()
-	instancia.executar_sfx_evento(instancia.sfx_inicio_partida)
+	tocar_apito_reinicio()
 	instancia.executar_musica(instancia.musica_gol_de_ouro, true)
+
+
+static func tocar_apito_reinicio() -> void:
+	if instancia == null:
+		return
+	instancia._sincronizar_estado_pausa_imediato()
+	instancia.executar_sfx_evento(instancia.sfx_inicio_partida, 1.0, instancia.volume_apito_inicio_db)
 
 
 static func tocar_gol() -> void:

@@ -227,9 +227,9 @@ func _iniciar_gol_de_ouro() -> void:
 	_posicionar_moeda_no_centro()
 	time_atual = _sortear_equipe()
 	gol_de_ouro_iniciado.emit()
-	AudioManager.tocar_gol_de_ouro()
 	_exibir_aviso_temporario("GOL DE OURO! Sorteio: %s" % _nome_equipe(time_atual))
 	_habilitar_turno(time_atual, true)
+	AudioManager.tocar_gol_de_ouro()
 
 
 func _encerrar_partida(vencedor: Prego.Equipe, por_gol_de_ouro: bool) -> void:
@@ -323,8 +323,8 @@ func iniciar_partida() -> void:
 	time_atual = _sortear_equipe()
 	placar_alterado.emit(placar)
 	tempo_atualizado.emit(duracao_partida)
-	AudioManager.tocar_inicio_partida()
 	_habilitar_turno(time_atual, true)
+	AudioManager.tocar_inicio_partida()
 
 
 func reiniciar_partida() -> void:
@@ -694,6 +694,7 @@ func _on_pausa_gol_timeout() -> void:
 	cronometro_pausado_por_gol = false
 	cronometro.paused = false
 	_habilitar_turno(equipe_sofreu_ultimo_gol, true)
+	AudioManager.tocar_apito_reinicio()
 
 
 func _on_hub_pausa_solicitada() -> void:
