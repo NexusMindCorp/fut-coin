@@ -10,8 +10,8 @@ const RAIO: float = 14.0
 
 # --- PARAMETROS CONFIGURAVEIS ---
 @export_group("Fisica")
-@export_range(1.0, 2000.0) var impulso_maximo: float = 700.0
-@export_range(1.0, 2000.0) var velocidade_maxima: float = 700.0
+@export_range(1.0, 2000.0) var impulso_maximo: float = 800.0
+@export_range(1.0, 2000.0) var velocidade_maxima: float = 800.0
 @export_range(0.01, 20.0) var limiar_parada: float = 3.0
 @export_range(0.05, 1.0) var duracao_parada: float = 0.2
 @export_range(0.01, 2.0) var tolerancia_contato: float = 0.5

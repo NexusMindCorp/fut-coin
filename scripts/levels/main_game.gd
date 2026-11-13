@@ -395,6 +395,7 @@ func iniciar_partida() -> void:
 	placar_alterado.emit(placar)
 	tempo_atualizado.emit(duracao_partida)
 	_habilitar_turno(time_atual, true)
+	_exibir_aviso_temporario("%s começa!" % _nome_equipe(time_atual), 1.5)
 	AudioManager.tocar_inicio_partida()
 
 
@@ -611,7 +612,7 @@ func _exibir_aviso_gol(equipe_marcadora: Prego.Equipe) -> void:
 		)
 
 
-func _exibir_aviso_temporario(mensagem: String) -> void:
+func _exibir_aviso_temporario(mensagem: String, duracao: float = 0.6) -> void:
 	if gol_ui != null:
 		gol_ui.ocultar_gol()
 	if rotulo_aviso == null:
@@ -621,7 +622,7 @@ func _exibir_aviso_temporario(mensagem: String) -> void:
 	rotulo_aviso.modulate = Color.WHITE
 	rotulo_aviso.visible = true
 	tween_aviso = create_tween()
-	tween_aviso.tween_interval(0.6)
+	tween_aviso.tween_interval(duracao)
 	tween_aviso.tween_property(rotulo_aviso, "modulate:a", 0.0, 0.25)
 	tween_aviso.tween_callback(_ocultar_aviso_central)
 

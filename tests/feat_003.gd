@@ -130,10 +130,10 @@ func _testar_sleep() -> void:
 func _testar_trajetorias() -> void:
 	# Alta velocidade e passagem estreita real pelos dois goleiros, sem sensores de gol.
 	var inicios: Array[Vector2] = [Vector2(120, 139), Vector2(1032, 139), Vector2(120, 181), Vector2(1032, 181), Vector2(576, 80), Vector2(576, 240), Vector2(104, 160)]
-	var impulsos: Array[Vector2] = [Vector2(-700, 0), Vector2(700, 0), Vector2(-700, 0), Vector2(700, 0), Vector2(0, -700), Vector2(0, 700), Vector2(700, 0)]
+	var impulsos: Array[Vector2] = [Vector2(-800, 0), Vector2(800, 0), Vector2(-800, 0), Vector2(800, 0), Vector2(0, -800), Vector2(0, 800), Vector2(800, 0)]
 	for angulo: int in range(16):
 		inicios.append(Vector2(576, 160))
-		impulsos.append(Vector2.RIGHT.rotated(TAU * float(angulo) / 16.0) * 700.0)
+		impulsos.append(Vector2.RIGHT.rotated(TAU * float(angulo) / 16.0) * 800.0)
 	for indice: int in range(inicios.size()):
 		await _posicionar(inicios[indice])
 		_verificar(moeda.lancar(impulsos[indice]), "Trajetoria inicia %d" % indice)
@@ -174,7 +174,7 @@ func _testar_entrada() -> void:
 	_verificar(mira.arrastando, "Clique na moeda inicia mira")
 	_enviar_mouse(Vector2(466, 160))
 	await _quadros(2)
-	_verificar(mira.impulso_atual.is_equal_approx(Vector2(700, 0)), "Arrasto global escolhe direcao oposta")
+	_verificar(mira.impulso_atual.is_equal_approx(Vector2(moeda.impulso_maximo, 0)), "Arrasto global escolhe direcao oposta")
 	var anteriores: int = lancamentos
 	_enviar_mouse(Vector2(466, 160), false, true)
 	_verificar(lancamentos == anteriores + 1 and not mira.habilitada, "Soltura coordena tiro e bloqueia mira")
