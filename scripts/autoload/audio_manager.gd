@@ -35,14 +35,11 @@ const CAMINHO_SFX_FOGOS: String = "res://assets/sounds/sfx/fogos_artificios.mp3"
 @export var sfx_fogos_artificio: AudioStream = null
 @export var musica_menu: AudioStream = null
 @export var sfx_apito_final: AudioStream = null
-@export_group("Streams Opcionais Pendentes")
-@export var som_ambiente_torcida: AudioStream = null
 
 # --- ESTADO ---
 static var instancia: AudioManager = null
 
 var player_musica: AudioStreamPlayer
-var player_ambiente: AudioStreamPlayer
 var player_sfx_evento: AudioStreamPlayer
 var player_fogos: AudioStreamPlayer
 var player_torcida_gol: AudioStreamPlayer
@@ -64,7 +61,7 @@ func _ready() -> void:
 func _exit_tree() -> void:
 	if tween_ducking != null and tween_ducking.is_valid():
 		tween_ducking.kill()
-	for player: AudioStreamPlayer in [player_musica, player_ambiente, player_sfx_evento, player_fogos, player_torcida_gol]:
+	for player: AudioStreamPlayer in [player_musica, player_sfx_evento, player_fogos, player_torcida_gol]:
 		if player != null:
 			player.stop()
 			player.stream = null
@@ -76,7 +73,6 @@ func _exit_tree() -> void:
 	sfx_vitoria_trofeu = null
 	sfx_fogos_artificio = null
 	musica_menu = null
-	som_ambiente_torcida = null
 	sfx_apito_final = null
 	if instancia == self:
 		instancia = null
@@ -125,8 +121,6 @@ static func tocar_inicio_partida() -> void:
 	instancia.parar_fogos()
 	tocar_apito_reinicio()
 	instancia.executar_musica(instancia.musica_partida_normal, true)
-	if instancia.som_ambiente_torcida != null:
-		instancia.executar_ambiente(instancia.som_ambiente_torcida, true)
 
 
 static func tocar_gol_de_ouro() -> void:
@@ -179,7 +173,6 @@ static func tocar_fim_partida() -> AudioStreamPlayer:
 	if instancia == null:
 		return null
 	instancia.parar_torcida_gol()
-	instancia.parar_ambiente()
 	instancia._animar_volume_musica(VOLUME_MUSICA_DUCKING_DB, 0.1)
 	if instancia.sfx_apito_final == null or DisplayServer.get_name() == "headless":
 		return null
@@ -193,7 +186,6 @@ static func tocar_tela_vitoria() -> void:
 	instancia.parar_torcida_gol()
 	instancia._sincronizar_estado_pausa_imediato()
 	instancia._cancelar_tween_ducking()
-	instancia.parar_ambiente()
 	instancia.parar_musica()
 	if instancia.sfx_vitoria_trofeu != null:
 		instancia.executar_sfx_evento(instancia.sfx_vitoria_trofeu)
@@ -221,7 +213,6 @@ static func parar_audio_partida() -> void:
 	if instancia.player_sfx_evento != null:
 		instancia.player_sfx_evento.stop()
 	instancia.parar_fogos()
-	instancia.parar_ambiente()
 	instancia.parar_musica()
 
 
@@ -244,22 +235,6 @@ func executar_musica(stream: AudioStream, reiniciar_se_igual: bool = false) -> v
 func parar_musica() -> void:
 	if player_musica != null:
 		player_musica.stop()
-
-
-func executar_ambiente(stream: AudioStream, reiniciar_se_igual: bool = false) -> void:
-	if player_ambiente == null or stream == null:
-		return
-	if player_ambiente.stream == stream and player_ambiente.playing and not reiniciar_se_igual:
-		return
-	player_ambiente.stop()
-	player_ambiente.stream = stream
-	if DisplayServer.get_name() != "headless":
-		player_ambiente.play(0.0)
-
-
-func parar_ambiente() -> void:
-	if player_ambiente != null:
-		player_ambiente.stop()
 
 
 func executar_torcida_gol() -> void:
@@ -367,12 +342,6 @@ func _criar_players() -> void:
 	player_musica.bus = BUS_MUSIC
 	player_musica.volume_db = VOLUME_MUSICA_PADRAO_DB
 	add_child(player_musica)
-
-	player_ambiente = AudioStreamPlayer.new()
-	player_ambiente.name = "PlayerAmbiente"
-	player_ambiente.bus = BUS_AMBIENTE
-	player_ambiente.process_mode = Node.PROCESS_MODE_PAUSABLE
-	add_child(player_ambiente)
 
 	player_sfx_evento = AudioStreamPlayer.new()
 	player_sfx_evento.name = "PlayerSfxEvento"

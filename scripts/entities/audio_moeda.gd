@@ -13,15 +13,12 @@ const CAMINHO_SFX_IMPACTO_PREGO_PADRAO: String = "res://assets/sounds/sfx/impact
 # --- PARAMETROS CONFIGURAVEIS ---
 @export var sfx_chute: AudioStream = null
 @export var sfx_impacto_prego: AudioStream = null
-@export var sfx_impacto_parede: AudioStream = null
-@export var sfx_deslize_mesa: AudioStream = null
 @export_range(0.05, 5.0) var duracao_maxima_impacto: float = DURACAO_MAXIMA_IMPACTO
 
 # --- ESTADO ---
 var moeda: Moeda
 var player_chute: AudioStreamPlayer
 var player_impacto: AudioStreamPlayer
-var player_deslize: AudioStreamPlayer
 var ultimo_impacto_ms: int = -1000
 var ultima_contagem_reposicionamento: int = 0
 var rng: RandomNumberGenerator = RandomNumberGenerator.new()
@@ -41,21 +38,17 @@ func _ready() -> void:
 		ultima_contagem_reposicionamento = moeda.contagem_reposicionamento
 		if not moeda.lancada.is_connected(_on_moeda_lancada):
 			moeda.lancada.connect(_on_moeda_lancada)
-		if not moeda.parou.is_connected(_on_moeda_parou):
-			moeda.parou.connect(_on_moeda_parou)
 		if not moeda.body_entered.is_connected(_on_moeda_body_entered):
 			moeda.body_entered.connect(_on_moeda_body_entered)
 
 
 func _exit_tree() -> void:
 	parar_todos_sons()
-	for player: AudioStreamPlayer in [player_chute, player_impacto, player_deslize]:
+	for player: AudioStreamPlayer in [player_chute, player_impacto]:
 		if player != null:
 			player.stream = null
 	sfx_chute = null
 	sfx_impacto_prego = null
-	sfx_impacto_parede = null
-	sfx_deslize_mesa = null
 
 
 func _process(_delta: float) -> void:
@@ -64,29 +57,11 @@ func _process(_delta: float) -> void:
 
 func _physics_process(_delta: float) -> void:
 	_verificar_corte_impacto_e_reposicionamento()
-	if player_deslize == null or sfx_deslize_mesa == null or moeda == null:
-		return
-	if not moeda.visible or not moeda.em_movimento:
-		if player_deslize.playing:
-			player_deslize.stop()
-		return
-	var velocidade: float = moeda.linear_velocity.length()
-	if velocidade < VELOCIDADE_MINIMA_IMPACTO:
-		if player_deslize.playing:
-			player_deslize.stop()
-		return
-	var proporcao: float = clampf(velocidade / VELOCIDADE_REFERENCIA_IMPACTO, 0.08, 1.0)
-	player_deslize.volume_db = linear_to_db(proporcao * 0.45)
-	player_deslize.pitch_scale = lerpf(0.85, 1.15, proporcao)
-	if not player_deslize.playing:
-		player_deslize.stream = sfx_deslize_mesa
-		if DisplayServer.get_name() != "headless":
-			player_deslize.play(0.0)
 
 
 # --- API PUBLICA ---
 func parar_todos_sons() -> void:
-	for player: AudioStreamPlayer in [player_chute, player_impacto, player_deslize]:
+	for player: AudioStreamPlayer in [player_chute, player_impacto]:
 		if player != null and player.playing:
 			player.stop()
 
@@ -113,11 +88,6 @@ func _criar_players() -> void:
 	player_impacto.bus = BUS_SFX
 	add_child(player_impacto)
 
-	player_deslize = AudioStreamPlayer.new()
-	player_deslize.name = "PlayerDeslize"
-	player_deslize.bus = BUS_SFX
-	add_child(player_deslize)
-
 
 func _on_moeda_lancada(impulso: Vector2) -> void:
 	if player_chute == null or sfx_chute == null or moeda == null:
@@ -131,13 +101,8 @@ func _on_moeda_lancada(impulso: Vector2) -> void:
 		player_chute.play(0.0)
 
 
-func _on_moeda_parou() -> void:
-	if player_deslize != null and player_deslize.playing:
-		player_deslize.stop()
-
-
 func _on_moeda_body_entered(corpo: Node) -> void:
-	if moeda == null or player_impacto == null:
+	if moeda == null or player_impacto == null or not (corpo is Prego):
 		return
 	var agora_ms: int = Time.get_ticks_msec()
 	if agora_ms - ultimo_impacto_ms < COOLDOWN_IMPACTO_MS:
@@ -145,11 +110,7 @@ func _on_moeda_body_entered(corpo: Node) -> void:
 	var velocidade: float = moeda.linear_velocity.length()
 	if velocidade < VELOCIDADE_MINIMA_IMPACTO:
 		return
-	var stream_escolhido: AudioStream = null
-	if corpo is Prego:
-		stream_escolhido = sfx_impacto_prego
-	else:
-		stream_escolhido = sfx_impacto_parede
+	var stream_escolhido: AudioStream = sfx_impacto_prego
 	if stream_escolhido == null:
 		return
 	ultimo_impacto_ms = agora_ms
