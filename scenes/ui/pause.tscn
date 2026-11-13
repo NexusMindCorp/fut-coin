@@ -101,7 +101,7 @@ text = "REINICIAR"
 custom_minimum_size = Vector2(180, 30)
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
-text = "SAIR"
+text = "VOLTAR AO MENU"
 
 [node name="Sounds" parent="." unique_id=619283745 instance=ExtResource("2_sounds")]
 

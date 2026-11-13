@@ -39,7 +39,7 @@ offset_bottom = 20.0
 mouse_filter = 2
 theme_override_colors/font_color = Color(0.92, 0.94, 1, 1)
 theme_override_font_sizes/font_size = 12
-text = "Clique na moeda e puxe | Solte para lancar | Parede encostada: atire para fora"
+text = "Clique na moeda e puxe | Solte para lancar | Ricochete livre nas paredes"
 
 [connection signal="lancamento_solicitado" from="Mira" to="." method="_on_lancamento_solicitado"]
 [connection signal="parou" from="Moeda" to="." method="_on_moeda_parou"]
