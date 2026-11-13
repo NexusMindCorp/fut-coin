@@ -55,12 +55,6 @@ func tocar_confirmacao() -> void:
 		player_confirmacao.play()
 
 
-func choice_select() -> void:
-	tocar_confirmacao()
-	if player_confirmacao != null and player_confirmacao.playing and is_inside_tree():
-		await get_tree().create_timer(0.12, true, false, true).timeout
-
-
 # --- AUXILIARES / SETTERS ---
 func _criar_players() -> void:
 	player_selecao = AudioStreamPlayer.new()

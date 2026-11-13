@@ -583,12 +583,6 @@ func _relogio_regulamentar_esgotado() -> bool:
 	return tempo_esgotado or expiracao_pendente or cronometro.is_stopped() or cronometro.time_left <= 0.0
 
 
-func _formatar_relogio(segundos: float) -> String:
-	if gol_de_ouro_ativo:
-		return "GOL DE OURO"
-	return Hub.formatar_tempo(segundos)
-
-
 func _atualizar_feedback_status() -> void:
 	if hub == null:
 		return

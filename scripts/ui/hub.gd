@@ -53,12 +53,6 @@ func definir_brasoes_por_chave(chave_esquerda: StringName, chave_direita: String
 	atualizar_turno(turno_atual)
 
 
-func definir_brasoes_equipes(equipe_esquerda: Prego.Equipe, equipe_direita: Prego.Equipe) -> void:
-	var esq: StringName = &"corinthians" if equipe_esquerda == Prego.Equipe.CORINTHIANS else &"flamengo"
-	var dir: StringName = &"flamengo" if equipe_direita == Prego.Equipe.FLAMENGO else &"corinthians"
-	definir_brasoes_por_chave(esq, dir)
-
-
 func atualizar_placar(novo_placar: Vector2i, animar: bool = false) -> void:
 	var mudou_esquerda: bool = novo_placar.x != placar_atual.x
 	var mudou_direita: bool = novo_placar.y != placar_atual.y
