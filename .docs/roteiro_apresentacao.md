@@ -1,8 +1,11 @@
 # 🎮 Roteiro de Apresentação e Guia de Estudo — FutCoin
 
-**Disciplina:** Desenvolvimento de Jogos — UFJF  
-**Autores:** Gabriel Lineker e Gianlucca Paiva  
-**Engine:** Godot 4.7, GDScript com tipagem estática, 2D  
+**Disciplina:** Desenvolvimento de Jogos — UFJF
+
+**Autores:** Gabriel Lineker e Gianlucca Paiva
+
+**Engine:** Godot 4.7, GDScript com tipagem estática, 2D
+
 **Base:** código e histórico de commits conferidos em 13/11/2026, após a limpeza autorizada.
 
 Este documento serve como roteiro curto de demonstração e guia detalhado de estudo. Ambos precisam conhecer todo o código. A divisão de falas é uma proposta baseada no Git, não uma declaração de autoria exclusiva. Não foi informado limite de duração da apresentação. Linux continua como etapa final pendente.
