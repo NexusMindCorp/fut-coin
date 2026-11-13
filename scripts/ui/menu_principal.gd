@@ -6,7 +6,7 @@ const CAMINHO_TELA_VERSUS: String = "res://scenes/ui/tela_versus.tscn"
 const CAMINHO_CREDITOS: String = "res://scenes/ui/creditos.tscn"
 
 # --- EXPORTS ---
-@export_range(0.0, 1.0, 0.01) var probabilidade_tigre: float = 0.10
+@export_range(0.0, 1.0, 0.01) var probabilidade_tigre: float = 0.01
 
 # --- REFERENCIAS A NODES ---
 @onready var tigre_moeda: TextureRect = $FundoArte/TigreMoeda
