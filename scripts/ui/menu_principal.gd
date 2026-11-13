@@ -67,15 +67,15 @@ func _definir_botoes_desabilitados(desabilitado: bool) -> void:
 
 
 func _conectar_foco_mouse_botoes() -> void:
-	if botao_jogar != null:
-		botao_jogar.mouse_entered.connect(_focar_botao_jogar)
-		botao_jogar.mouse_exited.connect(_desfocar_botao_jogar)
-	if botao_creditos != null:
-		botao_creditos.mouse_entered.connect(_focar_botao_creditos)
-		botao_creditos.mouse_exited.connect(_desfocar_botao_creditos)
-	if botao_sair != null:
-		botao_sair.mouse_entered.connect(_focar_botao_sair)
-		botao_sair.mouse_exited.connect(_desfocar_botao_sair)
+	for botao: Button in [botao_jogar, botao_creditos, botao_sair]:
+		if botao == null:
+			continue
+		var ao_entrar: Callable = _focar_botao.bind(botao)
+		var ao_sair: Callable = _desfocar_botao.bind(botao)
+		if not botao.mouse_entered.is_connected(ao_entrar):
+			botao.mouse_entered.connect(ao_entrar)
+		if not botao.mouse_exited.is_connected(ao_sair):
+			botao.mouse_exited.connect(ao_sair)
 
 
 func _focar_botao(botao: Button) -> void:
@@ -86,30 +86,6 @@ func _focar_botao(botao: Button) -> void:
 func _desfocar_botao(botao: Button) -> void:
 	if botao != null and botao.has_focus():
 		botao.release_focus()
-
-
-func _focar_botao_jogar() -> void:
-	_focar_botao(botao_jogar)
-
-
-func _desfocar_botao_jogar() -> void:
-	_desfocar_botao(botao_jogar)
-
-
-func _focar_botao_creditos() -> void:
-	_focar_botao(botao_creditos)
-
-
-func _desfocar_botao_creditos() -> void:
-	_desfocar_botao(botao_creditos)
-
-
-func _focar_botao_sair() -> void:
-	_focar_botao(botao_sair)
-
-
-func _desfocar_botao_sair() -> void:
-	_desfocar_botao(botao_sair)
 
 
 func _on_botao_jogar_pressed() -> void:

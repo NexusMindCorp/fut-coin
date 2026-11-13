@@ -118,55 +118,19 @@ func carregar_selecao_atual() -> void:
 
 
 func selecionar_time_esquerdo(chave_time: StringName) -> void:
-	if not DadosTimes.possui_time(chave_time):
-		return
-	chave_esquerda_atual = chave_time
-	if chave_direita_atual == chave_esquerda_atual:
-		chave_direita_atual = DadosTimes.obter_proximo_time_disponivel(
-			chave_direita_atual,
-			1,
-			chave_esquerda_atual
-		)
-	DadosTimes.definir_times_selecionados(chave_esquerda_atual, chave_direita_atual)
-	_atualizar_exibicao_times()
-	_animar_troca_brasao(brasao_esquerdo, true)
+	_selecionar_time(chave_time, true)
 
 
 func selecionar_time_direito(chave_time: StringName) -> void:
-	if not DadosTimes.possui_time(chave_time):
-		return
-	chave_direita_atual = chave_time
-	if chave_esquerda_atual == chave_direita_atual:
-		chave_esquerda_atual = DadosTimes.obter_proximo_time_disponivel(
-			chave_esquerda_atual,
-			1,
-			chave_direita_atual
-		)
-	DadosTimes.definir_times_selecionados(chave_esquerda_atual, chave_direita_atual)
-	_atualizar_exibicao_times()
-	_animar_troca_brasao(brasao_direito, false)
+	_selecionar_time(chave_time, false)
 
 
 func alternar_time_esquerdo(passo: int) -> void:
-	if transicionando:
-		return
-	var proximo: StringName = DadosTimes.obter_proximo_time_disponivel(
-		chave_esquerda_atual,
-		passo,
-		chave_direita_atual
-	)
-	selecionar_time_esquerdo(proximo)
+	_alternar_time(passo, true)
 
 
 func alternar_time_direito(passo: int) -> void:
-	if transicionando:
-		return
-	var proximo: StringName = DadosTimes.obter_proximo_time_disponivel(
-		chave_direita_atual,
-		passo,
-		chave_esquerda_atual
-	)
-	selecionar_time_direito(proximo)
+	_alternar_time(passo, false)
 
 
 func confirmar_e_iniciar_partida() -> void:
@@ -178,6 +142,27 @@ func confirmar_e_iniciar_partida() -> void:
 
 
 # --- AUXILIARES / SETTERS ---
+func _selecionar_time(chave_time: StringName, lado_esquerdo: bool) -> void:
+	if not DadosTimes.possui_time(chave_time):
+		return
+	var outra_chave: StringName = chave_direita_atual if lado_esquerdo else chave_esquerda_atual
+	if outra_chave == chave_time:
+		outra_chave = DadosTimes.obter_proximo_time_disponivel(outra_chave, 1, chave_time)
+	chave_esquerda_atual = chave_time if lado_esquerdo else outra_chave
+	chave_direita_atual = outra_chave if lado_esquerdo else chave_time
+	DadosTimes.definir_times_selecionados(chave_esquerda_atual, chave_direita_atual)
+	_atualizar_exibicao_times()
+	_animar_troca_brasao(brasao_esquerdo if lado_esquerdo else brasao_direito, lado_esquerdo)
+
+
+func _alternar_time(passo: int, lado_esquerdo: bool) -> void:
+	if transicionando:
+		return
+	var chave_atual: StringName = chave_esquerda_atual if lado_esquerdo else chave_direita_atual
+	var outra_chave: StringName = chave_direita_atual if lado_esquerdo else chave_esquerda_atual
+	_selecionar_time(DadosTimes.obter_proximo_time_disponivel(chave_atual, passo, outra_chave), lado_esquerdo)
+
+
 func _definir_botoes_desabilitados(desabilitado: bool) -> void:
 	var botoes: Array[Button] = [
 		botao_anterior_esquerdo,
@@ -193,18 +178,17 @@ func _definir_botoes_desabilitados(desabilitado: bool) -> void:
 
 
 func _conectar_foco_mouse_botoes() -> void:
-	if botao_anterior_esquerdo != null and not botao_anterior_esquerdo.mouse_entered.is_connected(_on_mouse_entered_ant_esq):
-		botao_anterior_esquerdo.mouse_entered.connect(_on_mouse_entered_ant_esq)
-	if botao_proximo_esquerdo != null and not botao_proximo_esquerdo.mouse_entered.is_connected(_on_mouse_entered_prox_esq):
-		botao_proximo_esquerdo.mouse_entered.connect(_on_mouse_entered_prox_esq)
-	if botao_anterior_direito != null and not botao_anterior_direito.mouse_entered.is_connected(_on_mouse_entered_ant_dir):
-		botao_anterior_direito.mouse_entered.connect(_on_mouse_entered_ant_dir)
-	if botao_proximo_direito != null and not botao_proximo_direito.mouse_entered.is_connected(_on_mouse_entered_prox_dir):
-		botao_proximo_direito.mouse_entered.connect(_on_mouse_entered_prox_dir)
-	if botao_comecar != null and not botao_comecar.mouse_entered.is_connected(_on_mouse_entered_comecar):
-		botao_comecar.mouse_entered.connect(_on_mouse_entered_comecar)
-	if botao_voltar != null and not botao_voltar.mouse_entered.is_connected(_on_mouse_entered_voltar):
-		botao_voltar.mouse_entered.connect(_on_mouse_entered_voltar)
+	var botoes: Array[Button] = [
+		botao_anterior_esquerdo, botao_proximo_esquerdo,
+		botao_anterior_direito, botao_proximo_direito,
+		botao_comecar, botao_voltar,
+	]
+	for botao: Button in botoes:
+		if botao == null:
+			continue
+		var ao_entrar: Callable = _on_botao_mouse_entered.bind(botao)
+		if not botao.mouse_entered.is_connected(ao_entrar):
+			botao.mouse_entered.connect(ao_entrar)
 
 
 func _on_botao_mouse_entered(botao: Button) -> void:
@@ -212,30 +196,6 @@ func _on_botao_mouse_entered(botao: Button) -> void:
 		return
 	if not botao.has_focus():
 		botao.grab_focus()
-
-
-func _on_mouse_entered_ant_esq() -> void:
-	_on_botao_mouse_entered(botao_anterior_esquerdo)
-
-
-func _on_mouse_entered_prox_esq() -> void:
-	_on_botao_mouse_entered(botao_proximo_esquerdo)
-
-
-func _on_mouse_entered_ant_dir() -> void:
-	_on_botao_mouse_entered(botao_anterior_direito)
-
-
-func _on_mouse_entered_prox_dir() -> void:
-	_on_botao_mouse_entered(botao_proximo_direito)
-
-
-func _on_mouse_entered_comecar() -> void:
-	_on_botao_mouse_entered(botao_comecar)
-
-
-func _on_mouse_entered_voltar() -> void:
-	_on_botao_mouse_entered(botao_voltar)
 
 
 func _on_botao_anterior_esquerdo_pressed() -> void:

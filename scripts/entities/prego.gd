@@ -40,7 +40,6 @@ func _ready() -> void:
 func definir_cor_time(nova_cor: Color) -> void:
 	cor_customizada = true
 	cor_time = nova_cor
-	_aplicar_cor_material()
 
 
 func reagir_ao_impacto() -> void:

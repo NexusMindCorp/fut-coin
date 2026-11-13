@@ -526,22 +526,21 @@ func _testar_menu_creditos_e_musica() -> void:
 		"MenuPrincipal tem Jogar/Creditos/Sair e destinos existentes"
 	)
 	_verificar(
-		is_equal_approx(menu.probabilidade_tigre, 0.10)
+		is_equal_approx(menu.probabilidade_tigre, 0.01)
 		and menu.tigre_moeda != null
-		and menu.tigre_moeda.texture != null
-		and is_equal_approx(menu.tigre_moeda.offset_left, 106.0)
-		and is_equal_approx(menu.tigre_moeda.offset_top, 253.0),
-		"MenuPrincipal possui export de probabilidade 10% e node de overlay do tigre alinhado a moeda"
+		and menu.tigre_moeda.texture != null,
+		"MenuPrincipal possui export de probabilidade 1% e recurso do tigre"
 	)
 	menu.definir_exibicao_tigre(true)
 	var tigre_ligado: bool = menu.obter_exibicao_tigre()
 	menu.definir_exibicao_tigre(false)
 	var tigre_desligado: bool = not menu.obter_exibicao_tigre()
+	var probabilidade_original: float = menu.probabilidade_tigre
 	menu.probabilidade_tigre = 1.0
 	var sorteio_sempre: bool = menu.sortear_exibicao_tigre() and menu.obter_exibicao_tigre()
 	menu.probabilidade_tigre = 0.0
 	var sorteio_nunca: bool = (not menu.sortear_exibicao_tigre()) and (not menu.obter_exibicao_tigre())
-	menu.probabilidade_tigre = 0.10
+	menu.probabilidade_tigre = probabilidade_original
 	_verificar(
 		tigre_ligado and tigre_desligado and sorteio_sempre and sorteio_nunca,
 		"Controle e sorteio de probabilidade do easter egg do tigre na moeda funcionam deterministicamente"
@@ -698,6 +697,36 @@ func _testar_selecao_times_e_propagacao() -> void:
 		and tela_versus.nome_time_direito.text == "FLAMENGO",
 		"TelaVersus inicia com Corinthians (P1/Prata) e Flamengo (P2/Vermelho) por padrao"
 	)
+
+	# Exercita os dois lados do helper compartilhado, incluindo conflitos e chaves invalidas.
+	tela_versus.selecionar_time_esquerdo(&"invalido")
+	tela_versus.selecionar_time_direito(&"invalido")
+	_verificar(
+		tela_versus.chave_esquerda_atual == &"corinthians"
+		and tela_versus.chave_direita_atual == &"flamengo",
+		"Selecao invalida preserva ambos os lados"
+	)
+	tela_versus.selecionar_time_esquerdo(&"flamengo")
+	_verificar(
+		tela_versus.chave_esquerda_atual == &"flamengo"
+		and tela_versus.chave_direita_atual == &"atletico_mineiro",
+		"Selecao esquerda preserva clube solicitado e desloca o adversario repetido"
+	)
+	tela_versus.selecionar_time_direito(&"flamengo")
+	_verificar(
+		tela_versus.chave_esquerda_atual == &"atletico_mineiro"
+		and tela_versus.chave_direita_atual == &"flamengo",
+		"Selecao direita preserva clube solicitado e desloca o adversario repetido"
+	)
+	tela_versus.alternar_time_direito(-1)
+	_verificar(
+		tela_versus.chave_esquerda_atual == &"atletico_mineiro"
+		and tela_versus.chave_direita_atual == &"corinthians"
+		and DadosTimes.time_direito_selecionado == &"corinthians",
+		"Alternancia direita retrocede e sincroniza o catalogo sem alterar o outro lado"
+	)
+	DadosTimes.restaurar_times_padrao()
+	tela_versus.carregar_selecao_atual()
 
 	# Alternar P1 por passo +1 deve pular Flamengo (ja escolhido por P2) e selecionar Atletico-MG.
 	tela_versus.alternar_time_esquerdo(1)

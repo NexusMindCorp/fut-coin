@@ -160,25 +160,16 @@ func _transicionar_para(caminho_cena: String) -> void:
 	if ciclo_fogos != null:
 		ciclo_fogos.stop()
 	AudioManager.parar_audio_partida()
-	if botao_jogar_novamente != null:
-		botao_jogar_novamente.disabled = true
-	if botao_trocar_times != null:
-		botao_trocar_times.disabled = true
-	if botao_menu != null:
-		botao_menu.disabled = true
+	_definir_botoes_desabilitados(true)
 	if is_inside_tree():
 		get_tree().paused = false
 		var erro: Error = get_tree().change_scene_to_file(caminho_cena)
 		if erro != OK:
 			push_error("Falha ao transicionar para '%s' (erro %d)." % [caminho_cena, erro])
 			transicionando = false
+			_definir_botoes_desabilitados(false)
 			if botao_jogar_novamente != null:
-				botao_jogar_novamente.disabled = false
 				botao_jogar_novamente.grab_focus()
-			if botao_trocar_times != null:
-				botao_trocar_times.disabled = false
-			if botao_menu != null:
-				botao_menu.disabled = false
 
 
 # --- API PUBLICA ---
@@ -222,28 +213,24 @@ func _carregar_dados_padrao_teste() -> void:
 	chave_vencedor_atual = &"corinthians"
 
 
+func _definir_botoes_desabilitados(desabilitado: bool) -> void:
+	for botao: Button in [botao_jogar_novamente, botao_trocar_times, botao_menu]:
+		if botao != null:
+			botao.disabled = desabilitado
+
+
 func _conectar_foco_mouse_botoes() -> void:
-	if botao_jogar_novamente != null and not botao_jogar_novamente.mouse_entered.is_connected(_on_mouse_entered_jogar_novamente):
-		botao_jogar_novamente.mouse_entered.connect(_on_mouse_entered_jogar_novamente)
-	if botao_trocar_times != null and not botao_trocar_times.mouse_entered.is_connected(_on_mouse_entered_trocar_times):
-		botao_trocar_times.mouse_entered.connect(_on_mouse_entered_trocar_times)
-	if botao_menu != null and not botao_menu.mouse_entered.is_connected(_on_mouse_entered_menu):
-		botao_menu.mouse_entered.connect(_on_mouse_entered_menu)
+	for botao: Button in [botao_jogar_novamente, botao_trocar_times, botao_menu]:
+		if botao == null:
+			continue
+		var ao_entrar: Callable = _on_botao_mouse_entered.bind(botao)
+		if not botao.mouse_entered.is_connected(ao_entrar):
+			botao.mouse_entered.connect(ao_entrar)
 
 
-func _on_mouse_entered_menu() -> void:
-	if not transicionando and botao_menu != null and not botao_menu.disabled:
-		botao_menu.grab_focus()
-
-
-func _on_mouse_entered_jogar_novamente() -> void:
-	if not transicionando and botao_jogar_novamente != null and not botao_jogar_novamente.disabled:
-		botao_jogar_novamente.grab_focus()
-
-
-func _on_mouse_entered_trocar_times() -> void:
-	if not transicionando and botao_trocar_times != null and not botao_trocar_times.disabled:
-		botao_trocar_times.grab_focus()
+func _on_botao_mouse_entered(botao: Button) -> void:
+	if not transicionando and botao != null and not botao.disabled:
+		botao.grab_focus()
 
 
 func _on_ciclo_fogos_timeout() -> void:
