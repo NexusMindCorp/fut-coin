@@ -1,6 +1,6 @@
 # FutCoin: Documento de Requisitos e Contexto
 
-> Contexto atualizado em 11/11/2026 conforme ADR-001 e decisões posteriores das FEAT-004 a 008. Partida, seleção dos nove clubes, fluxo de menus e áudio implementados; permanecem polimento/balanceamento de áudio (M4), confirmações de atribuição e export/teste Linux (M5). A suíte 004 foi revalidada com 127 verificações sem falhas; não foi reexecutada nesta revisão documental. Itens **[A DEFINIR]** continuam abertos. O enunciado original permanece em `Trabalho 2 - 2026.3.md`.
+> Estado em 13/11/2026: base jog?vel e polimento FEAT-009/010 conclu?dos. Cr?ditos completos por confirma??o do usu?rio; grupo de Gabriel Lineker e Gianlucca Paiva. Revis?o e limpeza planejadas na FEAT-011; roteiro ap?s limpeza e Linux na ?ltima etapa. Ideias n?o implementadas n?o integram o escopo final.
 
 ---
 
