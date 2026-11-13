@@ -17,7 +17,6 @@ signal lancamento_solicitado(impulso: Vector2)
 var habilitada: bool = false
 var arrastando: bool = false
 var impulso_atual: Vector2 = Vector2.ZERO
-var bloqueada: bool = false
 var posicao_mouse_tela: Vector2 = Vector2.ZERO
 
 
@@ -50,7 +49,7 @@ func _unhandled_input(evento: InputEvent) -> void:
 		_atualizar_arrasto()
 		var valido: bool = habilitada and moeda.autorizada and moeda.esta_parada()
 		var impulso: Vector2 = impulso_atual
-		valido = valido and not impulso.is_zero_approx() and not bloqueada
+		valido = valido and not impulso.is_zero_approx()
 		arrastando = false
 		impulso_atual = Vector2.ZERO
 		queue_redraw()
@@ -79,18 +78,9 @@ func _draw() -> void:
 		cor = Color(1.0, 0.3, 0.25)
 	elif forca > 1.0 / 3.0:
 		cor = Color(1.0, 0.6, 0.2)
-	if bloqueada:
-		cor = Color(0.65, 0.65, 0.65, 0.65)
 	draw_line(inicio, ponta, Color(0.04, 0.04, 0.06), 6.0)
 	draw_line(inicio, ponta, cor, 3.0)
 	draw_colored_polygon(PackedVector2Array([ponta + direcao * 6.0, ponta - direcao * 5.0 + lateral, ponta - direcao * 5.0 - lateral]), cor)
-	if bloqueada:
-		# Marca pelo lado livre: a ponta pode estar fora da tela junto a parede.
-		var centro: Vector2 = -direcao * 25.0
-		draw_line(centro - Vector2(4, 4), centro + Vector2(4, 4), Color.BLACK, 5.0)
-		draw_line(centro - Vector2(4, -4), centro + Vector2(4, -4), Color.BLACK, 5.0)
-		draw_line(centro - Vector2(4, 4), centro + Vector2(4, 4), Color.WHITE, 2.0)
-		draw_line(centro - Vector2(4, -4), centro + Vector2(4, -4), Color.WHITE, 2.0)
 
 
 # --- API PUBLICA ---
@@ -122,7 +112,6 @@ static func calcular_impulso(puxada: Vector2, zona: float, arrasto: float, maxim
 func _atualizar_arrasto() -> void:
 	global_position = moeda.global_position
 	impulso_atual = calcular_impulso(_obter_mouse_global() - moeda.global_position, zona_morta, arrasto_maximo, moeda.impulso_maximo)
-	bloqueada = not impulso_atual.is_zero_approx() and not moeda.pode_lancar(impulso_atual.normalized())
 	queue_redraw()
 
 

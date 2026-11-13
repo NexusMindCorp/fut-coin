@@ -14,7 +14,6 @@ const RAIO: float = 14.0
 @export_range(1.0, 2000.0) var velocidade_maxima: float = 800.0
 @export_range(0.01, 20.0) var limiar_parada: float = 3.0
 @export_range(0.05, 1.0) var duracao_parada: float = 0.2
-@export_range(0.01, 2.0) var tolerancia_contato: float = 0.5
 @export_group("Apresentacao")
 @export var cor_posse: Color = Color(0.8, 0.9, 1.0)
 
@@ -28,8 +27,6 @@ var autorizada: bool = false
 var dourada: bool = false
 var contagem_reposicionamento: int = 0
 var impulso_pendente: Vector2 = Vector2.ZERO
-var consulta: PhysicsShapeQueryParameters2D = PhysicsShapeQueryParameters2D.new()
-var forma_consulta: CircleShape2D = CircleShape2D.new()
 var pulso: Tween
 var intensidade_aura: float = 0.6:
 	set(valor):
@@ -39,9 +36,6 @@ var intensidade_aura: float = 0.6:
 
 # --- INICIALIZACAO E LOOP DE FISICA/PROCESSAMENTO ---
 func _ready() -> void:
-	consulta.shape = forma_consulta
-	consulta.collision_mask = 1
-	consulta.exclude = [get_rid()]
 	_atualizar_animacao()
 	pulso = create_tween().set_loops()
 	pulso.tween_property(self, "intensidade_aura", 1.0, 0.6)
@@ -76,7 +70,7 @@ func _draw() -> void:
 func lancar(impulso: Vector2) -> bool:
 	if not impulso.is_finite() or impulso.is_zero_approx() or not autorizada:
 		return false
-	if not esta_parada() or not pode_lancar(impulso.normalized()):
+	if not esta_parada():
 		return false
 	impulso_pendente = impulso.limit_length(impulso_maximo)
 	em_movimento = true
@@ -91,20 +85,6 @@ func lancar(impulso: Vector2) -> bool:
 
 func esta_parada() -> bool:
 	return not em_movimento and (freeze or linear_velocity.is_zero_approx())
-
-
-func pode_lancar(direcao: Vector2) -> bool:
-	if not direcao.is_finite() or direcao.is_zero_approx() or not is_inside_tree():
-		return false
-	forma_consulta.radius = RAIO + tolerancia_contato
-	consulta.transform = Transform2D(0.0, global_position)
-	var pontos: Array[Vector2] = get_world_2d().direct_space_state.collide_shape(consulta, 16)
-	for indice: int in range(0, pontos.size(), 2):
-		# Ponto na parede menos ponto no circulo: normal para o espaco livre.
-		var normal: Vector2 = (pontos[indice + 1] - pontos[indice]).normalized()
-		if not direcao_permitida(direcao.normalized(), normal):
-			return false
-	return true
 
 
 func definir_autorizada(valor: bool) -> void:
@@ -132,10 +112,6 @@ func interromper_movimento() -> void:
 func definir_gol_de_ouro(ativo: bool) -> void:
 	dourada = ativo
 	_atualizar_animacao()
-
-
-static func direcao_permitida(direcao: Vector2, normal: Vector2) -> bool:
-	return direcao.dot(normal) >= -0.001
 
 
 # --- AUXILIARES / SETTERS ---

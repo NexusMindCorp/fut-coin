@@ -46,7 +46,7 @@
 ### 3.2 Mecânica de lançamento
 - Estilo "estilingue": o jogador **clica e arrasta** o mouse, simulando puxar a moeda para trás, e uma **seta** indica **direção e força**. Ao soltar, a moeda é lançada.
 - Direção livre em **360°**.
-- **Parede em contato (esclarecimento em 09/11/2026):** bloquear lançamento contra a parede já encostada, evitando ricochete imediato; permitir saída para o campo ou tangente. Sem contato, permitir ricochetes normais. Considerar direção de lançamento, oposta à puxada, conforme FEAT-003.
+- **Ricochete livre (13/11/2026, FEAT-013):** permitir qualquer direção de lançamento, inclusive contra parede em contato e nos cantos; colisões e ricochetes são resolvidos pela física.
 - A seta aponta para onde a moeda será lançada. Força cresce com a puxada para fora da moeda e retorna a zero ao voltar à moeda.
 - Valores de força mínima, máxima e escala do arrasto devem ser **configuráveis** (`@export`).
 
@@ -124,7 +124,7 @@ Planejamento detalhado de interface/fluxo/áudio na [FEAT-005](../.agent/feature
   - **Cronômetro** da partida.
 - Sugestão: **indicador de vez**, destacando o time que joga no turno.
 - A **seta de mira** (direção e força) faz parte da interface de jogo.
-- Borda pulsante rente à moeda indica a vez com a cor do clube selecionado, consultada em `DadosTimes`; a prévia isolada pode usar cores de demonstração. Seta aprovada em três faixas de força: amarela até 1/3, laranja até 2/3, vermelha acima; bloqueio cinza com X. Comprimento e direção continuam indicando força e lançamento.
+- Borda pulsante rente à moeda indica a vez com a cor do clube selecionado, consultada em `DadosTimes`; a prévia isolada pode usar cores de demonstração. Seta aprovada em três faixas de força: amarela até 1/3, laranja até 2/3, vermelha acima; sem bloqueio direcional por contato (FEAT-013). Comprimento e direção continuam indicando força e lançamento.
 
 ---
 
@@ -175,7 +175,7 @@ Planejamento detalhado de interface/fluxo/áudio na [FEAT-005](../.agent/feature
 - **Pregos e paredes:** `StaticBody2D` com colisão.
 - **Gols:** `Area2D` posicionada atrás da linha do gol.
 - **Estados do jogo:** aguardando jogada, mirando, moeda em movimento, gol animando e fim de partida. Pause pertence ao `SceneTree`; gol de ouro é uma flag, conforme ADR-001.
-- **Configurações em variáveis exportadas (`@export`):** duração da partida, força máxima, zona morta/escala do arrasto (força mínima zero), amortecimento e tolerância de contato com paredes. Gol de ouro é regra obrigatória e não possui controle de desativação.
+- **Configurações em variáveis exportadas (`@export`):** duração da partida, força máxima, zona morta/escala do arrasto (força mínima zero), amortecimento. Gol de ouro é regra obrigatória e não possui controle de desativação.
 - **Organização:** cenas separadas para menu, versus, partida (`main_game`), pause, tela final, créditos, moeda, prego, gol e HUD. Seguir ADR-001, sem `TelaBase` ou `TimeDados` como Resource. Código legível e comentado, pois cada integrante será questionado sobre ele.
 - **Exportação:** exportar e testar o executável **Linux** desde cedo (não só no dia da entrega), e deixá-lo na pasta `build/` do repositório (**público** no GitHub).
 

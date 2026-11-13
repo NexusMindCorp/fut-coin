@@ -53,9 +53,6 @@ func _testar_matematica() -> void:
 		_verificar(Mira.calcular_impulso(direcao * 14.0, 14.0, 96.0, 700.0).is_zero_approx(), "Zona morta")
 		_verificar(Mira.calcular_impulso(direcao * 62.0, 14.0, 96.0, 700.0).is_equal_approx(-direcao * 350.0), "Metade da forca e sentido")
 		_verificar(Mira.calcular_impulso(direcao * 500.0, 14.0, 96.0, 700.0).is_equal_approx(-direcao * 700.0), "Saturacao")
-	_verificar(not Moeda.direcao_permitida(Vector2.UP, Vector2.DOWN), "Contra parede")
-	_verificar(Moeda.direcao_permitida(Vector2.DOWN, Vector2.DOWN), "Saida da parede")
-	_verificar(Moeda.direcao_permitida(Vector2.RIGHT, Vector2.DOWN), "Tangente")
 	_verificar(not moeda.lancar(Vector2.ZERO), "Rejeita impulso zero")
 	_verificar(not moeda.lancar(Vector2(INF, 0)), "Rejeita infinito")
 
@@ -65,22 +62,16 @@ func _testar_contatos() -> void:
 	var saidas: Array[Vector2] = [Vector2.DOWN, Vector2.UP, Vector2.RIGHT, Vector2.LEFT, Vector2.RIGHT, Vector2.LEFT, Vector2.DOWN, Vector2.UP]
 	for indice: int in range(posicoes.size()):
 		await _posicionar(posicoes[indice])
-		_verificar(not moeda.pode_lancar(-saidas[indice]), "Contato bloqueia %d" % indice)
-		_verificar(moeda.pode_lancar(saidas[indice]), "Contato permite saida %d" % indice)
-		_verificar(moeda.pode_lancar(saidas[indice].orthogonal()), "Contato permite tangente %d" % indice)
+		_verificar(moeda.lancar(-saidas[indice] * moeda.impulso_maximo), "Contato permite tiro contra parede %d" % indice)
+		var retornou: bool = false
+		for quadro: int in range(6):
+			await _quadros(1)
+			retornou = retornou or moeda.linear_velocity.dot(saidas[indice]) > 0.0
+		_verificar(retornou, "Ricochete retorna ao campo %d" % indice)
 	await _posicionar(Vector2(62, 46))
-	_verificar(not moeda.pode_lancar(Vector2.UP), "Canto superior")
-	_verificar(not moeda.pode_lancar(Vector2.LEFT), "Canto lateral")
-	_verificar(moeda.pode_lancar(Vector2(1, 1).normalized()), "Canto permite diagonal para fora")
-	await _posicionar(Vector2(576, 46.6))
-	_verificar(moeda.pode_lancar(Vector2.UP), "Fora da tolerancia permite ricochete")
-	await _posicionar(Vector2(576, 46.25))
-	_verificar(not moeda.pode_lancar(Vector2.UP), "Dentro da tolerancia bloqueia")
-	for posicao: Vector2 in [Vector2(48, 139), Vector2(1104, 181)]:
-		await _posicionar(posicao)
-		_verificar(moeda.pode_lancar(Vector2.LEFT) and moeda.pode_lancar(Vector2.RIGHT), "Boca aberta sem parede ficticia")
-	await _posicionar(Vector2(180, 112))
-	_verificar(moeda.pode_lancar(Vector2.LEFT), "Contato com prego nao bloqueia tiro")
+	_verificar(moeda.lancar(Vector2(-1, -1).normalized() * moeda.impulso_maximo), "Canto permite tiro contra paredes")
+	await _quadros(12)
+	_verificar(moeda.linear_velocity.x > 0.0 and moeda.linear_velocity.y > 0.0, "Canto devolve moeda ao campo")
 
 
 func _testar_movimento() -> void:
@@ -190,9 +181,9 @@ func _testar_entrada() -> void:
 	_enviar_mouse(Vector2(576, 46), true)
 	_enviar_mouse(Vector2(576, 156))
 	await _quadros(2)
-	_verificar(mira.bloqueada, "Entrada bloqueia tiro para parede superior")
+	_verificar(mira.impulso_atual.y < 0.0, "Mira aponta contra parede superior")
 	_enviar_mouse(Vector2(576, 156), false, true)
-	_verificar(lancamentos == anteriores + 1 and moeda.esta_parada(), "Soltura bloqueada nao lanca")
+	_verificar(lancamentos == anteriores + 2 and not moeda.esta_parada(), "Soltura junto a parede lanca")
 
 
 func _enviar_mouse(posicao_global: Vector2, pressionar: bool = false, soltar: bool = false) -> void:

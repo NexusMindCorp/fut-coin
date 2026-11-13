@@ -130,11 +130,11 @@ func _testar_turnos_cancelamento_e_recusa() -> void:
 	_verificar(partida.obter_estado() == MainGame.Estado.AGUARDANDO_JOGADA, "Cancelamento retorna para AGUARDANDO_JOGADA")
 	_verificar(partida.obter_time_atual() == time_inicial, "Cancelamento preserva equipe do turno")
 
-	# Tiro recusado contra a parede superior nao consome turno.
+	# Impulso zero recusado nao consome turno.
 	moeda.reposicionar(Vector2(576.0, 46.0))
 	await _quadros(2)
-	partida._on_lancamento_solicitado(Vector2(0.0, -200.0))
-	_verificar(partida.obter_estado() == MainGame.Estado.AGUARDANDO_JOGADA, "Tiro recusado contra parede mantem AGUARDANDO_JOGADA")
+	partida._on_lancamento_solicitado(Vector2.ZERO)
+	_verificar(partida.obter_estado() == MainGame.Estado.AGUARDANDO_JOGADA, "Impulso zero mantem AGUARDANDO_JOGADA")
 	_verificar(partida.obter_time_atual() == time_inicial and mira.habilitada, "Tiro recusado preserva turno e mira habilitada")
 	_verificar(partida.obter_tempo_restante() <= tempo_antes, "Tiro recusado nao reinicia cronometro")
 
